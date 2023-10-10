@@ -1,6 +1,7 @@
 <nav id ="nav-bar">
-    <a href="#">My plans</a>
-    <a href="makenewplan.php">Make a plan</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/myplans">My plans</a>
+    <a href="/makenewplan">Make a plan</a>
     
     <?php if (isset($_SESSION['username'])) : ?>
     <div class="dropdown">
