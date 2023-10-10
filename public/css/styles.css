@@ -1,0 +1,321 @@
+body {
+	background-color: #3cdfff;
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+}
+
+img {
+    margin: 0px;
+    padding: 0px;
+}
+
+h1 {
+	font-weight: normal;
+	margin-top: 40px;
+	text-align: center;
+}
+
+h2 {
+	font-weight: normal;
+	margin: 40px 0px 20px 100px;
+	text-align: left;
+}
+
+a {
+  text-decoration: none; /* Remove the default underline */
+  color: grey; /* Link color */
+  position: relative; /* Required for pseudo-element positioning */
+  margin: 0px 10px;
+}
+
+button a {
+  color: white;
+}
+
+a::after {
+  content: ''; /* Create an empty pseudo-element */
+  display: block;
+  width: 0;
+  height: 2px; /* Set the initial underline height */
+  background-color: #3cdfff; /* Underline color */
+  position: absolute;
+  bottom: -2px; /* Position the underline below the text */
+  left: 0;
+  transition: width 0.3s ease; /* Add a smooth transition */
+}
+
+a:hover::after {
+  width: 100%; /* Expand the underline on hover */
+}
+
+button {
+  cursor: pointer;
+}
+
+.popup {
+  width: 300px; 
+  max-height: 200px; 
+  overflow-y: auto; 
+}
+
+#container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: #404040;
+}
+
+#content, #top, #footer {
+    width: 1600px;
+    margin: 0px auto;
+    position: relative;
+}
+
+#content {
+  -webkit-box-shadow: 0px 0px 31px 12px rgba(0,0,0,0.04); 
+  box-shadow: 0px 0px 31px 12px rgba(0,0,0,0.04);
+}
+
+#top {
+	height: 70px;
+}
+
+.logo {
+	margin-top: 20px;
+	margin-left: 20px;
+	display: block;
+	float: left;
+}
+
+.logo img {
+  height: 40px;
+}
+
+#content {
+	background-color: #fff;
+	min-height: 700px;
+	text-align: center;
+	position: relative;
+	padding-top: 1px;
+}
+
+.spcr {
+	clear: both;
+}
+
+form {
+	width: 260px;
+	margin: 0px auto;
+	position: relative;
+}
+
+form label, form input, form button {
+	width: 100%;
+}
+
+
+form input, form button, button{
+	margin-bottom: 20px;
+	height: 35px;
+}
+
+form input {
+  border-style: solid;
+  border-width: 0px;
+  background-color: rgb(251, 251, 251);
+  box-shadow: inset 0px 3px 21px 0px rgba(0, 1, 1, 0.1);
+  border-radius: 10px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+form button, button {
+  border-style: solid;
+  border-width: 0px;
+  background-color: #3cdfff;
+  border-radius: 10px;
+  color: white;
+}
+
+#footer {
+	color: #fff;
+	text-align: right;
+}
+
+#footer span {
+	padding: 10px;
+}
+
+/*menu*/
+#nav-bar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: right;
+	text-transform: uppercase;
+	font-weight: bold;
+	padding-top: 40px;
+}
+
+#nav-bar a {
+    text-decoration: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0px 20px;
+    color: white;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#nav-bar a:hover {
+
+    color: white;
+}
+
+/* Dropdown Button */
+.dropbtn {
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  padding: 10px 0px 10px 0px;
+  z-index: 1;
+  border: #f2f2f2 1px solid;
+  box-shadow: #404040 0px 0px 2px 0px ;
+  min-width: 100%;
+  text-align: center;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black !important;
+  text-decoration: none;
+  display: block;
+  border: 1px solid #f2f2f2;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+  
+}
+
+
+
+/*end menu*/
+
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+/* CSS for the training table */
+
+#trainingForm {
+  width: 90%;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+table th {
+  padding: 10px;
+}
+
+.trainingTable th:nth-child(1) {
+  width: 2%;
+}
+
+.trainingTable th:nth-child(2) {
+  width: 35%;
+}
+
+.trainingTable th:nth-child(3) {
+  width: 7%;
+}
+
+.trainingTable th:nth-child(4) {
+  width: 7%;
+}
+
+.trainingTable th:nth-child(5) {
+  width: 7%;
+}
+
+.trainingTable th:nth-child(6) {
+  width: 7%;
+}
+
+.trainingTable th:nth-child(7) {
+  width: 29%;
+}
+
+.trainingTable th:nth-child(8) {
+  width: 6%;
+}
+
+/* Style to contain text within cells */
+table tbody td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Display full-length text on hover */
+table tbody td:hover {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+
+}
+
+/* Style alternate row background colors */
+table tbody tr:nth-child(even) {
+  background-color: #f2f2f2; 
+}
+
+.addExercise {
+  width: 300px;
+  margin-bottom: 50px;
+}
+
+.hidden {
+  display: none;
+}
+
+tbody button {
+  margin-top: 14px;
+  height: 30px;
+  width: 90%;
+}
+
+.adminTable form input[type="text"],
+.adminTable form input[type="email"],
+.adminTable form input[type="password"],
+.adminTable form input[type="submit"],
+.adminTable form input[type="button"] {
+    background: none;
+    border: none;
+    padding: 0;
+    color: grey; /* Set your desired link color */
+    text-decoration: underline;
+    cursor: pointer;
+}
