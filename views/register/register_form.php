@@ -4,8 +4,7 @@
 <div id="content">
     <div class="spcr"></div>
     <h1>Register</h1>
-    <form method="post" action="register.php" id="sign-up">
-
+    <form method="post" action="/register" id="register_form">
     <?php 
         
 
@@ -24,14 +23,14 @@
         </div>
         <div class="input-group">
             <label>Password:</label>
-            <input type="password" name="password_1">
+            <input type="password" name="password">
         </div>
         <div class="input-group">
             <label>Confirm password:</label>
-            <input type="password" name="password_2">
+            <input type="password" name="confirm_password">
         </div>
         <div class="input-group">
-            <button type="submit" class="btn" name="reg_user">
+            <button type="submit" class="btn" name="register_user">
                 Ok
             </button>
         </div>

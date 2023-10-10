@@ -1,40 +1,40 @@
 <?php
 
 class UserModel {
-    // Database connection
-    private $db;
+    private $pdo;
 
-    // constructor receives database connection as parameter
-    public function __construct(PDO $pdo) {
-        $this->db = $pdo;
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
-    // select user by email
-    public function getUserByEmail($email) {
-        try {
-            $query = "SELECT * FROM users WHERE email = :email";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
+    public function registerUser($username, $email, $password) {
+        // Hash the password (you should use a secure hashing algorithm)
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            // Fetch the user data
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Handle database query errors gracefully
-            // You can log the error or return an appropriate response
-            throw new Exception("Error fetching user by email: " . $e->getMessage());
+        // Prepare an SQL statement for inserting the user data
+        $sql = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
+
+        // Prepare the statement
+        $stmt = $this->pdo->prepare($sql);
+
+        // Bind parameters
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashedPassword);
+
+        // Execute the statement
+        $stmt->execute();
+
+        // Check if the insertion was successful
+        if ($stmt->rowCount() > 0) {
+            // User registered successfully
+            return true;
+        } else {
+            // Registration failed
+            return false;
         }
     }
-
-
-
-
-    public function verifyPassword($user, $password) {
-        // Implement logic to verify the password of a user
-        // Example: $hashedPassword = $user['password']; // Retrieve the hashed password from the user data
-        // Use password_verify() to check if the provided password matches the hashed password
-
-        // Replace this example code with your actual password verification logic
-        return password_verify($password, $user['password']);
-    }
 }
+
+// Create an instance of UserModel with the database connection
+$userModel = new UserModel($pdo);

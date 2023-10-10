@@ -39,7 +39,6 @@ if (isset($routes[$route])) {
 
     // Include the appropriate controller file
     require_once '../controllers/' . $controller_name . '.php';
-
     // Create an instance of the controller and call the action method
     $controller = new $controller_name();
     $controller->$action_name();
