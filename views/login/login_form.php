@@ -7,19 +7,7 @@
     
     <form action="login.php" method="post" id="log-in">
         
-        <?php 
-        
-        if (isset($_SESSION['success']) && !empty($_SESSION['success'])) {
-            // Display the success message
-            echo '<p class="success">' . $_SESSION['success'] . '</p>';
-            
-            // Clear the session variable
-            unset($_SESSION['success']);
-        }
-    
-        require_once "../views/shared/errors.php";
-        
-        ?>
+    <?php require_once "../views/shared/errors.php";?>
 
         <div class="input-group">
             <label>Username or e-mail:</label>
@@ -29,6 +17,8 @@
             <label>Password:</label>
             <input type="password" name="password">
         </div>
+        <label for="remember_me">Remember Me</label>
+    <input type="checkbox" name="remember_me" id="remember_me">
         <div class="input-group">
             <button type="submit" class="btn"
                         name="login_user">

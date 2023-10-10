@@ -109,7 +109,7 @@ form {
 	position: relative;
 }
 
-form label, form input, form button {
+form label, form input, form button{
 	width: 100%;
 }
 
@@ -127,6 +127,12 @@ form input {
   border-radius: 10px;
   margin-top: 5px;
   text-align: center;
+}
+
+#remember_me {
+  width: 20px;
+  height: 20px;
+
 }
 
 form button, button {
