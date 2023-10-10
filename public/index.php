@@ -23,6 +23,7 @@ $routes = [
     '/login' => ['controller' => 'LoginController', 'action' => 'index'],
     '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index'],
     '/register' => ['controller' => 'RegisterController', 'action' => 'index'],
+    '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index'],
