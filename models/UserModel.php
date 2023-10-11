@@ -21,6 +21,43 @@ class UserModel {
         $user = $result->fetch_assoc();
         return $user;
     }
+
+    public function getUserByUsernameOrEmail ($db, $loginInput) {
+        $sql = "SELECT * FROM users WHERE email = ? OR username = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ss", $loginInput, $loginInput);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
+
+    public function IsInputEmailOrUsername ($db, $loginInput) {
+        //check if the input is email or username
+        //if email return email
+        //if username return username
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $loginInput);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        if ($user) {
+            return "email";
+        } else {
+            $sql = "SELECT * FROM users WHERE username = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("s", $loginInput);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+            if ($user) {
+                return "username";
+            } else {
+                return false;
+            }
+        }
+    }
     
     public function registerUser($db, $username, $email, $password) {
 
@@ -57,10 +94,10 @@ class UserModel {
         }
     }
 
-    public function loginUser($db, $username, $password) {
+    public function loginUser($db, $loginInput, $password) {
         
         // Retrieve the user with the given username
-        $user = $this->getUserByUsername($db, $username);
+        $user = $this->getUserByUsernameOrEmail($db, $loginInput);
 
         if ($user) {
             // User found, check if the password is correct
@@ -85,6 +122,13 @@ class UserModel {
         }
     }
 
+    public function logoutUser() {
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: /');
+        exit;
+    }
 
 }
 

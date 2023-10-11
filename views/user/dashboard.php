@@ -6,7 +6,8 @@
    
     <h2>Dashboard</h2>
     
-
+    <?php 
+    echo $_SESSION['username']; ?>
     
     
 </div>

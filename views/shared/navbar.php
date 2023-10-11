@@ -5,15 +5,15 @@
     
     <?php if (isset($_SESSION['username'])) : ?>
     <div class="dropdown">
-        <a class="dropbtn" href="profile.php"><?php echo $_SESSION['username']?></a>
+        <a class="dropbtn" href="/profile"><?php echo $_SESSION['username']?></a>
         <div class="dropdown-content">
            <!-- adding admin panel if the role of the user is admin -->
             <?php 
             if ($_SESSION['user_role'] == 'admin') {
-                echo '<a href="adminpanel.php">Admin panel</a>';
+                echo '<a href="/admin">Admin panel</a>';
             } 
             ?>
-            <a href="logout.php">Logout</a>
+            <a href="/logout">Logout</a>
         </div>
     </div>
     <?php endif ?>

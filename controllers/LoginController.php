@@ -24,25 +24,45 @@ class LoginController {
     }
 
 
-    public function handleLogin($db, $username, $password) {
+    public function handleLogin($db, $loginInput, $password) {
         
         $userModel = new UserModel($db);   
         $errors = array();
-        if (empty($username)) {
-            array_push($errors, "Username is required.");
+        if (empty($loginInput)) {
+            array_push($errors, "Username or email is required.");
         }
         if (empty($password)) {
             array_push($errors, "Password is required.");
         }
 
-
-
         if (empty($errors)) {
             // All data is valid, proceed with login
             // Call the user login function in UserModel
-            $loginResult = $userModel->loginUser($db, $username, $password);
+            $loginResult = $userModel->loginUser($db, $loginInput, $password);
             if ($loginResult === true) {
-                // Login successful, redirect to the home page
+                session_start();
+                
+                
+                if ($userModel->IsInputEmailOrUsername($db, $loginInput) == "email") {
+                    $user = $userModel->getUserByEmail($db, $loginInput);
+                } else {
+                    $user = $userModel->getUserByUsername($db, $loginInput);
+                }
+                
+                
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['confirmed'] = $user['confirmed'];
+                $_SESSION['date_registered'] = $user['date_registered'];
+                $_SESSION['last_logged'] = $user['last_logged'];
+                $_SESSION['user_role'] = $user['user_role'];
+                $_SESSION['last_activity'] = time();
+
+                
+
+
+                
                 header('Location: /dashboard');
                 exit;
             } else {
@@ -54,11 +74,22 @@ class LoginController {
         }
     }
 
-
+    public function handleLogout() {
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: /');
+        exit;
+    }
 
 
     public function index() {
         $titlePage = 'Strenghtify - Login';
+
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /dashboard');
+            exit;
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data

@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Load any necessary configurations or autoloaders here
 require_once '../config/database.php'; 
 
@@ -28,6 +29,7 @@ $routes = [
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index'],
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index'],
+    '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
 ];
 
 

@@ -1,1 +1,1 @@
-<div class="logo"><a href="#"><img src="img/logo.png" alt="Strenghtify Logo"/></a></div>
+<div class="logo"><a href="/"><img src="img/logo.png" alt="Strenghtify Logo"/></a></div>
