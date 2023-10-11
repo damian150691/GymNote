@@ -3,29 +3,80 @@
 
 class LoginController {
 
+    private $userModel;
+    private $db;
+
     public function __construct() {
+
+        
         // Set the include path
         set_include_path(get_include_path() . PATH_SEPARATOR . '../models');
-        set_include_path(get_include_path() . PATH_SEPARATOR . '../config');
-
         // Load the model file
         require_once 'UserModel.php';
-        require_once 'database.php';
-    }
-
-    
-
-
-    // Handle the login form submission
-    public function login(Request $request) {
         
-
     }
+
+    public function setParams($params)
+    {
+        if (isset($params['db'])) {
+            $this->db = $params['db'];
+        }
+    }
+
+
+    public function handleLogin($db, $username, $password) {
+        
+        $userModel = new UserModel($db);   
+        $errors = array();
+        if (empty($username)) {
+            array_push($errors, "Username is required.");
+        }
+        if (empty($password)) {
+            array_push($errors, "Password is required.");
+        }
+
+
+
+        if (empty($errors)) {
+            // All data is valid, proceed with login
+            // Call the user login function in UserModel
+            $loginResult = $userModel->loginUser($db, $username, $password);
+            if ($loginResult === true) {
+                // Login successful, redirect to the home page
+                header('Location: /dashboard');
+                exit;
+            } else {
+                array_push($errors, "Wrong username or password.");
+                return $errors;
+            }
+        } else {
+            return $errors;
+        }
+    }
+
 
 
 
     public function index() {
         $titlePage = 'Strenghtify - Login';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Retrieve POST data
+            $loginInput = $_POST['login_input'];
+            $password = $_POST['password'];
+
+            // Call the registration function
+            $loginResult = $this->handleLogin($this->db, $loginInput, $password);
+            
+
+            
+            if ($loginResult !== true) {
+                // Registration failed, $registration_result contains validation errors
+                
+                $errors = $loginResult;
+
+            }
+        }
 
         // Load the login view with any necessary data
         require_once '../views/shared/head.php';

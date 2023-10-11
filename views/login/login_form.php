@@ -5,7 +5,7 @@
     <div class="spcr"></div>
     <h1>Log in:</h1>
     
-    <form action="login.php" method="post" id="log-in">
+    <form action="/login" method="post" id="log-in">
         
     <?php require_once "../views/shared/errors.php";?>
 

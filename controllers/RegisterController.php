@@ -26,7 +26,7 @@ class RegisterController {
 
 
     public function handleRegistration($db, $username, $email, $password, $confirm_password) {
-
+        $userModel = new UserModel($db);
         // Validate the data (You can create validation functions)
         $errors = array();
         if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
@@ -41,17 +41,25 @@ class RegisterController {
         if ($password !== $confirm_password) {
             array_push($errors, "Passwords do not match.");
         }
-
-
+        // Check if the username or email already exists in the database
+        $user = $userModel->getUserByUsername($db, $username);
+        if ($user) {
+            if ($user['username'] === $username) {
+                array_push($errors, "Username already exists.");
+            }
+            if ($user['email'] === $email) {
+                array_push($errors, "Email already exists.");
+            }
+        }
     
         if (empty($errors)) {
             // All data is valid, proceed with registration
-            $userModel = new UserModel($db);
+            
     
             // Call the user registration function in UserModel
-            $registration_result = $userModel->registerUser($db, $username, $email, $password);
+            $registrationResult = $userModel->registerUser($db, $username, $email, $password);
     
-            if ($registration_result === true) {
+            if ($registrationResult === true) {
                 // Registration successful, redirect to login page
                 header('Location: /login');
                 exit;
@@ -63,12 +71,9 @@ class RegisterController {
             return $errors;
         }
     
-        // If we get here, something went wrong, display the error message
-        if (!empty($error_message)) {
-            echo '<p class="error">' . $error_message . '</p>';
-        }
+        
     }
-    
+
     public function index() {
 
         $titlePage = 'Strenghtify - Register';
@@ -86,13 +91,13 @@ class RegisterController {
 
         
             // Call the registration function
-            $registration_result = $this->handleRegistration($this->db, $username, $email, $password, $confirm_password);
+            $registrationResult = $this->handleRegistration($this->db, $username, $email, $password, $confirm_password);
             
 
             
-            if ($registration_result !== true) {
+            if ($registrationResult !== true) {
                 // Registration failed, $registration_result contains validation errors
-                $errors = $registration_result;
+                $errors = $registrationResult;
             }
 
             

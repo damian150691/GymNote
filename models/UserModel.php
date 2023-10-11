@@ -1,6 +1,26 @@
 <?php
 
 class UserModel {
+
+    public function getUserByUsername ($db, $username) {
+        $sql = "SELECT * FROM users WHERE username = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
+
+    public function getUserByEmail ($db, $email) {
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
     
     public function registerUser($db, $username, $email, $password) {
 
@@ -36,6 +56,36 @@ class UserModel {
             return false;
         }
     }
+
+    public function loginUser($db, $username, $password) {
+        
+        // Retrieve the user with the given username
+        $user = $this->getUserByUsername($db, $username);
+
+        if ($user) {
+            // User found, check if the password is correct
+            if (password_verify($password, $user['password'])) {
+                // Password is correct, log the user in
+                // Update the last_logged column in the database
+                $last_logged_in = date("Y-m-d H:i:s");
+                $sql = "UPDATE users SET last_logged = ? WHERE id = ?";
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param("si", $last_logged_in, $user['id']);
+                $stmt->execute();
+
+                
+                return true;
+            } else {
+                // Password is incorrect
+                return false;
+            }
+        } else {
+            // User not found
+            return false;
+        }
+    }
+
+
 }
 
 // Create an instance of UserModel with the database connection

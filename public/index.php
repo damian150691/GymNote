@@ -20,7 +20,7 @@ $route = str_replace($base_url, '', $request_uri);
 // Define routes and their corresponding controllers and actions
 $routes = [
     '/' => ['controller' => 'HomeController', 'action' => 'index'],
-    '/login' => ['controller' => 'LoginController', 'action' => 'index'],
+    '/login' => ['controller' => 'LoginController', 'action' => 'index', 'params' => ['db' => $db]],
     '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index'],
     '/register' => ['controller' => 'RegisterController', 'action' => 'index', 'params' => ['db' => $db]],
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
