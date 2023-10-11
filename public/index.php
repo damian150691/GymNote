@@ -22,7 +22,7 @@ $routes = [
     '/' => ['controller' => 'HomeController', 'action' => 'index'],
     '/login' => ['controller' => 'LoginController', 'action' => 'index'],
     '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index'],
-    '/register' => ['controller' => 'RegisterController', 'action' => 'index'],
+    '/register' => ['controller' => 'RegisterController', 'action' => 'index', 'params' => ['db' => $db]],
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
@@ -41,6 +41,17 @@ if (isset($routes[$route])) {
     require_once '../controllers/' . $controller_name . '.php';
     // Create an instance of the controller and call the action method
     $controller = new $controller_name();
+
+    // Check if "params" exist in the route definition
+    if (isset($routes[$route]['params'])) {
+        $params = $routes[$route]['params'];
+        
+        // Pass the "params" to the controller (if applicable)
+        if (method_exists($controller, 'setParams')) {
+            $controller->setParams($params);
+        }
+    }
+
     $controller->$action_name();
 } else {
     // Handle 404 Not Found error

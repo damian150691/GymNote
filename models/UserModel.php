@@ -1,40 +1,31 @@
 <?php
 
 class UserModel {
-    private $pdo;
+    
+    public function registerUser($db, $username, $email, $password) {
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
-    }
-
-    public function registerUser($username, $email, $password) {
+        
         // Hash the password (you should use a secure hashing algorithm)
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Prepare an SQL statement for inserting the user data
-        $sql = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
+        $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+        $stmt = $db->prepare($sql);
 
-        // Prepare the statement
-        $stmt = $this->pdo->prepare($sql);
-
-        // Bind parameters
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashedPassword);
-
-        // Execute the statement
-        $stmt->execute();
-
-        // Check if the insertion was successful
-        if ($stmt->rowCount() > 0) {
-            // User registered successfully
-            return true;
+        if ($stmt) {
+            $stmt->bind_param("sss", $username, $email, $hashedPassword);
+            if ($stmt->execute()) {
+                // Insertion was successful
+                return true;
+            } else {
+                // Insertion failed
+                return false;
+            }
         } else {
-            // Registration failed
+            // Statement preparation failed
             return false;
         }
     }
 }
 
 // Create an instance of UserModel with the database connection
-$userModel = new UserModel($pdo);
+$userModel = new UserModel();

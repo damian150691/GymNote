@@ -4,9 +4,11 @@
 class RegisterController {
 
     private $userModel;
-    private $pdo;
+    private $db;
 
     public function __construct() {
+
+        
         // Set the include path
         set_include_path(get_include_path() . PATH_SEPARATOR . '../models');
         // Load the model file
@@ -14,8 +16,17 @@ class RegisterController {
         
     }
 
+    public function setParams($params)
+    {
+        if (isset($params['db'])) {
+            $this->db = $params['db'];
+        }
+    }
 
-    public function registerUser($pdo, $username, $email, $password, $confirm_password) {
+
+
+    public function handleRegistration($db, $username, $email, $password, $confirm_password) {
+
         // Validate the data (You can create validation functions)
         $errors = [];
         if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
@@ -33,10 +44,10 @@ class RegisterController {
     
         if (empty($errors)) {
             // All data is valid, proceed with registration
-            $userModel = new UserModel($pdo);
+            $userModel = new UserModel($db);
     
             // Call the user registration function in UserModel
-            $registration_result = $userModel->registerUser($username, $email, $password);
+            $registration_result = $userModel->registerUser($db, $username, $email, $password);
     
             if ($registration_result === true) {
                 // Registration successful, redirect to login page
@@ -55,8 +66,7 @@ class RegisterController {
     }
     
     public function index() {
-
-        $pdo = $this->pdo;
+        
 
         $titlePage = 'Strenghtify - Register';
         
@@ -67,10 +77,12 @@ class RegisterController {
             $email = $_POST['email'];
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
+
+
         
             // Call the registration function
-            $this->registerUser($pdo, $username, $email, $password, $confirm_password);
-            //dump ($this->$pdo);
+            $this->handleRegistration($this->db, $username, $email, $password, $confirm_password);
+            
 
         }
 
@@ -80,5 +92,6 @@ class RegisterController {
         require_once '../views/shared/footer.php';
     }
 }
+
 
 

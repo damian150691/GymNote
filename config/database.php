@@ -5,11 +5,11 @@ $db_name = 'strnghtf';      // Database name
 $db_user = 'damian';        // Database username
 $db_pass = 'zaq1@WSX';      // Database password
 
-// Establish a database connection
-try {
-    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_user, $db_pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Add error mode
-} catch (PDOException $e) {
-    // Handle database connection errors gracefully
-    die("Database connection failed: " . $e->getMessage());
-}
+$db = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+
+
+// Check for connection errors
+if ($db->connect_error) {
+    die("Database connection failed: " . $db->connect_error);
+} 
