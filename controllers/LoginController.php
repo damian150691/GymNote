@@ -24,7 +24,7 @@ class LoginController {
     }
 
 
-    public function handleLogin($db, $loginInput, $password) {
+    public function handleLogin($db, $loginInput, $password, $rememberMe) {
         
         $userModel = new UserModel($db);   
         $errors = array();
@@ -55,11 +55,12 @@ class LoginController {
             // Call the user login function in UserModel
             $loginResult = $userModel->loginUser($db, $loginInput, $password);
             if ($loginResult === true) {
-                session_start();
-                
-                
-                             
-                
+                if ($rememberMe) {
+                    $token = $userModel->generateToken(100); 
+                    $userModel->updateToken($db, $user['id'], $token);
+                    setcookie('strenghtify_remember_me', $token, time() + 30 * 24 * 3600, '/');
+                }
+                // Login was successful, redirect to dashboard 
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
@@ -69,10 +70,6 @@ class LoginController {
                 $_SESSION['user_role'] = $user['user_role'];
                 $_SESSION['last_activity'] = time();
 
-                
-
-
-                
                 header('Location: /dashboard');
                 exit;
             } else {
@@ -84,17 +81,43 @@ class LoginController {
         }
     }
 
+
+
     public function handleLogout() {
         session_start();
         session_unset();
         session_destroy();
+        if (isset($_COOKIE['strenghtify_remember_me'])) {
+            setcookie('strenghtify_remember_me', '', time() - 3600, '/');
+        }
         header('Location: /');
         exit;
+    }
+
+    public function checkRememberMeCookie ($db) {
+        if (isset($_COOKIE['strenghtify_remember_me'])) {
+            $userModel = new UserModel($db);
+            $token = $_COOKIE['strenghtify_remember_me'];
+            $user = $userModel->getUserByToken($db, $token);
+            if ($user) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['confirmed'] = $user['confirmed'];
+                $_SESSION['date_registered'] = $user['date_registered'];
+                $_SESSION['last_logged'] = $user['last_logged'];
+                $_SESSION['user_role'] = $user['user_role'];
+                $_SESSION['last_activity'] = time();
+                header('Location: /dashboard');
+                exit;
+            }
+        }
     }
 
 
     public function index() {
         $titlePage = 'Strenghtify - Login';
+
 
         if (isset($_SESSION['user_id'])) {
             header('Location: /dashboard');
@@ -105,9 +128,14 @@ class LoginController {
             // Retrieve POST data
             $loginInput = $_POST['login_input'];
             $password = $_POST['password'];
+            if (isset($_POST['remember_me'])) {
+                $rememberMe = $_POST['remember_me'];
+            } else {
+                $rememberMe = false;
+            }
 
             // Call the registration function
-            $loginResult = $this->handleLogin($this->db, $loginInput, $password);
+            $loginResult = $this->handleLogin($this->db, $loginInput, $password, $rememberMe);
             
 
             

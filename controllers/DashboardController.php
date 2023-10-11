@@ -6,11 +6,11 @@ class DashboardController {
     public function __construct() {
         // Set the include path
         set_include_path(get_include_path() . PATH_SEPARATOR . '../models');
-        set_include_path(get_include_path() . PATH_SEPARATOR . '../config');
+
 
         // Load the model file
         require_once 'UserModel.php';
-        require_once 'database.php';
+
     }
 
     
@@ -20,6 +20,11 @@ class DashboardController {
 
     public function index() {
         $titlePage = 'Strenghtify - Dashboard';
+
+        if (!isset($_SESSION['user_id']) ) {
+            header('Location: /login');
+            exit();
+        }
 
         // Load the login view with any necessary data
         require_once '../views/shared/head.php';

@@ -76,6 +76,26 @@ class UserModel {
             return false;
         }
     }
+
+    public function generateToken($tokenLength) {
+        if ($tokenLength % 2 !== 0) {
+            throw new Exception("Token length must be an even number.");
+        }
+        
+        return bin2hex(random_bytes($tokenLength / 2));
+    }
+
+    public function updateToken($db, $id, $token) {
+        $sql = "UPDATE users SET token = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("si", $token, $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     public function registerUser($db, $username, $email, $password) {
 
@@ -84,7 +104,7 @@ class UserModel {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // generate token
-        $token = bin2hex(random_bytes(50));
+        $token = $this->generateToken(100);
 
         // set date_registered and last_logged_in to current date and time
         $date_registered = date("Y-m-d H:i:s");
