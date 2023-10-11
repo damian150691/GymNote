@@ -28,19 +28,21 @@ class RegisterController {
     public function handleRegistration($db, $username, $email, $password, $confirm_password) {
 
         // Validate the data (You can create validation functions)
-        $errors = [];
+        $errors = array();
         if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-            $errors[] = 'Invalid username.';
+            array_push($errors, "Invalid username.");
         }
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Invalid email address.';
+            array_push($errors, "Invalid email address.");
         }
         if (empty($password) || strlen($password) < 6) {
-            $errors[] = 'Password must be at least 6 characters long.';
+            array_push($errors, "Password must be at least 6 characters long.");
         }
         if ($password !== $confirm_password) {
-            $errors[] = 'Passwords do not match.';
+            array_push($errors, "Passwords do not match.");
         }
+
+
     
         if (empty($errors)) {
             // All data is valid, proceed with registration
@@ -54,9 +56,11 @@ class RegisterController {
                 header('Location: /login');
                 exit;
             } else {
-                // Registration failed, handle the error (e.g., display an error message)
-                $error_message = 'Registration failed. Please try again later.';
+                return false;
             }
+        } else {
+            
+            return $errors;
         }
     
         // If we get here, something went wrong, display the error message
@@ -66,10 +70,11 @@ class RegisterController {
     }
     
     public function index() {
-        
 
         $titlePage = 'Strenghtify - Register';
         
+       
+        $registration_result = array(); // Initialize the $registration_result array
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data
@@ -81,7 +86,15 @@ class RegisterController {
 
         
             // Call the registration function
-            $this->handleRegistration($this->db, $username, $email, $password, $confirm_password);
+            $registration_result = $this->handleRegistration($this->db, $username, $email, $password, $confirm_password);
+            
+
+            
+            if ($registration_result !== true) {
+                // Registration failed, $registration_result contains validation errors
+                $errors = $registration_result;
+            }
+
             
 
         }
