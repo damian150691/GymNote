@@ -30,6 +30,7 @@ $routes = [
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index'],
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index'],
     '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
+    '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
 ];
 
 

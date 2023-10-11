@@ -6,4 +6,8 @@ if (!empty($errors)) {
     }
 }
 
+if (!empty($_SESSION['message'])) {
+    echo '<p class="message">' . $_SESSION['message'] . '</p>';
+    unset($_SESSION['message']);
+}
 

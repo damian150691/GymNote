@@ -32,6 +32,16 @@ class UserModel {
         return $user;
     }
 
+    public function getUserByToken ($db, $token) {
+        $sql = "SELECT * FROM users WHERE token = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
+
     public function IsInputEmailOrUsername ($db, $loginInput) {
         //check if the input is email or username
         //if email return email
@@ -58,6 +68,14 @@ class UserModel {
             }
         }
     }
+
+    public function sendEmail ($to, $subject, $message, $headers) {
+        if (mail($to, $subject, $message, $headers)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     public function registerUser($db, $username, $email, $password) {
 
@@ -70,17 +88,16 @@ class UserModel {
 
         // set date_registered and last_logged_in to current date and time
         $date_registered = date("Y-m-d H:i:s");
-        $last_logged_in = $date_registered;
 
         //setting user role to user
         $user_role = "user";
 
 
-        $sql = "INSERT INTO users (username, email, password, token, date_registered, last_logged, user_role) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (username, email, password, token, date_registered, user_role) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
 
         if ($stmt) {
-            $stmt->bind_param("sssssss", $username, $email, $hashedPassword, $token, $date_registered, $last_logged_in, $user_role);
+            $stmt->bind_param("ssssss", $username, $email, $hashedPassword, $token, $date_registered, $user_role);
             if ($stmt->execute()) {
                 // Insertion was successful
                 return true;
@@ -90,6 +107,18 @@ class UserModel {
             }
         } else {
             // Statement preparation failed
+            return false;
+        }
+    }
+
+    public function confirmUser($db, $token) {
+        $sql = "UPDATE users SET confirmed = 1 WHERE token = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
             return false;
         }
     }
@@ -122,13 +151,9 @@ class UserModel {
         }
     }
 
-    public function logoutUser() {
-        session_start();
-        session_unset();
-        session_destroy();
-        header('Location: /');
-        exit;
-    }
+
+
+
 
 }
 

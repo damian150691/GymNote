@@ -34,6 +34,21 @@ class LoginController {
         if (empty($password)) {
             array_push($errors, "Password is required.");
         }
+        
+        if ($userModel->IsInputEmailOrUsername($db, $loginInput) == "email") {
+            $user = $userModel->getUserByEmail($db, $loginInput);
+        } elseif ($userModel->IsInputEmailOrUsername($db, $loginInput) == "username") {
+            $user = $userModel->getUserByUsername($db, $loginInput);
+        } else {
+            array_push($errors, "Wrong username or password.");
+                return $errors;
+        }
+
+        //check if user is verified
+        if ($user['confirmed'] == 0) {
+            array_push($errors, "You need to verify your account first.");
+        }
+        
 
         if (empty($errors)) {
             // All data is valid, proceed with login
@@ -43,12 +58,7 @@ class LoginController {
                 session_start();
                 
                 
-                if ($userModel->IsInputEmailOrUsername($db, $loginInput) == "email") {
-                    $user = $userModel->getUserByEmail($db, $loginInput);
-                } else {
-                    $user = $userModel->getUserByUsername($db, $loginInput);
-                }
-                
+                             
                 
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];

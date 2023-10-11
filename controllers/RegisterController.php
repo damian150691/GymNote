@@ -29,40 +29,60 @@ class RegisterController {
         $userModel = new UserModel($db);
         // Validate the data (You can create validation functions)
         $errors = array();
-        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-            array_push($errors, "Invalid username.");
+        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username) || strlen($username) < 3 || strlen($username) > 20) {
+            array_push($errors, "Invalid username. Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores.");
         }
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             array_push($errors, "Invalid email address.");
         }
-        if (empty($password) || strlen($password) < 6) {
-            array_push($errors, "Password must be at least 6 characters long.");
-        }
         if ($password !== $confirm_password) {
             array_push($errors, "Passwords do not match.");
         }
+        if (empty($password)) {
+            array_push($errors, "Password is required.");
+        } elseif (strlen($password) < 6 || strlen($password) > 20) {
+            array_push($errors, "Password must be between 6 and 20 characters long.");
+        } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9!@#$%^&*])/', $password)) {
+            array_push($errors, "Password must include at least one uppercase letter, one lowercase letter, and either one digit or one of the special characters: !@#$%^&*");
+        }
+        
         // Check if the username or email already exists in the database
         $user = $userModel->getUserByUsername($db, $username);
         if ($user) {
             if ($user['username'] === $username) {
                 array_push($errors, "Username already exists.");
             }
-            if ($user['email'] === $email) {
+        }
+        $user = $userModel->getUserByEmail($db, $email);
+        if ($user) {
+            if ($user['username'] === $username) {
                 array_push($errors, "Email already exists.");
             }
         }
-    
         if (empty($errors)) {
             // All data is valid, proceed with registration
             
     
             // Call the user registration function in UserModel
             $registrationResult = $userModel->registerUser($db, $username, $email, $password);
+            $user = $userModel->getUserByUsername($db, $username);
     
             if ($registrationResult === true) {
-                // Registration successful, redirect to login page
-                header('Location: /login');
-                exit;
+                $token = $user['token'];
+                $to = $email;
+                $subject = "Strenghtify - Verify your email";
+                $message = "Please click on the link below to verify your email address: \n\n http://localhost:8080/verify?token=" . $token;
+                $headers = "From: damian.miela@gmail.com";
+
+                if ($userModel->sendEmail($to, $subject, $message, $headers)) {
+                    $_SESSION['message'] = "You have been registered successfully. Please check your email to verify your account.";
+                    header('Location: /login');
+                    exit;
+                } else {
+                    return false;
+                }
+
+                
             } else {
                 return false;
             }
@@ -72,6 +92,53 @@ class RegisterController {
         }
     
         
+    }
+
+    public function verifyUser () {
+        $errors = array();
+        $db = $this->db;
+        $userModel = new UserModel($db);
+        $url = "$_SERVER[REQUEST_URI]";
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $parts = parse_url($requestUri);
+
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $queryParameters);
+            if (isset($queryParameters['token'])) {
+                $token = $queryParameters['token'];
+                // Now, $token contains the value of the 'token' parameter
+            } else {
+                // Handle the case where 'token' is not present in the query string
+            }
+        } else {
+            // Handle the case where there is no query string in the URL
+        }
+        if ($token === null || $token === false) {
+            array_push($errors, "No token provided.");
+            $_SESSION['message'] = "No token provided.";
+            var_dump($token);
+            var_dump($url);
+        } else {
+            $user = $userModel->getUserByToken($db, $token);
+            if ($user) {
+                if ($userModel->confirmUser($db, $token)) {
+                    $_SESSION['message'] = "Your account has been verified. You can now log in.";
+                    header('Location: /login');
+                    exit;
+                } else {
+                    array_push($errors, "a");
+                    $_SESSION['message'] = "a";
+                    header('Location: /login');
+                    exit;
+                }
+                
+            } else {
+                array_push($errors, "b");
+                $_SESSION['message'] = "b";
+                header('Location: /login');
+                exit;
+            }
+        }
     }
 
     public function index() {
