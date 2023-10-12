@@ -22,7 +22,8 @@ $route = str_replace($base_url, '', $request_uri);
 $routes = [
     '/' => ['controller' => 'HomeController', 'action' => 'index'],
     '/login' => ['controller' => 'LoginController', 'action' => 'index', 'params' => ['db' => $db]],
-    '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index'],
+    '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/setnewpassword' => ['controller' => 'SetNewPasswordController', 'action' => 'index', 'params' => ['db' => $db]],
     '/register' => ['controller' => 'RegisterController', 'action' => 'index', 'params' => ['db' => $db]],
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],

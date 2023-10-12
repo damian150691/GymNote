@@ -106,18 +106,16 @@ class RegisterController {
             parse_str($parts['query'], $queryParameters);
             if (isset($queryParameters['token'])) {
                 $token = $queryParameters['token'];
-                // Now, $token contains the value of the 'token' parameter
             } else {
-                // Handle the case where 'token' is not present in the query string
+                array_push($errors, "No token provided.");
             }
         } else {
-            // Handle the case where there is no query string in the URL
+            array_push($errors, "No token provided.");
         }
         if ($token === null || $token === false) {
             array_push($errors, "No token provided.");
             $_SESSION['message'] = "No token provided.";
-            var_dump($token);
-            var_dump($url);
+            header('Location: /login');
         } else {
             $user = $userModel->getUserByToken($db, $token);
             if ($user) {
@@ -126,15 +124,13 @@ class RegisterController {
                     header('Location: /login');
                     exit;
                 } else {
-                    array_push($errors, "a");
-                    $_SESSION['message'] = "a";
+                    array_push($errors, "Something went wrong. Please try again.");
                     header('Location: /login');
                     exit;
                 }
                 
             } else {
-                array_push($errors, "b");
-                $_SESSION['message'] = "b";
+                array_push($errors, "Invalid token. Please try again.");
                 header('Location: /login');
                 exit;
             }

@@ -80,8 +80,7 @@ class UserModel {
     public function generateToken($tokenLength) {
         if ($tokenLength % 2 !== 0) {
             throw new Exception("Token length must be an even number.");
-        }
-        
+        }      
         return bin2hex(random_bytes($tokenLength / 2));
     }
 
@@ -96,26 +95,31 @@ class UserModel {
             return false;
         }
     }
+
+    public function updatePassword ($db, $id, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "UPDATE users SET password = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("si", $hashedPassword, $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     public function registerUser($db, $username, $email, $password) {
-
-        
         // Hash the password (you should use a secure hashing algorithm)
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
         // generate token
         $token = $this->generateToken(100);
-
         // set date_registered and last_logged_in to current date and time
         $date_registered = date("Y-m-d H:i:s");
-
         //setting user role to user
         $user_role = "user";
-
-
         $sql = "INSERT INTO users (username, email, password, token, date_registered, user_role) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-
         if ($stmt) {
             $stmt->bind_param("ssssss", $username, $email, $hashedPassword, $token, $date_registered, $user_role);
             if ($stmt->execute()) {
@@ -142,6 +146,7 @@ class UserModel {
             return false;
         }
     }
+        
 
     public function loginUser($db, $loginInput, $password) {
         

@@ -28,6 +28,6 @@
 
     </form>
     <a href="/register">Register</a>
-    <a href="/forgotpassword">Reset password</a>
+    <a href="/forgotpassword">Forgot password?</a>
     
 </div>
