@@ -78,7 +78,6 @@ class SetNewPasswordController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data
-            echo $token;
             $password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_new_password'];
             $errors = $this->handleSetNewPassword($this->db, $password, $confirm_password, $token);

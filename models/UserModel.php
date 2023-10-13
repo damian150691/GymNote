@@ -32,6 +32,16 @@ class UserModel {
         return $user;
     }
 
+    public function getUserById ($db, $id) {
+        $sql = "SELECT * FROM users WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
+
     public function getUserByToken ($db, $token) {
         $sql = "SELECT * FROM users WHERE token = ?";
         $stmt = $db->prepare($sql);
@@ -86,6 +96,18 @@ class UserModel {
 
     public function updateToken($db, $id, $token) {
         $sql = "UPDATE users SET token = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("si", $token, $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateSessionToken ($db, $id, $token) {
+        $sql = "UPDATE users SET session_token = ? WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("si", $token, $id);
         $stmt->execute();

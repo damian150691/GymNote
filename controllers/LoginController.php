@@ -28,13 +28,14 @@ class LoginController {
         
         $userModel = new UserModel($db);   
         $errors = array();
+
+        // Validate the input
         if (empty($loginInput)) {
             array_push($errors, "Username or email is required.");
         }
         if (empty($password)) {
             array_push($errors, "Password is required.");
         }
-        
         if ($userModel->IsInputEmailOrUsername($db, $loginInput) == "email") {
             $user = $userModel->getUserByEmail($db, $loginInput);
         } elseif ($userModel->IsInputEmailOrUsername($db, $loginInput) == "username") {
@@ -57,7 +58,7 @@ class LoginController {
             if ($loginResult === true) {
                 if ($rememberMe) {
                     $token = $userModel->generateToken(100); 
-                    $userModel->updateToken($db, $user['id'], $token);
+                    $userModel->updateSessionToken($db, $user['id'], $token);
                     setcookie('strenghtify_remember_me', $token, time() + 30 * 24 * 3600, '/');
                 }
                 // Login was successful, redirect to dashboard 
@@ -117,11 +118,14 @@ class LoginController {
 
     public function index() {
         $titlePage = 'Strenghtify - Login';
-
+        $errors = array();
 
         if (isset($_SESSION['user_id'])) {
-            header('Location: /dashboard');
-            exit;
+            $user = $this->userModel->getUserById($this->db, $_SESSION['user_id']);
+            if ($user) {
+                header('Location: /dashboard');
+                exit;
+            }
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -135,16 +139,11 @@ class LoginController {
             }
 
             // Call the registration function
-            $loginResult = $this->handleLogin($this->db, $loginInput, $password, $rememberMe);
+            $errors = $this->handleLogin($this->db, $loginInput, $password, $rememberMe);
             
 
             
-            if ($loginResult !== true) {
-                // Registration failed, $registration_result contains validation errors
-                
-                $errors = $loginResult;
-
-            }
+            
         }
 
         // Load the login view with any necessary data
@@ -156,53 +155,3 @@ class LoginController {
 
 
 }
-
-
-
-
-/*
-    // Log the user out
-    public function logout() {
-        // Implement this function to log the user out and redirect
-    }
-
-    // Redirect to the home page if authenticated
-    public function redirectToHomeIfAuthenticated() {
-        // Implement this function to check if the user is authenticated and redirect
-    }
-
-    // Handle a failed login attempt
-    protected function handleFailedLogin() {
-        // Implement this function to handle a failed login attempt
-    }
-
-    // Reset a user's password
-    public function resetPassword(Request $request) {
-        // Implement this function to handle password reset
-    }
-
-    // Change a user's password
-    public function changePassword(Request $request) {
-        // Implement this function to handle password change
-    }
-
-    // Handle two-factor authentication
-    public function twoFactorAuth(Request $request) {
-        // Implement this function to handle two-factor authentication
-    }
-
-    // Handle social login callback
-    public function socialLoginCallback(Request $request) {
-        // Implement this function to handle social login callbacks
-    }
-
-    // Remember the user's session
-    protected function rememberMe(Request $request) {
-        // Implement this function to handle "Remember Me" functionality
-    }
-
-    // Add error handling functions
-    protected function handleAuthenticationError() {
-        // Implement this function to handle authentication errors
-    }
-*/
