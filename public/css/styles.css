@@ -231,6 +231,10 @@ form button, button {
   color: green;
 }
 
+.hidden {
+  display: none;
+}
+
 /* CSS for the training table */
 
 #trainingForm {
@@ -271,11 +275,11 @@ table th {
 }
 
 .trainingTable th:nth-child(7) {
-  width: 29%;
+  width: 23%;
 }
 
 .trainingTable th:nth-child(8) {
-  width: 6%;
+  width: 12%;
 }
 
 /* Style to contain text within cells */
@@ -290,7 +294,6 @@ table tbody td:hover {
   white-space: normal;
   overflow: visible;
   text-overflow: clip;
-
 }
 
 /* Style alternate row background colors */
@@ -303,15 +306,21 @@ table tbody tr:nth-child(even) {
   margin-bottom: 50px;
 }
 
-.hidden {
-  display: none;
-}
 
 tbody button {
   margin-top: 14px;
   height: 30px;
   width: 90%;
+  margin-top: -2px;
 }
+
+.edit-button, .delete-button {
+  margin-top: 14px;
+  height: 30px;
+  width: 40%;
+  margin: 5px;
+}
+
 
 .adminTable form input[type="text"],
 .adminTable form input[type="email"],

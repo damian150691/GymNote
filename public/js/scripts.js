@@ -44,7 +44,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton) {
+    function updateFirstColumnMNP (dayCount) {
+
+        const table = document.getElementById(`MNP${dayCount}`); //table that is being updated
+        //check if table is not empty
+        if (table !== null) {
+            const tableRows = table.querySelectorAll("tbody tr"); //all of the table rows in the table
+            for (let i = 0; i < tableRows.length; i++) {
+                tableRows[i].querySelector("td:nth-child(1)").textContent = i + 1;
+            }
+        }
+    }
+
+    function addEventListenerToDeleteButtonMNP (deleteButton, tableRow, addExerciseButton, dayCount) {
+        deleteButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            tableRow.remove();
+            //call to function that updates the first column in a table, so that the numbers are in order
+            updateFirstColumnMNP (dayCount);
+        });
+
+        
+        
+
+    }
+
+    function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton, dayCount) {
         confirmButton.addEventListener("click", function (event) {
             event.preventDefault();
             console.log("confirmButton clicked");
@@ -83,9 +108,18 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add event listener to the edit button
             addEventListenerToEditButtonMNP(editButton, newRow, addExerciseButton);
 
+        
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete-button");
+            // Add event listener to the delete button
+            addEventListenerToDeleteButtonMNP (deleteButton, newRow, addExerciseButton, dayCount);
+
             // Create a table cell
-            const tdEditButton = document.createElement("td");
-            tdEditButton.appendChild(editButton);
+            const tdButtons = document.createElement("td");
+            tdButtons.appendChild(editButton);
+            tdButtons.appendChild(deleteButton);
+
 
             // Insert the table cell into the table row
             newRow.innerHTML = `
@@ -97,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${exerciseInterval}</td>
                 <td>${exerciseInfo}</td>
             `;
-            newRow.appendChild(tdEditButton);
+            newRow.appendChild(tdButtons);
             newRow.classList.remove("inputRow");
             newRow.classList.add("tableRow");
             addExerciseButton.classList.remove("hidden");
@@ -108,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody) {
+    function addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody, dayCount) {
         addExerciseButton.addEventListener("click", function (event) {
             event.preventDefault();
 
@@ -132,8 +166,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
                 //append the new row to the table
                 tableBody.appendChild(newRow);
+
                 confirmButton = newRow.querySelector(".confirm-button");
-                addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton);
+                addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton, dayCount);
                 addExerciseButton.classList.add("hidden");
 
             }
@@ -142,8 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function createTableMNP (trainingDaysDiv) {
+    function createTableMNP (trainingDaysDiv, dayCount) {
         const newTable = document.createElement("table");
+        //add id (MPNdayCount) to the table so that it can be found later
+        newTable.id = `MNP${dayCount}`;
         newTable.classList.add("trainingTable");
         const tableHeader = document.createElement("thead");
         tableHeader.innerHTML = `
@@ -162,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const addExerciseButton = document.createElement("button");
         addExerciseButton.textContent = "Add Exercise";
         addExerciseButton.classList.add("addExercise");
-        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody);
+        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody, dayCount);
         newTable.appendChild(tableHeader);
         newTable.appendChild(tableBody);
         newTable.appendChild(addExerciseButton);
@@ -190,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             createHeaderMNP (dayCount, trainingDaysDiv);
 
-            createTableMNP (trainingDaysDiv); 
+            createTableMNP (trainingDaysDiv, dayCount);
         });
 
         

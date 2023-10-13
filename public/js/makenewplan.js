@@ -66,11 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
 
       // Append the new row to the table
-      tableBody.appendChild(newRow);
+    
 
       // checking how many rows are in the first column of the table
-      let rowCountInFirstColumn = document.querySelectorAll(".table-row-id").length;
-      tableRowCount = rowCountInFirstColumn + 1;
+      
 
 
       // Add event listener to the confirm button
