@@ -1,10 +1,64 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded and parsed!");
+  var dayCount = 0;
+
+    function updateDayHeadersMNP () {
+        //update all of the day headers so that they are in order
+        const dayHeaders = document.querySelectorAll("#trainingDays h3");
+        for (let i = 0; i < dayHeaders.length; i++) {
+            dayHeaders[i].textContent = `Day ${i + 1}`;
+        }
+        //check if there are less than 7 days, if so, show the add day button
+        dayCount = dayHeaders.length;
+        if (dayCount < 7) {
+            const addDayButton = document.getElementById("addDay");
+            addDayButton.classList.remove("hidden");
+        }
+        //update all of the tables id's
+        const tables = document.querySelectorAll(".trainingTable");
+        for (let i = 0; i < tables.length; i++) {
+            tables[i].id = `MNP${i + 1}`;
+        }
+    }
+
+    function addEventListenerToDeleteDayButtonMNP (deleteButton) {
+        deleteButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            //add alert with the option to cancel the deletion
+            const confirmDelete = confirm("Are you sure you want to delete this day? All of the exercises will be deleted as well.");
+            if (!confirmDelete) {
+                return;
+            }
+
+            const dayHeader = deleteButton.previousElementSibling;
+            const dayHeaderH3 = deleteButton.previousElementSibling.textContent;
+            const id = dayHeaderH3.match(/\d+/g);
+            if (id) {
+                id.forEach(number => {
+                    const table = document.getElementById(`MNP${number}`); //table that is being deleted
+                    dayHeader.remove();
+                    table.remove();
+                    deleteButton.remove();
+
+                    //call function to update all of the <h3> elements so that they are in order
+                    updateDayHeadersMNP ();
+                });
+            }
+
+            
+            //get the add day button
+        });
+    }
 
     function createHeaderMNP (dayCount, trainingDaysDiv) {
         const dayHeader = document.createElement("h3");
         dayHeader.textContent = `Day ${dayCount}`;
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete Day";
+        deleteButton.classList.add("deleteDayBtn");
+        addEventListenerToDeleteDayButtonMNP (deleteButton);
         trainingDaysDiv.appendChild(dayHeader);
+        trainingDaysDiv.appendChild(deleteButton);
     }
 
     function addEventListenerToEditButtonMNP (editButton, tableRow, addExerciseButton) {
@@ -72,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton, dayCount) {
         confirmButton.addEventListener("click", function (event) {
             event.preventDefault();
-            console.log("confirmButton clicked");
             //validate all of the inputs in the row that has "required" class
             const inputFields = newRow.querySelectorAll(".required");
             for (let i = 0; i < inputFields.length; i++) {
@@ -199,10 +252,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const addExerciseButton = document.createElement("button");
         addExerciseButton.textContent = "Add Exercise";
         addExerciseButton.classList.add("addExercise");
+
+        // wrap button into tfoot element
+        const tfoot = document.createElement("tfoot");
+        const tfootRow = document.createElement("tr");
+        const tfootCell = document.createElement("td");
+        //add style to the tfoot cell - text align center
+        tfootCell.classList.add("tfootAddExercise");
+        tfootCell.colSpan = 8;
+        tfootCell.appendChild(addExerciseButton);
+        tfootRow.appendChild(tfootCell);
+        tfoot.appendChild(tfootRow);
+
+        
         addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody, dayCount);
         newTable.appendChild(tableHeader);
         newTable.appendChild(tableBody);
-        newTable.appendChild(addExerciseButton);
+        newTable.appendChild(tfoot);
         trainingDaysDiv.appendChild(newTable);
             
     }
@@ -210,14 +276,12 @@ document.addEventListener("DOMContentLoaded", function () {
     
 
     function addDayButton () {
-        console.log("addDayButton function called");
         const addDayButton = document.getElementById("addDay"); //button for adding days
         const trainingDaysDiv = document.getElementById("trainingDays"); //div for adding days and exercises
-        let dayCount = 0; //necessary for adding days
+        
 
 
         addDayButton.addEventListener("click", function (event) {
-            console.log("addDayButton clicked");
             dayCount++;
             if (dayCount >= 7) {
                 addDayButton.classList.add("hidden");

@@ -10,8 +10,8 @@
                 <div id="trainingDays">
                     
                 </div>
-                <button type="button" id="addDay">Add Day</button>
-                <button type="submit">Create Training Plan</button>
+                <button class="addDay" type="button" id="addDay">Add Day</button>
+                <button class="savePlanBtn" type="submit">Save Plan</button>
             </form>
 
     

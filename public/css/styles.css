@@ -241,6 +241,22 @@ form button, button {
   width: 90%;
 }
 
+.addDay, .savePlanBtn {
+  width: 52%;
+
+  margin: 10px;
+}
+
+.savePlanBtn {
+  margin-bottom: 100px;
+}
+
+.deleteDayBtn {
+  width: 80px;
+
+  margin: 10px;
+}
+
 table {
   table-layout: fixed;
   width: 100%;
@@ -301,6 +317,10 @@ table tbody tr:nth-child(even) {
   background-color: #f2f2f2; 
 }
 
+.tfootAddExercise {
+  text-align: center;
+}
+
 .addExercise {
   width: 300px;
   margin-bottom: 50px;
@@ -320,6 +340,7 @@ tbody button {
   width: 40%;
   margin: 5px;
 }
+
 
 
 .adminTable form input[type="text"],
