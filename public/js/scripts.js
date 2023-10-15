@@ -279,7 +279,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const addDayButton = document.getElementById("addDay"); //button for adding days
         const trainingDaysDiv = document.getElementById("trainingDays"); //div for adding days and exercises
         
-
+        if (!addDayButton) {
+            return;
+        }
 
         addDayButton.addEventListener("click", function (event) {
             dayCount++;
@@ -299,9 +301,70 @@ document.addEventListener("DOMContentLoaded", function () {
         
     }
 
+    function savePlanButton() {
+        const savePlanBtn = document.getElementById("savePlan");
+
+        if (!savePlanBtn) {
+            return;
+        }
+
+        savePlanBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            var tableData = {};
+            var allTables = document.querySelectorAll(".trainingTable");
+            allTables.forEach((table, index) => {
+                var tableRows = table.querySelectorAll("tbody .tableRow");
+                var tableRowsData = [];
+                tableRows.forEach(function (row) {
+                    var rowData = {
+                        No: row.querySelector("td:nth-child(1)").textContent,
+                        Exercise: row.querySelector("td:nth-child(2)").textContent,
+                        Sets: row.querySelector("td:nth-child(3)").textContent,
+                        Repetitions: row.querySelector("td:nth-child(4)").textContent,
+                        Weight: row.querySelector("td:nth-child(5)").textContent,
+                        Interval: row.querySelector("td:nth-child(6)").textContent,
+                        Comments: row.querySelector("td:nth-child(7)").textContent
+                    };
+                    tableRowsData.push(rowData);
+                });
+                tableData["Day" + (index + 1)] = tableRowsData;
+            });
+    
+            // Convert the tableData object to a JSON string
+            var jsonData = JSON.stringify(tableData);
+
+            console.log(jsonData);
+
+            // Send the JSON string to the PHP script
+            fetch('/saveplan', {
+                method: 'POST',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                // Handle the response from the PHP script
+                console.log(data);
+
+                // If you want to display the response data on the page, you can do it here.
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+            // Note: You should reload the page after processing the response, not immediately.
+        });
+    }
+
+
+    
 
 
     addDayButton ();
+    savePlanButton ();
+
   
 });
 

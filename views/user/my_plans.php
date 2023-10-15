@@ -6,7 +6,9 @@
    
     <h2>My Plans</h2>
             
-            
+    <div id="plans">
+        
+    </div>
 
     
     

@@ -32,9 +32,13 @@ class LoginController {
         // Validate the input
         if (empty($loginInput)) {
             array_push($errors, "Username or email is required.");
+            return $errors;
+            exit;
         }
         if (empty($password)) {
             array_push($errors, "Password is required.");
+            return $errors;
+            exit;
         }
         if ($userModel->IsInputEmailOrUsername($db, $loginInput) == "email") {
             $user = $userModel->getUserByEmail($db, $loginInput);
@@ -42,7 +46,8 @@ class LoginController {
             $user = $userModel->getUserByUsername($db, $loginInput);
         } else {
             array_push($errors, "Wrong username or password.");
-                return $errors;
+            return $errors;
+            exit;
         }
 
         //check if user is verified
@@ -120,13 +125,7 @@ class LoginController {
         $titlePage = 'Strenghtify - Login';
         $errors = array();
 
-        if (isset($_SESSION['user_id'])) {
-            $user = $this->userModel->getUserById($this->db, $_SESSION['user_id']);
-            if ($user) {
-                header('Location: /dashboard');
-                exit;
-            }
-        }
+        
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data
@@ -140,10 +139,7 @@ class LoginController {
 
             // Call the registration function
             $errors = $this->handleLogin($this->db, $loginInput, $password, $rememberMe);
-            
-
-            
-            
+        
         }
 
         // Load the login view with any necessary data

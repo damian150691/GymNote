@@ -199,8 +199,75 @@ class UserModel {
     }
 
 
+    public function savePlan ($db, $id, $data){
 
+        $userId = $id;
+        $planName = "Plan";
+        $planId = null;
+        $tableId = null;
+        $tableName = null;
+        $lp = null;
+        $exerciseName = null;
+        $sets = null;
+        $repetitions = null;
+        $weight = null;
+        $interval = null;
+        $comments = null;
 
+        
+
+        $sqlInsertPlan = "INSERT INTO training_plans (user_id, plan_name) VALUES (?, ?)";
+        $stmtPlan = $db->prepare($sqlInsertPlan);
+        $stmtPlan->bind_param("is", $userId, $planName);
+
+        $sqlInsertTable = "INSERT INTO training_tables (plan_id, table_name) VALUES (?, ?)";
+        $stmtTable = $db->prepare($sqlInsertTable);
+        $stmtTable->bind_param("is", $planId, $tableName);
+
+        $sqlInsertData = "INSERT INTO table_data (table_id, lp, exercise, sets, repetitions, weight, interval_seconds, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmtData = $db->prepare($sqlInsertData);
+        $stmtData->bind_param("iisiiiss", $tableId, $lp, $exerciseName, $sets, $repetitions, $weight, $interval, $comments);
+        
+        if ($stmtPlan && $stmtTable && $stmtData) {
+            $stmtPlan->execute();
+            $planId = $stmtPlan->insert_id;
+            
+            foreach ($data as $day => $exercises) {
+                $tableName = $day;
+                $stmtTable->execute();
+                $tableId = $stmtTable->insert_id;
+
+                foreach ($exercises as $exercise) {
+                    $lp = $exercise['No'];
+                    $exerciseName = $exercise['Exercise'];
+                    $sets = $exercise['Sets'];
+                    $repetitions = $exercise['Repetitions'];
+                    $weight = $exercise['Weight'];
+                    $interval = $exercise['Interval'];
+                    $comments = $exercise['Comments'];
+                    $stmtData->execute();
+                }
+            }
+            $stmtPlan->close();
+            $stmtTable->close();
+            $stmtData->close();
+            $db->close();
+            $response = array(
+                "message" => "Plan saved successfully.",
+                "data" => $data
+            );
+            return $response;
+        } else {
+            $response = array(
+                "message" => "Error saving plan.",
+                "data" => $data
+            );
+            return $response;
+        }  
+    }
+
+    
+    
 
 }
 

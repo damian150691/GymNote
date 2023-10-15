@@ -29,7 +29,9 @@ $routes = [
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index'],
-    '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index'],
+    '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
+    '/displayplan' => ['controller' => 'MyPlansController', 'action' => 'handleDisplayPlan', 'params' => ['db' => $db]],
     '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
     '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
 ];
