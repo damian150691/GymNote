@@ -1,5 +1,5 @@
 body {
-	background-color: #3cdfff;
+	background-color: #40504e;
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
 }
@@ -37,7 +37,7 @@ a::after {
   display: block;
   width: 0;
   height: 2px; /* Set the initial underline height */
-  background-color: #3cdfff; /* Underline color */
+  background-color: #40504e; /* Underline color */
   position: absolute;
   bottom: -2px; /* Position the underline below the text */
   left: 0;
@@ -138,7 +138,7 @@ form input {
 form button, button {
   border-style: solid;
   border-width: 0px;
-  background-color: #3cdfff;
+  background-color: #40504e;
   border-radius: 10px;
   color: white;
 }
@@ -298,6 +298,10 @@ table th {
   width: 12%;
 }
 
+.setRow {
+  background-color: orange;
+}
+
 /* Style to contain text within cells */
 table tbody td {
   white-space: nowrap;
@@ -305,12 +309,6 @@ table tbody td {
   text-overflow: ellipsis;
 }
 
-/* Display full-length text on hover */
-table tbody td:hover {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-}
 
 /* Style alternate row background colors */
 table tbody tr:nth-child(even) {
@@ -339,6 +337,13 @@ tbody button {
   height: 30px;
   width: 40%;
   margin: 5px;
+}
+
+.trainingDay {
+  border: 1px dashed #c4c4c4;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 

@@ -52,6 +52,17 @@ class UserModel {
         return $user;
     }
 
+    public function getUserBySessionToken ($db, $token) {
+        $sql = "SELECT * FROM users WHERE session_token = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        return $user;
+    }
+
+
     public function IsInputEmailOrUsername ($db, $loginInput) {
         //check if the input is email or username
         //if email return email
@@ -203,6 +214,7 @@ class UserModel {
 
         $userId = $id;
         $planName = "Plan";
+        $date_created = date("Y-m-d H:i:s");
         $planId = null;
         $tableId = null;
         $tableName = null;
@@ -216,9 +228,9 @@ class UserModel {
 
         
 
-        $sqlInsertPlan = "INSERT INTO training_plans (user_id, plan_name) VALUES (?, ?)";
+        $sqlInsertPlan = "INSERT INTO training_plans (user_id, plan_name, date_created) VALUES (?, ?, ?)";
         $stmtPlan = $db->prepare($sqlInsertPlan);
-        $stmtPlan->bind_param("is", $userId, $planName);
+        $stmtPlan->bind_param("iss", $userId, $planName, $date_created);
 
         $sqlInsertTable = "INSERT INTO training_tables (plan_id, table_name) VALUES (?, ?)";
         $stmtTable = $db->prepare($sqlInsertTable);
@@ -266,8 +278,17 @@ class UserModel {
         }  
     }
 
-    
-    
+    public function getPlans ($db, $id) {
+        $sql = "SELECT plan_id, plan_name, date_created FROM training_plans WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $plans = $result->fetch_all(MYSQLI_ASSOC);
+        return $plans;
+    }
+
+      
 
 }
 

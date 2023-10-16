@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function createTableMNP (trainingDaysDiv, dayCount) {
+    function createTableMNP (trainingDayDiv, dayCount) {
         const newTable = document.createElement("table");
         //add id (MPNdayCount) to the table so that it can be found later
         newTable.id = `MNP${dayCount}`;
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
         newTable.appendChild(tableHeader);
         newTable.appendChild(tableBody);
         newTable.appendChild(tfoot);
-        trainingDaysDiv.appendChild(newTable);
+        trainingDayDiv.appendChild(newTable);
             
     }
 
@@ -279,6 +279,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const addDayButton = document.getElementById("addDay"); //button for adding days
         const trainingDaysDiv = document.getElementById("trainingDays"); //div for adding days and exercises
         
+        
+
         if (!addDayButton) {
             return;
         }
@@ -287,13 +289,18 @@ document.addEventListener("DOMContentLoaded", function () {
             dayCount++;
             if (dayCount >= 7) {
                 addDayButton.classList.add("hidden");
+                
             }
-
+            const trainingDayDiv = document.createElement("div"); //div for adding days and exercises
             
+            //add class to the div with daycount
+            trainingDayDiv.classList.add(`day${dayCount}`, "trainingDay");
 
-            createHeaderMNP (dayCount, trainingDaysDiv);
+            trainingDaysDiv.appendChild(trainingDayDiv);
 
-            createTableMNP (trainingDaysDiv, dayCount);
+            createHeaderMNP (dayCount, trainingDayDiv);
+
+            createTableMNP (trainingDayDiv, dayCount);
         });
 
         
@@ -354,12 +361,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(error);
             });
 
-            // Note: You should reload the page after processing the response, not immediately.
+            // redirecting user to /myplans 
+            window.location.replace("/myplans");
+            window.location.href = "/myplans";
+
         });
     }
 
 
-    
+    function getPlans () {  
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/getplans', true);
+    }
 
 
     addDayButton ();

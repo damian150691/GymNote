@@ -104,7 +104,7 @@ class LoginController {
         if (isset($_COOKIE['strenghtify_remember_me'])) {
             $userModel = new UserModel($db);
             $token = $_COOKIE['strenghtify_remember_me'];
-            $user = $userModel->getUserByToken($db, $token);
+            $user = $userModel->getUserBySessionToken($db, $token);
             if ($user) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
@@ -125,7 +125,10 @@ class LoginController {
         $titlePage = 'Strenghtify - Login';
         $errors = array();
 
-        
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /dashboard');
+            exit;
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data

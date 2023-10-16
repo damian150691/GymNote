@@ -20,9 +20,18 @@ class MyPlansController {
         }
     }
 
+    public function displayPlan () {
+        $titlePage = 'Strenghtify - My plans';
+
+        require_once '../views/shared/head.php';
+        require_once '../views/user/plan.php';
+        require_once '../views/shared/footer.php';
+    }
 
 
     public function index() {
+        $plansCount = 0;
+        $userModel = new UserModel($this->db);
         $titlePage = 'Strenghtify - My plans';
 
         if (!isset($_SESSION['user_id'])) {
@@ -31,6 +40,11 @@ class MyPlansController {
             header('Location: /login');
             exit();
         } 
+
+        $plans = $userModel->getPlans($this->db, $_SESSION['user_id']);
+        $plansCount = count($plans);
+
+
 
         // Load the login view with any necessary data
         require_once '../views/shared/head.php';

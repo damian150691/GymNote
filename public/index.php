@@ -28,38 +28,50 @@ $routes = [
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
-    '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index'],
+    '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/plan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'displayPlan', 'params' => ['db' => $db]],
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
-    '/displayplan' => ['controller' => 'MyPlansController', 'action' => 'handleDisplayPlan', 'params' => ['db' => $db]],
     '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
     '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
 ];
 
 
 
-// Check if the requested route exists in the defined routes
-if (isset($routes[$route])) {
-    $controller_name = $routes[$route]['controller'];
-    $action_name = $routes[$route]['action'];
+$matched = false;
+foreach ($routes as $pattern => $routeInfo) {
+    // Use preg_match to match the pattern with the requested route
+    if (preg_match('#^' . $pattern . '$#', $route, $matches)) {
+        $controller_name = $routeInfo['controller'];
+        $action_name = $routeInfo['action'];
 
-    // Include the appropriate controller file
-    require_once '../controllers/' . $controller_name . '.php';
-    // Create an instance of the controller and call the action method
-    $controller = new $controller_name();
+        // Include the appropriate controller file
+        require_once '../controllers/' . $controller_name . '.php';
+        // Create an instance of the controller and call the action method
+        $controller = new $controller_name();
 
-    // Check if "params" exist in the route definition
-    if (isset($routes[$route]['params'])) {
-        $params = $routes[$route]['params'];
-        
-        // Pass the "params" to the controller (if applicable)
-        if (method_exists($controller, 'setParams')) {
-            $controller->setParams($params);
+        // Check if "params" exist in the route definition
+        if (isset($routeInfo['params'])) {
+            $params = $routeInfo['params'];
+            
+            // Pass the "params" to the controller (if applicable)
+            if (method_exists($controller, 'setParams')) {
+                $controller->setParams($params);
+            }
         }
-    }
 
-    $controller->$action_name();
-} else {
+        if (isset($matches[1])) {
+            $controller->$action_name($matches[1]);
+        } else {
+            $controller->$action_name();
+        }
+
+        $matched = true;
+        break;
+    }
+}
+
+if (!$matched) {
     // Handle 404 Not Found error
     header('HTTP/1.0 404 Not Found');
     echo '404 Not Found';
