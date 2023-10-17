@@ -121,11 +121,12 @@ form input, form button, button{
 
 form input {
   border-style: solid;
-  border-width: 0px;
-  background-color: rgb(251, 251, 251);
+  border-width: 1px;
+  background-color: rgb(251, 251, 251, 0.5);
   box-shadow: inset 0px 3px 21px 0px rgba(0, 1, 1, 0.1);
   border-radius: 10px;
-  margin-top: 5px;
+  margin: 5px;
+  width: 80%;
   text-align: center;
 }
 
@@ -332,7 +333,7 @@ tbody button {
   margin-top: -2px;
 }
 
-.edit-button, .delete-button {
+.edit-button, .delete-button, .confirm-button {
   margin-top: 14px;
   height: 30px;
   width: 40%;

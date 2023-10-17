@@ -128,7 +128,9 @@ class LoginController {
         if (isset($_SESSION['user_id'])) {
             header('Location: /dashboard');
             exit;
-        }
+        } 
+
+        $this->checkRememberMeCookie($this->db);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data

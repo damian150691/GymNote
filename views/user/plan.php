@@ -24,16 +24,12 @@
         </thead>
         <tbody>
             <tr class="setRow">
-                <td colspan="5">Set 1</td>
+                <td colspan="5">Set ${dayCount}</td>
+                <td></td>
+                <td></td>
                 <td>
-                    90s rest
-                </td>
-                <td>
-                    comment
-                </td>
-                <td>
-                    <button class="edit-button">Edit</button>
-                    <button class="delete-button">Delete</button>
+                    <button class="edit-set-button">Edit</button>
+                    <button class="delete-set-button">Delete</button>
                 </td>
             </tr>
             <tr class="tableRow">

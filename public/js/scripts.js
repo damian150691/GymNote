@@ -16,8 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         //update all of the tables id's
         const tables = document.querySelectorAll(".trainingTable");
+        const dayDivs = document.querySelectorAll(".trainingDay");
         for (let i = 0; i < tables.length; i++) {
             tables[i].id = `MNP${i + 1}`;
+            dayDivs[i].id = `day${i + 1}`;
         }
     }
 
@@ -35,10 +37,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const id = dayHeaderH3.match(/\d+/g);
             if (id) {
                 id.forEach(number => {
+                    const trainingDayDiv = document.getElementById(`day${number}`); //div that is being deleted
                     const table = document.getElementById(`MNP${number}`); //table that is being deleted
                     dayHeader.remove();
                     table.remove();
                     deleteButton.remove();
+                    trainingDayDiv.remove();
 
                     //call function to update all of the <h3> elements so that they are in order
                     updateDayHeadersMNP ();
@@ -98,24 +102,25 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function updateFirstColumnMNP (dayCount) {
-
-        const table = document.getElementById(`MNP${dayCount}`); //table that is being updated
-        //check if table is not empty
-        if (table !== null) {
-            const tableRows = table.querySelectorAll("tbody tr"); //all of the table rows in the table
-            for (let i = 0; i < tableRows.length; i++) {
-                tableRows[i].querySelector("td:nth-child(1)").textContent = i + 1;
-            }
-        }
-    }
-
-    function addEventListenerToDeleteButtonMNP (deleteButton, tableRow, addExerciseButton, dayCount) {
+    function addEventListenerToDeleteButtonMNP (deleteButton, newRow) {
         deleteButton.addEventListener("click", function (event) {
             event.preventDefault();
-            tableRow.remove();
-            //call to function that updates the first column in a table, so that the numbers are in order
-            updateFirstColumnMNP (dayCount);
+
+            const tableRows = newRow.closest("table");
+            //get the id of the table
+            const tableId = tableRows.id;
+            
+            newRow.remove();
+            
+            const tableRowsCount = tableRows.querySelectorAll(".tableRow").length;
+            const setRowsCount = tableRows.querySelectorAll(".setRow").length;
+
+            for (let i = 0; i < tableRowsCount; i++) {
+                const tableRow = tableRows.querySelectorAll(".tableRow")[i];
+                const letter = String.fromCharCode(97 + i);
+                tableRow.querySelector("td:nth-child(1)").textContent = setRowsCount + letter.toUpperCase();
+                
+            }
         });
 
         
@@ -123,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton, dayCount) {
+    function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton) {
         confirmButton.addEventListener("click", function (event) {
             event.preventDefault();
             //validate all of the inputs in the row that has "required" class
@@ -135,10 +140,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             
-            const exerciseName = newRow.querySelector("input[name='exerciseName[]']").value;
-            const exerciseSets = newRow.querySelector("input[name='exerciseSets[]']").value;
-            const exerciseRepeats = newRow.querySelector("input[name='exerciseRepeats[]']").value;
-            const exerciseWeight = newRow.querySelector("input[name='exerciseWeight[]']").value;
+            let exerciseName = newRow.querySelector("input[name='exerciseName[]']").value;
+            if (exerciseName == "") {
+                exerciseName = "-";
+            }
+            let exerciseSets = newRow.querySelector("input[name='exerciseSets[]']").value;
+            if (exerciseSets == "") {
+                exerciseSets = "-";
+            }
+            let exerciseRepeats = newRow.querySelector("input[name='exerciseRepeats[]']").value;
+            if (exerciseRepeats == "") {
+                exerciseRepeats = "-";
+            }
+            let exerciseWeight = newRow.querySelector("input[name='exerciseWeight[]']").value;
+            if (exerciseWeight == "") {
+                exerciseWeight = "-";
+            }
             let exerciseInterval = newRow.querySelector("input[name='exerciseInterval[]']").value;
             if (exerciseInterval == "") {
                 exerciseInterval = "-";
@@ -150,10 +167,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let tableRowCount = 1;
             //check if there is a row with class "table=row-id"
             const tableRowIds = newRow.closest("table").querySelectorAll(".table-row-id");
-            if (tableRowIds.length > 0) {
-            //get the first column value and add 1 to it
-            tableRowCount = parseInt(tableRowIds[tableRowIds.length - 1].textContent) + 1;
-            } 
+            
+            //check how many rows are there in nearest table with class setRow
+            const setRows = newRow.closest("table").querySelectorAll(".setRow");
+                
+            // tableRowCount = setRows.length + letter (for example 1a, 1b, 1c)
+            const letter = String.fromCharCode(97 + tableRowIds.length);
+            tableRowCount = setRows.length + letter.toUpperCase();
+                
+            
 
             const editButton = document.createElement("button");
             editButton.textContent = "Edit";
@@ -166,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteButton.textContent = "Delete";
             deleteButton.classList.add("delete-button");
             // Add event listener to the delete button
-            addEventListenerToDeleteButtonMNP (deleteButton, newRow, addExerciseButton, dayCount);
+            addEventListenerToDeleteButtonMNP (deleteButton, newRow);
 
             // Create a table cell
             const tdButtons = document.createElement("td");
@@ -195,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody, dayCount) {
+    function addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody) {
         addExerciseButton.addEventListener("click", function (event) {
             event.preventDefault();
 
@@ -209,10 +231,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 newRow.classList.add("inputRow");
                 newRow.innerHTML = `
                 <td></td>
-                <td><input type="text" name="exerciseName[]" class="required" /></td>
-                <td><input type="number" name="exerciseSets[]" class="required" /></td>
-                <td><input type="number" name="exerciseRepeats[]" class="required" /></td>
-                <td><input type="number" name="exerciseWeight[]" class="required" /></td>
+                <td><input type="text" name="exerciseName[]" /></td>
+                <td><input type="text" name="exerciseSets[]" /></td>
+                <td><input type="text" name="exerciseRepeats[]" /></td>
+                <td><input type="text" name="exerciseWeight[]" /></td>
                 <td><input type="text" name="exerciseInterval[]" /></td>
                 <td><input type="text" name="exerciseInfo[]" /></td>
                 <td><button class="confirm-button">Confirm</button></td>
@@ -221,13 +243,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 tableBody.appendChild(newRow);
 
                 confirmButton = newRow.querySelector(".confirm-button");
-                addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton, dayCount);
+                addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton);
                 addExerciseButton.classList.add("hidden");
 
             }
-            
-
         });
+    }
+
+    function addSet (tableBody) {
+        const setRow = document.createElement("tr");
+        setRow.classList.add("setRow");
+        setRow.innerHTML = `
+            <td colspan="5"><input type"text" name="setName[]" value="Set"></td>
+            <td><input type"text" name="setInterval[]" value="60"></td>
+            <td><input type"text" name="setInfo[]" value=""></td>
+            <td>
+                <button class="confirm-button">Confirm</button>
+            </td>
+        `;
+        tableBody.appendChild(setRow);
+        return tableBody;
     }
 
     function createTableMNP (trainingDayDiv, dayCount) {
@@ -239,16 +274,19 @@ document.addEventListener("DOMContentLoaded", function () {
         tableHeader.innerHTML = `
             <tr>
                 <th></th>
-                <th>Exercise*</th>
-                <th>Sets*</th>
-                <th>Repetitions*</th>
-                <th>Weight[kg]*</th>
-                <th>Interval[s]</th>
+                <th>Exercise</th>
+                <th>Sets</th>
+                <th>Repetitions</th>
+                <th>Weight[kg]</th>
+                <th>Rest[s]</th>
                 <th>Comments</th>
                 <th></th>
             </tr>
         `;
         const tableBody = document.createElement("tbody");
+
+        addSet (tableBody);
+
         const addExerciseButton = document.createElement("button");
         addExerciseButton.textContent = "Add Exercise";
         addExerciseButton.classList.add("addExercise");
@@ -257,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const tfoot = document.createElement("tfoot");
         const tfootRow = document.createElement("tr");
         const tfootCell = document.createElement("td");
-        //add style to the tfoot cell - text align center
+        
         tfootCell.classList.add("tfootAddExercise");
         tfootCell.colSpan = 8;
         tfootCell.appendChild(addExerciseButton);
@@ -265,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
         tfoot.appendChild(tfootRow);
 
         
-        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody, dayCount);
+        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody);
         newTable.appendChild(tableHeader);
         newTable.appendChild(tableBody);
         newTable.appendChild(tfoot);
@@ -294,7 +332,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const trainingDayDiv = document.createElement("div"); //div for adding days and exercises
             
             //add class to the div with daycount
-            trainingDayDiv.classList.add(`day${dayCount}`, "trainingDay");
+            trainingDayDiv.id = `day${dayCount}`;
+            trainingDayDiv.classList.add("trainingDay");
 
             trainingDaysDiv.appendChild(trainingDayDiv);
 
@@ -366,12 +405,6 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "/myplans";
 
         });
-    }
-
-
-    function getPlans () {  
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/getplans', true);
     }
 
 
