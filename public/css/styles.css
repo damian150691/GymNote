@@ -1,12 +1,12 @@
 body {
 	background-color: #40504e;
-	font-family: 'Lato', sans-serif;
+	font-family: Lato, sans-serif;
 	font-weight: 300;
 }
 
 img {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
@@ -17,7 +17,7 @@ h1 {
 
 h2 {
 	font-weight: normal;
-	margin: 40px 0px 20px 100px;
+	margin: 40px 0 20px 100px;
 	text-align: left;
 }
 
@@ -25,7 +25,7 @@ a {
   text-decoration: none; /* Remove the default underline */
   color: grey; /* Link color */
   position: relative; /* Required for pseudo-element positioning */
-  margin: 0px 10px;
+  margin: 0 10px;
 }
 
 button a {
@@ -67,13 +67,13 @@ button {
 
 #content, #top, #footer {
     width: 1600px;
-    margin: 0px auto;
+    margin: 0 auto;
     position: relative;
 }
 
 #content {
-  -webkit-box-shadow: 0px 0px 31px 12px rgba(0,0,0,0.04); 
-  box-shadow: 0px 0px 31px 12px rgba(0,0,0,0.04);
+  -webkit-box-shadow: 0 0 31px 12px rgb(0 0 0 / 4%); 
+  box-shadow: 0 0 31px 12px rgb(0 0 0 / 4%);
 }
 
 #top {
@@ -105,7 +105,7 @@ button {
 
 form {
 	width: 260px;
-	margin: 0px auto;
+	margin: 0 auto;
 	position: relative;
 }
 
@@ -122,8 +122,8 @@ form input, form button, button{
 form input {
   border-style: solid;
   border-width: 1px;
-  background-color: rgb(251, 251, 251, 0.5);
-  box-shadow: inset 0px 3px 21px 0px rgba(0, 1, 1, 0.1);
+  background-color: rgb(251 251 251 / 50%);
+  box-shadow: inset 0 3px 21px 0 rgb(0 1 1 / 10%);
   border-radius: 10px;
   margin: 5px;
   width: 80%;
@@ -138,7 +138,7 @@ form input {
 
 form button, button {
   border-style: solid;
-  border-width: 0px;
+  border-width: 0;
   background-color: #40504e;
   border-radius: 10px;
   color: white;
@@ -153,7 +153,7 @@ form button, button {
 	padding: 10px;
 }
 
-/*menu*/
+/* menu */
 #nav-bar {
     margin: 0;
     padding: 0;
@@ -168,13 +168,12 @@ form button, button {
     text-decoration: none;
     display: inline-block;
     margin: 0;
-    padding: 0px 20px;
+    padding: 0 20px;
     color: white;
     transition: background-color 0.3s, color 0.3s;
 }
 
 #nav-bar a:hover {
-
     color: white;
 }
 
@@ -197,10 +196,10 @@ form button, button {
   display: none;
   position: absolute;
   background-color: #fff;
-  padding: 10px 0px 10px 0px;
+  padding: 10px 0;
   z-index: 1;
   border: #f2f2f2 1px solid;
-  box-shadow: #404040 0px 0px 2px 0px ;
+  box-shadow: #404040 0 0 2px 0 ;
   min-width: 100%;
   text-align: center;
 }
@@ -221,7 +220,7 @@ form button, button {
 
 
 
-/*end menu*/
+/* end menu */
 
 
 .error {
@@ -244,7 +243,6 @@ form button, button {
 
 .addDay, .savePlanBtn {
   width: 52%;
-
   margin: 10px;
 }
 
@@ -252,9 +250,8 @@ form button, button {
   margin-bottom: 100px;
 }
 
-.deleteDayBtn {
-  width: 80px;
-
+.trainingDay button {
+  width: 100px;
   margin: 10px;
 }
 
@@ -299,8 +296,14 @@ table th {
   width: 12%;
 }
 
+.setRow, .inputSetRow {
+  background-color: orange !important;
+}
+
 .setRow {
-  background-color: orange;
+  color: #fff;
+  font-weight: 500;
+  font-size: 1.2em;
 }
 
 /* Style to contain text within cells */
@@ -336,8 +339,8 @@ tbody button {
 .edit-button, .delete-button, .confirm-button {
   margin-top: 14px;
   height: 30px;
-  width: 40%;
-  margin: 5px;
+  width: 40% !important;
+  margin: 5px !important;
 }
 
 .trainingDay {

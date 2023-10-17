@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const dayHeader = deleteButton.previousElementSibling;
-            const dayHeaderH3 = deleteButton.previousElementSibling.textContent;
+            const dayHeader = deleteButton.previousElementSibling.previousElementSibling;
+            const dayHeaderH3 = dayHeader.textContent;
             const id = dayHeaderH3.match(/\d+/g);
             if (id) {
                 id.forEach(number => {
@@ -54,14 +54,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function addEventListenerToAddSetButtonMNP (addSetButton, trainingDayDiv) {
+        addSetButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const table = trainingDayDiv.querySelector(".trainingTable");
+            const tableBody = table.querySelector("tbody");
+            addSet (tableBody);
+        });
+    }
+
     function createHeaderMNP (dayCount, trainingDaysDiv) {
+        const trainingDayDiv = trainingDaysDiv.closest(".trainingDay");
+        
         const dayHeader = document.createElement("h3");
         dayHeader.textContent = `Day ${dayCount}`;
+
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete Day";
         deleteButton.classList.add("deleteDayBtn");
+
         addEventListenerToDeleteDayButtonMNP (deleteButton);
+
+        const addSetButton = document.createElement("button");
+        addSetButton.textContent = "Add Set";
+        addSetButton.classList.add("addSetBtn");
+
+        addEventListenerToAddSetButtonMNP (addSetButton, trainingDayDiv);
+
         trainingDaysDiv.appendChild(dayHeader);
+        trainingDaysDiv.appendChild(addSetButton);
         trainingDaysDiv.appendChild(deleteButton);
     }
 
@@ -70,10 +91,22 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             //getting values from the table row using nth-child
             const tableRowCount = tableRow.querySelector("td:nth-child(1)").textContent;
-            const exerciseName = tableRow.querySelector("td:nth-child(2)").textContent;
-            const exerciseSets = tableRow.querySelector("td:nth-child(3)").textContent;
-            const exerciseRepeats = tableRow.querySelector("td:nth-child(4)").textContent;
-            const exerciseWeight = tableRow.querySelector("td:nth-child(5)").textContent;
+            let exerciseName = tableRow.querySelector("td:nth-child(2)").textContent;
+            if (exerciseName == "-") {
+                exerciseName = "";
+            }
+            let exerciseSets = tableRow.querySelector("td:nth-child(3)").textContent;
+            if (exerciseSets == "-") { 
+                exerciseSets = "";
+            }
+            let exerciseRepeats = tableRow.querySelector("td:nth-child(4)").textContent;
+            if (exerciseRepeats == "-") {
+                exerciseRepeats = "";
+            }
+            let exerciseWeight = tableRow.querySelector("td:nth-child(5)").textContent;
+            if (exerciseWeight == "-") {
+                exerciseWeight = "";
+            }
             let exerciseInterval = tableRow.querySelector("td:nth-child(6)").textContent;
             if (exerciseInterval == "-") {
                 exerciseInterval = "";
@@ -85,10 +118,10 @@ document.addEventListener("DOMContentLoaded", function () {
             //change the text content into input fields with values
             tableRow.innerHTML = `
             <td class="table-row-id">${tableRowCount}</td>
-            <td><input type="text" name="exerciseName[]" value="${exerciseName}" class="required" /></td>
-            <td><input type="number" name="exerciseSets[]" value="${exerciseSets}" class="required" /></td>
-            <td><input type="number" name="exerciseRepeats[]" value="${exerciseRepeats}" class="required" /></td>
-            <td><input type="number" name="exerciseWeight[]" value="${exerciseWeight}" class="required" /></td>
+            <td><input type="text" name="exerciseName[]" value="${exerciseName}"/></td>
+            <td><input type="text" name="exerciseSets[]" value="${exerciseSets}"/></td>
+            <td><input type="text" name="exerciseRepeats[]" value="${exerciseRepeats}"/></td>
+            <td><input type="text" name="exerciseWeight[]" value="${exerciseWeight}"/></td>
             <td><input type="text" name="exerciseInterval[]" value="${exerciseInterval}" /></td>
             <td><input type="text" name="exerciseInfo[]" value="${exerciseInfo}" /></td>
             <td><button class="confirm-button">Confirm</button></td>
@@ -102,6 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    
     function addEventListenerToDeleteButtonMNP (deleteButton, newRow) {
         deleteButton.addEventListener("click", function (event) {
             event.preventDefault();
@@ -164,16 +198,69 @@ document.addEventListener("DOMContentLoaded", function () {
             if (exerciseInfo == "") {
                 exerciseInfo = "-";
             }
+
             let tableRowCount = 1;
-            //check if there is a row with class "table=row-id"
-            const tableRowIds = newRow.closest("table").querySelectorAll(".table-row-id");
-            
-            //check how many rows are there in nearest table with class setRow
-            const setRows = newRow.closest("table").querySelectorAll(".setRow");
+
+            //if (newRow.querySelector("td:nth-child(1)").textContent == "") {
+
+                //find element that contains setRow class inside tbody
+                const currentSetRowId = addExerciseButton.parentElement.nextElementSibling.textContent;
+                const currentSetNumber = currentSetRowId.match(/\d+/g).toString();
+                const currentSetRow = addExerciseButton.closest(".setRow");
+                const nextSetRowNumber = parseInt(currentSetNumber) + 1; 
+                const nextSetRowClass = "set" + nextSetRowNumber;
+                const nextSetRow = document.querySelector(`.${nextSetRowClass}`);
+                console.log(currentSetRow);
+                console.log(nextSetRow);
+
+                if (newRow.querySelector("td:nth-child(1)").textContent == ""){
+                    if (nextSetRow) {
+                        // count how many rows are between currentSetRow and nextSetRow
+                        let rowsBetween = currentSetRow.nextElementSibling;
+                        let rowsBetweenCount = 0;
+                        while (rowsBetween != nextSetRow) {
+                            rowsBetweenCount++;
+                            rowsBetween = rowsBetween.nextElementSibling;
+                        }
+                        let letter = String.fromCharCode(96 + rowsBetweenCount);
+                        tableRowCount = currentSetNumber + letter.toUpperCase();
+                    } else {
+                        // count how many rows are after currentSetRow
+                        let rowsAfter = currentSetRow.nextElementSibling;
+                        let rowsAfterCount = 0;
+                        while (rowsAfter != null) {
+                            rowsAfterCount++;
+                            rowsAfter = rowsAfter.nextElementSibling;
+                        }
+                        let letter = String.fromCharCode(96 + rowsAfterCount);
+                        tableRowCount = currentSetNumber + letter.toUpperCase();
+                    }
+                } else {
+                    tableRowCount = newRow.querySelector("td:nth-child(1)").textContent;
+                }
+                //count how many rows are after currentSetRow and before 
                 
-            // tableRowCount = setRows.length + letter (for example 1a, 1b, 1c)
-            const letter = String.fromCharCode(97 + tableRowIds.length);
-            tableRowCount = setRows.length + letter.toUpperCase();
+
+
+               
+
+
+
+                
+                /*
+                //check if there is a row with class "table=row-id"
+                const tableRowIds = newRow.closest("table").querySelectorAll(".table-row-id");
+                
+                //check how many rows are there in nearest table with class setRow
+                const setRows = newRow.closest("table").querySelectorAll(".setRow");
+                    
+                // tableRowCount = setRows.length + letter (for example 1a, 1b, 1c)
+                const letter = String.fromCharCode(97 + tableRowIds.length);
+                tableRowCount = setRows.length + letter.toUpperCase();
+                */
+            //} else {
+            //    tableRowCount = newRow.querySelector("td:nth-child(1)").textContent;
+            //}
                 
             
 
@@ -217,52 +304,179 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody) {
+    function addEventListenerToAddExerciseButtonMNP(addExerciseButton, tableBody) {
         addExerciseButton.addEventListener("click", function (event) {
             event.preventDefault();
-
-            //check if there are any rows in the nearest table that contains the class "inputRow"
+    
             const inputRows = tableBody.querySelectorAll(".inputRow");
-            
-
-
-            if (inputRows.length == 0) {
+            const parentRow = addExerciseButton.closest(".setRow");
+    
+            if (inputRows.length === 0) {
                 const newRow = document.createElement("tr");
                 newRow.classList.add("inputRow");
                 newRow.innerHTML = `
-                <td></td>
-                <td><input type="text" name="exerciseName[]" /></td>
-                <td><input type="text" name="exerciseSets[]" /></td>
-                <td><input type="text" name="exerciseRepeats[]" /></td>
-                <td><input type="text" name="exerciseWeight[]" /></td>
-                <td><input type="text" name="exerciseInterval[]" /></td>
-                <td><input type="text" name="exerciseInfo[]" /></td>
-                <td><button class="confirm-button">Confirm</button></td>
+                    <td></td>
+                    <td><input type="text" name="exerciseName[]"/></td>
+                    <td><input type="text" name="exerciseSets[]"/></td>
+                    <td><input type="text" name="exerciseRepeats[]"/></td>
+                    <td><input type="text" name="exerciseWeight[]"/></td>
+                    <td><input type="text" name="exerciseInterval[]"/></td>
+                    <td><input type="text" name="exerciseInfo[]"/></td>
+                    <td><button class="confirm-button">Confirm</button></td>
                 `;
-                //append the new row to the table
-                tableBody.appendChild(newRow);
-
-                confirmButton = newRow.querySelector(".confirm-button");
-                addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton);
-                addExerciseButton.classList.add("hidden");
-
+    
+                const setID = addExerciseButton.closest(".setRow").classList[2];
+                const setNumber = setID.match(/\d+/g).toString();
+                console.log(setNumber);
+    
+                const confirmButton = newRow.querySelector(".confirm-button");
+                addEventListenerToConfirmButtonMNP(confirmButton, newRow, addExerciseButton);
+    
+                // Find the next setRow after the current parentRow
+                let nextRowID = parseInt(setNumber) + 1;
+                let nextSetRow = tableBody.querySelector(`.set${nextRowID}`);
+                
+                while (nextSetRow && !nextSetRow.classList.contains("setRow")) {
+                    nextSetRow = nextSetRow.nextElementSibling;
+                }
+    
+                if (nextSetRow) {
+                    // Insert the new row before the next setRow
+                    tableBody.insertBefore(newRow, nextSetRow);
+                } else {
+                    // If there's no next setRow, simply append it to the tableBody
+                    tableBody.appendChild(newRow);
+                }
+            } else {
+                alert("Please confirm the exercise you are currently editing before adding a new one.");
             }
+        });
+    }
+    
+
+    function addEventListenerToDeleteButtonInSetRow (deleteButton, setRow) {
+        deleteButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            //add alert with the option to cancel the deletion
+            const confirmDelete = confirm("Are you sure you want to delete this set and all of the exercises in it?");
+            if (!confirmDelete) {
+                return;
+            }
+
+            
+
+            let rowstoDelete = [];
+
+            let currentRow = setRow;
+            let nextSetRow = setRow.nextElementSibling;
+            
+            while (nextSetRow != null && (nextSetRow.classList.contains("tableRow") || nextSetRow.classList.contains("inputRow")) ) {
+                
+                currentRow = nextSetRow;
+                
+                rowstoDelete.push(currentRow);
+                nextSetRow = currentRow.nextElementSibling;
+
+                
+            }
+            rowstoDelete.forEach(row => {
+                row.remove();
+            });
+            setRow.remove();
+        });
+    }
+
+    function addEventListenerToConfirmButtonInSetRow (confirmButton, setRow) {
+        confirmButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            let setName = setRow.querySelector("input[name='setName[]']").value;
+            if (setName == "") {
+                setName = "-";
+            }
+            let setInterval = setRow.querySelector("input[name='setInterval[]']").value;
+            if (setInterval == "") {
+                setInterval = "-";
+            }
+            let setInfo = setRow.querySelector("input[name='setInfo[]']").value;
+            if (setInfo == "") {
+                setInfo = "-";
+            }
+
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.classList.add("edit-button");
+            // Add event listener to the edit button
+            //addEventListenerToEditButtonInSetRow(editButton, setRow);
+
+        
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete-button");
+            // Add event listener to the delete button
+            addEventListenerToDeleteButtonInSetRow (deleteButton, setRow);
+
+            // Create a table cell
+            const tdButtons = document.createElement("td");
+            tdButtons.appendChild(editButton);
+            tdButtons.appendChild(deleteButton);
+
+
+            // Insert the table cell into the table row
+            setRow.innerHTML = `
+                <td colspan="5">${setName}</td>
+                <td>${setInterval}</td>
+                <td>${setInfo}</td>
+            `;
+            setRow.appendChild(tdButtons);
+            setRow.classList.remove("inputSetRow");
+            setRow.classList.add("setRow");
+            
+            confirmButton.remove();
+
         });
     }
 
     function addSet (tableBody) {
+        
         const setRow = document.createElement("tr");
+        const setRowsCount = tableBody.querySelectorAll(".setRow").length + 1;
+        setRow.classList.add("inputSetRow");
         setRow.classList.add("setRow");
+        setRow.classList.add(`set${setRowsCount}`);        
         setRow.innerHTML = `
-            <td colspan="5"><input type"text" name="setName[]" value="Set"></td>
-            <td><input type"text" name="setInterval[]" value="60"></td>
-            <td><input type"text" name="setInfo[]" value=""></td>
+            <td></td>
+            <td></td>
+            <td colspan="3">Set ${setRowsCount}</td>
+            <td>60</td>
+            <td></td>
             <td>
-                <button class="confirm-button">Confirm</button>
+                <button class="edit-button">Edit</button>
+                <button class="delete-button">Delete</button>
             </td>
         `;
+
+        //const confirmButton = setRow.querySelector(".confirm-button");
+        //addEventListenerToConfirmButtonInSetRow (confirmButton, setRow);
         tableBody.appendChild(setRow);
+
+        let button = addExerciseButton (tableBody);
+        
+        buttonPlace = setRow.querySelector("td:nth-child(2)");
+        buttonPlace.appendChild(button);
+
         return tableBody;
+    }
+
+    function addExerciseButton (tableBody) {
+        const addExerciseButton = document.createElement("button");
+        addExerciseButton.textContent = "Add Exercise";
+        addExerciseButton.classList.add("addExercise");
+
+        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody);
+
+        return addExerciseButton;
     }
 
     function createTableMNP (trainingDayDiv, dayCount) {
@@ -285,28 +499,14 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         const tableBody = document.createElement("tbody");
 
-        addSet (tableBody);
+        addSet (tableBody, dayCount);
 
-        const addExerciseButton = document.createElement("button");
-        addExerciseButton.textContent = "Add Exercise";
-        addExerciseButton.classList.add("addExercise");
-
-        // wrap button into tfoot element
-        const tfoot = document.createElement("tfoot");
-        const tfootRow = document.createElement("tr");
-        const tfootCell = document.createElement("td");
-        
-        tfootCell.classList.add("tfootAddExercise");
-        tfootCell.colSpan = 8;
-        tfootCell.appendChild(addExerciseButton);
-        tfootRow.appendChild(tfootCell);
-        tfoot.appendChild(tfootRow);
-
-        
-        addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody);
         newTable.appendChild(tableHeader);
         newTable.appendChild(tableBody);
-        newTable.appendChild(tfoot);
+
+        buttonRow = addExerciseButton (tableBody);
+        
+        
         trainingDayDiv.appendChild(newTable);
             
     }
