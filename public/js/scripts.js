@@ -136,30 +136,86 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     
-    function addEventListenerToDeleteButtonMNP (deleteButton, newRow) {
+    
+
+    function updateFirstColumnMNP (addExerciseButton, newRow) {
+        //counting rows in the table
+        let tableRowCount = 1;
+        const currentSetRowId = addExerciseButton.parentElement.nextElementSibling.textContent;
+        const currentSetNumber = currentSetRowId.match(/\d+/g).toString();
+        const currentSetRow = addExerciseButton.closest(".setRow");
+        const nextSetRowNumber = parseInt(currentSetNumber) + 1; 
+        const nextSetRowClass = "set" + nextSetRowNumber;
+        const nextSetRow = addExerciseButton.closest(".setRow").parentElement.querySelector(`.${nextSetRowClass}`);
+        
+        
+        if (nextSetRow) {
+            // count how many rows are between currentSetRow and nextSetRow
+            let rowsBetween = currentSetRow.nextElementSibling;
+            let rowsBetweenCount = 0;
+            while (rowsBetween != nextSetRow) {
+                rowsBetweenCount++;
+                let currentFirstColumn = rowsBetween.querySelector("td:nth-child(1)");
+                rowsBetween = rowsBetween.nextElementSibling;
+                let letter = String.fromCharCode(96 + rowsBetweenCount);
+                tableRowCount = currentSetNumber + letter.toUpperCase();
+                currentFirstColumn.textContent = tableRowCount;
+            }
+            
+            
+        } else {
+            // count how many rows are after currentSetRow
+            let rowsAfter = currentSetRow.nextElementSibling;
+            let rowsAfterCount = 0;
+            while (rowsAfter != null) {
+                rowsAfterCount++;
+                let currentFirstColumn = rowsAfter.querySelector("td:nth-child(1)");
+                rowsAfter = rowsAfter.nextElementSibling;
+                let letter = String.fromCharCode(96 + rowsAfterCount);
+                tableRowCount = currentSetNumber + letter.toUpperCase();
+                currentFirstColumn.textContent = tableRowCount;
+            }
+            
+        }
+        
+    }
+
+    function addEventListenerToDeleteButtonMNP (deleteButton, newRow, addExerciseButton) {
         deleteButton.addEventListener("click", function (event) {
             event.preventDefault();
 
-            const tableRows = newRow.closest("table");
-            //get the id of the table
-            const tableId = tableRows.id;
+            //add alert with the option to cancel the deletion
+            const confirmDelete = confirm("Are you sure you want to delete this exercise?");
+            if (!confirmDelete) {
+                return;
+            }
+            
+            let currentRow = newRow;
+            let nextRow = currentRow.nextElementSibling;
+            let previousRow = currentRow.previousElementSibling;
+
+            if (nextRow != null && nextRow.classList.contains("setRow")) {
+                nextRow = true;
+            }
+            if (previousRow != null && previousRow.classList.contains("setRow")) {
+                previousRow = true;
+            }
+            
+            currentRow = currentRow.parentElement;
+            let updateRow = currentRow.querySelector(".setRow").nextElementSibling;
             
             newRow.remove();
             
-            const tableRowsCount = tableRows.querySelectorAll(".tableRow").length;
-            const setRowsCount = tableRows.querySelectorAll(".setRow").length;
 
-            for (let i = 0; i < tableRowsCount; i++) {
-                const tableRow = tableRows.querySelectorAll(".tableRow")[i];
-                const letter = String.fromCharCode(97 + i);
-                tableRow.querySelector("td:nth-child(1)").textContent = setRowsCount + letter.toUpperCase();
+            if ((nextRow==true || nextRow == null) && previousRow==true) {
+            } else {
+                updateFirstColumnMNP (addExerciseButton, updateRow);
                 
             }
+
+            
+            
         });
-
-        
-        
-
     }
 
     function addEventListenerToConfirmButtonMNP (confirmButton, newRow, addExerciseButton) {
@@ -199,71 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 exerciseInfo = "-";
             }
 
-            let tableRowCount = 1;
-
-            //if (newRow.querySelector("td:nth-child(1)").textContent == "") {
-
-                //find element that contains setRow class inside tbody
-                const currentSetRowId = addExerciseButton.parentElement.nextElementSibling.textContent;
-                const currentSetNumber = currentSetRowId.match(/\d+/g).toString();
-                const currentSetRow = addExerciseButton.closest(".setRow");
-                const nextSetRowNumber = parseInt(currentSetNumber) + 1; 
-                const nextSetRowClass = "set" + nextSetRowNumber;
-                const nextSetRow = document.querySelector(`.${nextSetRowClass}`);
-                console.log(currentSetRow);
-                console.log(nextSetRow);
-
-                if (newRow.querySelector("td:nth-child(1)").textContent == ""){
-                    if (nextSetRow) {
-                        // count how many rows are between currentSetRow and nextSetRow
-                        let rowsBetween = currentSetRow.nextElementSibling;
-                        let rowsBetweenCount = 0;
-                        while (rowsBetween != nextSetRow) {
-                            rowsBetweenCount++;
-                            rowsBetween = rowsBetween.nextElementSibling;
-                        }
-                        let letter = String.fromCharCode(96 + rowsBetweenCount);
-                        tableRowCount = currentSetNumber + letter.toUpperCase();
-                    } else {
-                        // count how many rows are after currentSetRow
-                        let rowsAfter = currentSetRow.nextElementSibling;
-                        let rowsAfterCount = 0;
-                        while (rowsAfter != null) {
-                            rowsAfterCount++;
-                            rowsAfter = rowsAfter.nextElementSibling;
-                        }
-                        let letter = String.fromCharCode(96 + rowsAfterCount);
-                        tableRowCount = currentSetNumber + letter.toUpperCase();
-                    }
-                } else {
-                    tableRowCount = newRow.querySelector("td:nth-child(1)").textContent;
-                }
-                //count how many rows are after currentSetRow and before 
-                
-
-
-               
-
-
-
-                
-                /*
-                //check if there is a row with class "table=row-id"
-                const tableRowIds = newRow.closest("table").querySelectorAll(".table-row-id");
-                
-                //check how many rows are there in nearest table with class setRow
-                const setRows = newRow.closest("table").querySelectorAll(".setRow");
-                    
-                // tableRowCount = setRows.length + letter (for example 1a, 1b, 1c)
-                const letter = String.fromCharCode(97 + tableRowIds.length);
-                tableRowCount = setRows.length + letter.toUpperCase();
-                */
-            //} else {
-            //    tableRowCount = newRow.querySelector("td:nth-child(1)").textContent;
-            //}
-                
             
-
             const editButton = document.createElement("button");
             editButton.textContent = "Edit";
             editButton.classList.add("edit-button");
@@ -275,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteButton.textContent = "Delete";
             deleteButton.classList.add("delete-button");
             // Add event listener to the delete button
-            addEventListenerToDeleteButtonMNP (deleteButton, newRow);
+            addEventListenerToDeleteButtonMNP (deleteButton, newRow, addExerciseButton);
 
             // Create a table cell
             const tdButtons = document.createElement("td");
@@ -285,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Insert the table cell into the table row
             newRow.innerHTML = `
-                <td class="table-row-id">${tableRowCount}</td>
+                <td class="table-row-id"></td>
                 <td>${exerciseName}</td>
                 <td>${exerciseSets}</td>
                 <td>${exerciseRepeats}</td>
@@ -298,6 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
             newRow.classList.add("tableRow");
             addExerciseButton.classList.remove("hidden");
             confirmButton.remove();
+            updateFirstColumnMNP (addExerciseButton, newRow);
             
             
             

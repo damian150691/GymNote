@@ -258,6 +258,7 @@ form button, button {
 table {
   table-layout: fixed;
   width: 100%;
+  margin-bottom: 40px;
 }
 
 table th {
