@@ -210,72 +210,43 @@ class UserModel {
     }
 
 
-    public function savePlan ($db, $id, $data){
-
-        $userId = $id;
-        $planName = "Plan";
-        $date_created = date("Y-m-d H:i:s");
-        $planId = null;
-        $tableId = null;
-        $tableName = null;
-        $lp = null;
-        $exerciseName = null;
-        $sets = null;
-        $repetitions = null;
-        $weight = null;
-        $interval = null;
-        $comments = null;
-
-        
-
-        $sqlInsertPlan = "INSERT INTO training_plans (user_id, plan_name, date_created) VALUES (?, ?, ?)";
-        $stmtPlan = $db->prepare($sqlInsertPlan);
-        $stmtPlan->bind_param("iss", $userId, $planName, $date_created);
-
-        $sqlInsertTable = "INSERT INTO training_tables (plan_id, table_name) VALUES (?, ?)";
-        $stmtTable = $db->prepare($sqlInsertTable);
-        $stmtTable->bind_param("is", $planId, $tableName);
-
-        $sqlInsertData = "INSERT INTO table_data (table_id, lp, exercise, sets, repetitions, weight, interval_seconds, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmtData = $db->prepare($sqlInsertData);
-        $stmtData->bind_param("iisiiiss", $tableId, $lp, $exerciseName, $sets, $repetitions, $weight, $interval, $comments);
-        
-        if ($stmtPlan && $stmtTable && $stmtData) {
-            $stmtPlan->execute();
-            $planId = $stmtPlan->insert_id;
-            
-            foreach ($data as $day => $exercises) {
-                $tableName = $day;
-                $stmtTable->execute();
-                $tableId = $stmtTable->insert_id;
-
-                foreach ($exercises as $exercise) {
-                    $lp = $exercise['No'];
-                    $exerciseName = $exercise['Exercise'];
-                    $sets = $exercise['Sets'];
-                    $repetitions = $exercise['Repetitions'];
-                    $weight = $exercise['Weight'];
-                    $interval = $exercise['Interval'];
-                    $comments = $exercise['Comments'];
-                    $stmtData->execute();
+    public function savePlan($db, $id, $data) {
+        $response = [];
+        try {
+            // First, save to mkp_plans
+            $sql = "INSERT INTO mkp_plans (plan_name, date_created, created_by, user_id) VALUES (?, NOW(), ?, ?)";
+            $stmt = $db->prepare($sql);
+            $stmt->execute(['MyPlan', $id, $id]);
+            $planId = $db->lastInsertId();
+    
+            // Save each day
+            foreach ($data['mnp_days'] as $dayIndex => $day) {
+                $sql = "INSERT INTO mkp_days (plan_id, day_name) VALUES (?, ?)";
+                $stmt = $db->prepare($sql);
+                $stmt->execute([$planId, $day['day_name']]);
+                $dayId = $db->lastInsertId();
+    
+                // Save the sets associated with this day
+                $set = $data['mnp_sets'][$dayIndex];
+                $sql = "INSERT INTO mkp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
+                $stmt = $db->prepare($sql);
+                $stmt->execute([$dayId, $set['set_name'], $set['rest'], $set['comments']]);
+                $setId = $db->lastInsertId();
+    
+                // Save the exercises associated with this set
+                foreach ($data['mnp_exercises'] as $exercise) {
+                    $sql = "INSERT INTO mkp_exercises (set_id, lp, exercise_name, sets, repetitions, weight, rest, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $db->prepare($sql);
+                    $stmt->execute([$setId, $exercise['lp'], $exercise['exercise_name'], $exercise['sets'], $exercise['repetitions'], $exercise['weight'], $exercise['rest'], $exercise['comments']]);
                 }
             }
-            $stmtPlan->close();
-            $stmtTable->close();
-            $stmtData->close();
-            $db->close();
-            $response = array(
-                "message" => "Plan saved successfully.",
-                "data" => $data
-            );
-            return $response;
-        } else {
-            $response = array(
-                "message" => "Error saving plan.",
-                "data" => $data
-            );
-            return $response;
-        }  
+            $response['status'] = 'success';
+            $response['message'] = 'Plan saved successfully!';
+        } catch (PDOException $e) {
+            $response['status'] = 'error';
+            $response['message'] = 'Failed to save plan: ' . $e->getMessage();
+        }
+        return $response;
     }
 
     public function getPlans ($db, $id) {

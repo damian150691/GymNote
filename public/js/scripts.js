@@ -642,27 +642,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
         savePlanBtn.addEventListener("click", function (event) {
             event.preventDefault();
-            var tableData = {};
+            
+
+            var tableData = {
+                mnp_days: [],
+                mnp_sets: [],
+                mnp_exercises: []
+            };
+        
             var allTables = document.querySelectorAll(".trainingTable");
-            allTables.forEach((table, index) => {
-                var tableRows = table.querySelectorAll("tbody .tableRow");
-                var tableRowsData = [];
-                tableRows.forEach(function (row) {
-                    var rowData = {
-                        No: row.querySelector("td:nth-child(1)").textContent,
-                        Exercise: row.querySelector("td:nth-child(2)").textContent,
-                        Sets: row.querySelector("td:nth-child(3)").textContent,
-                        Repetitions: row.querySelector("td:nth-child(4)").textContent,
-                        Weight: row.querySelector("td:nth-child(5)").textContent,
-                        Interval: row.querySelector("td:nth-child(6)").textContent,
-                        Comments: row.querySelector("td:nth-child(7)").textContent
-                    };
-                    tableRowsData.push(rowData);
+        
+            allTables.forEach((table, dayIndex) => {
+                // Each table corresponds to a day
+                tableData.mnp_days.push({
+                    day_name: "Day " + dayIndex + 1
                 });
-                tableData["Day" + (index + 1)] = tableRowsData;
+        
+                var setRows = table.querySelectorAll(".setRow");
+                setRows.forEach((setRow, setIndex) => {
+                    
+                    var restElement = setRow.querySelector("td:nth-child(4)");
+                    var restTime = restElement ? restElement.textContent.trim() : "";
+        
+                    var commentsElement = setRow.querySelector("td:nth-child(5)");
+                    var comments = commentsElement ? commentsElement.textContent.trim() : "";
+        
+                    tableData.mnp_sets.push({
+                        set_name: "Set " + (setIndex + 1),
+                        rest: restTime,
+                        comments: comments
+                    });
+        
+                    // Find the exercises associated with this set
+                    var exercises = setRow.nextElementSibling;
+                    while (exercises && !exercises.classList.contains("setRow")) {
+                        tableData.mnp_exercises.push({
+                            lp: exercises.querySelector(".table-row-id").textContent.trim(),
+                            exercise_name: exercises.querySelector("td:nth-child(2)").textContent.trim(),
+                            sets: exercises.querySelector("td:nth-child(3)").textContent.trim(),
+                            repetitions: exercises.querySelector("td:nth-child(4)").textContent.trim(),
+                            weight: exercises.querySelector("td:nth-child(5)").textContent.trim(),
+                            rest: exercises.querySelector("td:nth-child(6)").textContent.trim(),
+                            comments: exercises.querySelector("td:nth-child(7)").textContent.trim()
+                        });
+                        exercises = exercises.nextElementSibling;
+                    }
+                });
             });
+        
     
             // Convert the tableData object to a JSON string
+            
             var jsonData = JSON.stringify(tableData);
 
             console.log(jsonData);
@@ -687,9 +717,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // redirecting user to /myplans 
-            window.location.replace("/myplans");
-            window.location.href = "/myplans";
-
+            //window.location.replace("/myplans");
+            //window.location.href = "/myplans";
+            
         });
     }
 

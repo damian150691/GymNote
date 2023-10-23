@@ -29,7 +29,7 @@ class MakeNewPlanController {
             $json = file_get_contents("php://input");
             $data = json_decode($json, true);
 
-            if ($data) {
+            if (!is_array($data)) {
                 
                 $userModel = new UserModel($this->db);
                 $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
