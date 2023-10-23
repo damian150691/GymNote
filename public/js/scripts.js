@@ -142,9 +142,9 @@ document.addEventListener("DOMContentLoaded", function () {
         //counting rows in the table
         
         const tableBody = addExerciseButton.closest("tbody");
-        console.log(tableBody);
+
         const tableTR = tableBody.querySelectorAll("tr");
-        console.log(tableTR);
+
 
         tableTR.forEach(row => {
             if (row.classList.contains("tableRow")) {
@@ -287,9 +287,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function addEventListenerToAddExerciseButtonMNP(addExerciseButton, tableBody) {
         addExerciseButton.addEventListener("click", function (event) {
             event.preventDefault();
-    
+            console.log (tableBody);
+            console.log (addExerciseButton);
             const inputRows = tableBody.querySelectorAll(".inputRow");
-            const parentRow = addExerciseButton.closest(".setRow");
     
             if (inputRows.length === 0) {
                 const newRow = document.createElement("tr");
@@ -305,9 +305,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><button class="confirm-button">Confirm</button></td>
                 `;
     
-                const setID = addExerciseButton.closest(".setRow").classList[2];
+                const setID = addExerciseButton.parentElement.nextElementSibling.textContent;
+                console.log(setID);
                 const setNumber = setID.match(/\d+/g).toString();
-                console.log(setNumber);
     
                 const confirmButton = newRow.querySelector(".confirm-button");
                 addEventListenerToConfirmButtonMNP(confirmButton, newRow, addExerciseButton);
@@ -370,10 +370,8 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmButton.addEventListener("click", function (event) {
             event.preventDefault();
 
-            let setName = setRow.querySelector("input[name='setName[]']").value;
-            if (setName == "") {
-                setName = "-";
-            }
+            let setName = setRow.querySelector("td:nth-child(3)").textContent;
+            
             let setInterval = setRow.querySelector("input[name='setInterval[]']").value;
             if (setInterval == "") {
                 setInterval = "-";
@@ -388,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
             editButton.textContent = "Edit";
             editButton.classList.add("edit-button");
             // Add event listener to the edit button
-            //addEventListenerToEditButtonInSetRow(editButton, setRow);
+            addEventListenerToEditButtonInSetRow(editButton, setRow);
 
         
             const deleteButton = document.createElement("button");
@@ -402,16 +400,27 @@ document.addEventListener("DOMContentLoaded", function () {
             tdButtons.appendChild(editButton);
             tdButtons.appendChild(deleteButton);
 
+            const tableBody = setRow.closest("tbody");
+            console.log(tableBody);
+            let button = addExerciseButton (tableBody);
+
 
             // Insert the table cell into the table row
             setRow.innerHTML = `
-                <td colspan="5">${setName}</td>
+                <td></td>
+                <td></td>
+                <td colspan="3">${setName}</td>
                 <td>${setInterval}</td>
                 <td>${setInfo}</td>
             `;
             setRow.appendChild(tdButtons);
             setRow.classList.remove("inputSetRow");
             setRow.classList.add("setRow");
+
+            
+
+            let buttonPlace = setRow.querySelector("td:nth-child(2)");
+            buttonPlace.appendChild(button);
             
             confirmButton.remove();
 
@@ -424,18 +433,23 @@ document.addEventListener("DOMContentLoaded", function () {
             //getting values from the table row using nth-child
 
             
-            const setName = setRow.querySelector("td:nth-child(3)").textContent;
+            let setName = setRow.querySelector("td:nth-child(3)").textContent;
             if (setName == "-") {
                 setName = "";
             }
-            const setInterval = setRow.querySelector("td:nth-child(4)").textContent;
+            let setInterval = setRow.querySelector("td:nth-child(4)").textContent;
             if (setInterval == "-") {
                 setInterval = "";
             }
-            const setInfo = setRow.querySelector("td:nth-child(5)").textContent;
+            let setInfo = setRow.querySelector("td:nth-child(5)").textContent;
             if (setInfo == "-") {
                 setInfo = "";
             }
+
+            
+        
+            
+
             //change the text content into input fields with values
             setRow.innerHTML = `
             <td></td>
@@ -445,6 +459,17 @@ document.addEventListener("DOMContentLoaded", function () {
             <td><input type="text" name="setInfo[]" value="${setInfo}"/></td>
             <td><button class="confirm-button">Confirm</button></td>
             `;
+
+            const tableBody = setRow.closest("tbody");
+            let button = addExerciseButton (tableBody);
+
+            let buttonPlace = setRow.querySelector("td:nth-child(2)");
+            buttonPlace.appendChild(button);
+
+            //find the confirm button
+            const confirmButton = setRow.querySelector(".confirm-button");
+            // Add event listener to the confirm button
+            addEventListenerToConfirmButtonInSetRow (confirmButton, setRow);
 
         });
     }
@@ -457,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!confirmDelete) {
                 return;
             }
-
+            
             let setRows = [];
             let currentRow = setRow;
             let nextRow = setRow.nextElementSibling;
@@ -475,7 +500,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (nextRow.classList.contains("setRow")) {
                     let setNumber = nextRow.classList[2].match(/\d+/g).toString();
-                    console.log(setNumber);
                     //parse the setNumber to int
                     setNumber = parseInt(setNumber);
                     setNumber--;
@@ -486,7 +510,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 if (nextRow.classList.contains("tableRow")) {
                     let addExerciseButton = nextRow.parentElement.querySelector(".addExercise");
-                    console.log(addExerciseButton);
                     updateFirstColumnMNP (addExerciseButton);
                     
                 }
