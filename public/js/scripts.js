@@ -138,46 +138,35 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
 
-    function updateFirstColumnMNP (addExerciseButton, newRow) {
+    function updateFirstColumnMNP (addExerciseButton) {
         //counting rows in the table
-        let tableRowCount = 1;
-        const currentSetRowId = addExerciseButton.parentElement.nextElementSibling.textContent;
-        const currentSetNumber = currentSetRowId.match(/\d+/g).toString();
-        const currentSetRow = addExerciseButton.closest(".setRow");
-        const nextSetRowNumber = parseInt(currentSetNumber) + 1; 
-        const nextSetRowClass = "set" + nextSetRowNumber;
-        const nextSetRow = addExerciseButton.closest(".setRow").parentElement.querySelector(`.${nextSetRowClass}`);
         
-        
-        if (nextSetRow) {
-            // count how many rows are between currentSetRow and nextSetRow
-            let rowsBetween = currentSetRow.nextElementSibling;
-            let rowsBetweenCount = 0;
-            while (rowsBetween != nextSetRow) {
-                rowsBetweenCount++;
-                let currentFirstColumn = rowsBetween.querySelector("td:nth-child(1)");
-                rowsBetween = rowsBetween.nextElementSibling;
-                let letter = String.fromCharCode(96 + rowsBetweenCount);
-                tableRowCount = currentSetNumber + letter.toUpperCase();
-                currentFirstColumn.textContent = tableRowCount;
+        const tableBody = addExerciseButton.closest("tbody");
+        console.log(tableBody);
+        const tableTR = tableBody.querySelectorAll("tr");
+        console.log(tableTR);
+
+        tableTR.forEach(row => {
+            if (row.classList.contains("tableRow")) {
+                let rowCount = 1;
+                let firstColumn = row.querySelector("td:nth-child(1)");
+                if (row.previousElementSibling.classList.contains("setRow")) {
+                    let setCount = row.previousElementSibling.querySelector("td:nth-child(3)").textContent.match(/\d+/g).toString();
+                    setCount = parseInt(setCount);
+                    let letter = String.fromCharCode(64 + rowCount);
+                    firstColumn.textContent = setCount + letter;
+                } else {
+                    let stringToDecode = row.previousElementSibling.querySelector("td:nth-child(1)").textContent;
+                    let decodedString = stringToDecode.match(/(\d+)([A-Z])/)
+                    let setCount = decodedString[1];
+                    let letter = decodedString[2];
+                    letter = letter.charCodeAt(0);
+                    letter++;
+                    letter = String.fromCharCode(letter);
+                    firstColumn.textContent = setCount + letter;
+                }
             }
-            
-            
-        } else {
-            // count how many rows are after currentSetRow
-            let rowsAfter = currentSetRow.nextElementSibling;
-            let rowsAfterCount = 0;
-            while (rowsAfter != null) {
-                rowsAfterCount++;
-                let currentFirstColumn = rowsAfter.querySelector("td:nth-child(1)");
-                rowsAfter = rowsAfter.nextElementSibling;
-                let letter = String.fromCharCode(96 + rowsAfterCount);
-                tableRowCount = currentSetNumber + letter.toUpperCase();
-                currentFirstColumn.textContent = tableRowCount;
-            }
-            
-        }
-        
+        });
     }
 
     function addEventListenerToDeleteButtonMNP (deleteButton, newRow, addExerciseButton) {
@@ -201,15 +190,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 previousRow = true;
             }
             
-            currentRow = currentRow.parentElement;
-            let updateRow = currentRow.querySelector(".setRow").nextElementSibling;
-            
+                        
             newRow.remove();
             
 
             if ((nextRow==true || nextRow == null) && previousRow==true) {
             } else {
-                updateFirstColumnMNP (addExerciseButton, updateRow);
+                updateFirstColumnMNP (addExerciseButton);
                 
             }
 
@@ -290,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
             newRow.classList.add("tableRow");
             addExerciseButton.classList.remove("hidden");
             confirmButton.remove();
-            updateFirstColumnMNP (addExerciseButton, newRow);
+            updateFirstColumnMNP (addExerciseButton);
             
             
             
@@ -431,6 +418,85 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function addEventListenerToEditButtonInSetRow (editButton, setRow) {
+        editButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            //getting values from the table row using nth-child
+
+            
+            const setName = setRow.querySelector("td:nth-child(3)").textContent;
+            if (setName == "-") {
+                setName = "";
+            }
+            const setInterval = setRow.querySelector("td:nth-child(4)").textContent;
+            if (setInterval == "-") {
+                setInterval = "";
+            }
+            const setInfo = setRow.querySelector("td:nth-child(5)").textContent;
+            if (setInfo == "-") {
+                setInfo = "";
+            }
+            //change the text content into input fields with values
+            setRow.innerHTML = `
+            <td></td>
+            <td></td>
+            <td colspan="3">${setName}</td>
+            <td><input type="text" name="setInterval[]" value="${setInterval}"/></td>
+            <td><input type="text" name="setInfo[]" value="${setInfo}"/></td>
+            <td><button class="confirm-button">Confirm</button></td>
+            `;
+
+        });
+    }
+
+    function addEventListenerToDeleteButtonInSetRow (deleteButton, setRow) {
+        deleteButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            //add alert with the option to cancel the deletion
+            const confirmDelete = confirm("Are you sure you want to delete this set and all of the exercises in it?");
+            if (!confirmDelete) {
+                return;
+            }
+
+            let setRows = [];
+            let currentRow = setRow;
+            let nextRow = setRow.nextElementSibling;
+
+            while (nextRow != null && (nextRow.classList.contains("tableRow") || nextRow.classList.contains("inputRow")) ) {
+                currentRow = nextRow;
+                setRows.push(currentRow);
+                nextRow = currentRow.nextElementSibling;
+            }
+            setRows.forEach(row => {
+                row.remove();
+            });
+            setRow.remove();
+            while (nextRow != null) {
+
+                if (nextRow.classList.contains("setRow")) {
+                    let setNumber = nextRow.classList[2].match(/\d+/g).toString();
+                    console.log(setNumber);
+                    //parse the setNumber to int
+                    setNumber = parseInt(setNumber);
+                    setNumber--;
+                    nextRow.querySelector("td:nth-child(3)").textContent = `Set ${setNumber}`;
+                    nextRow.classList.remove(`set${setNumber + 1}`);
+                    nextRow.classList.add(`set${setNumber}`);
+                    
+                }
+                if (nextRow.classList.contains("tableRow")) {
+                    let addExerciseButton = nextRow.parentElement.querySelector(".addExercise");
+                    console.log(addExerciseButton);
+                    updateFirstColumnMNP (addExerciseButton);
+                    
+                }
+                nextRow = nextRow.nextElementSibling;
+                
+            }
+
+        });
+    }
+
     function addSet (tableBody) {
         
         const setRow = document.createElement("tr");
@@ -450,8 +516,12 @@ document.addEventListener("DOMContentLoaded", function () {
             </td>
         `;
 
-        //const confirmButton = setRow.querySelector(".confirm-button");
-        //addEventListenerToConfirmButtonInSetRow (confirmButton, setRow);
+        const editButton = setRow.querySelector(".edit-button");
+        addEventListenerToEditButtonInSetRow (editButton, setRow);
+
+        const deleteButton = setRow.querySelector(".delete-button");
+        addEventListenerToDeleteButtonInSetRow (deleteButton, setRow);
+
         tableBody.appendChild(setRow);
 
         let button = addExerciseButton (tableBody);
@@ -606,10 +676,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
   
 });
-
-
-
-
-
-
-  
