@@ -21,7 +21,29 @@ class MyPlansController {
     }
 
     public function displayPlan () {
-        $titlePage = 'Strenghtify - My plans';
+        $titlePage = 'Strenghtify - View plan';
+        $errors = array();
+        $userModel = new UserModel($this->db);
+
+        $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
+        $planId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
+        $planId = preg_replace("/[^0-9]/", "", $planId);
+        $plan = $userModel->getPlanById($this->db, $planId);
+        $days = $userModel->getDaysByPlanId($this->db, $planId);
+        //make a loop to get all sets by day id
+        $sets = array();
+        foreach ($days as $day) {
+            $sets[$day['day_id']] = $userModel->getSetsByDayId($this->db, $day['day_id']);
+        }
+        //loop to get all exercises by set id
+        $exercises = array();
+        foreach ($sets as $set) {
+            foreach ($set as $s) {
+                $exercises[$s['set_id']] = $userModel->getExercisesBySetId($this->db, $s['set_id']);
+            }
+        }
+
+        
 
         require_once '../views/shared/head.php';
         require_once '../views/user/plan.php';
@@ -40,16 +62,15 @@ class MyPlansController {
         $userId = $_SESSION['user_id'];
         $userModel->deletePlan($this->db, $userId, $planId);
         header('Location: /myplans');
-        
-
-        
+        exit();
     }
 
 
     public function index() {
+        $titlePage = 'Strenghtify - My plans';
         $plansCount = 0;
         $userModel = new UserModel($this->db);
-        $titlePage = 'Strenghtify - My plans';
+        
 
         if (!isset($_SESSION['user_id'])) {
             array_push($errors, "You need to login first.");

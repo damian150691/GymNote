@@ -353,7 +353,10 @@ tbody button {
 
 }
 
-
+.viewplan {
+  width: 90%;
+  margin: 0 auto;
+}
 
 .adminTable form input[type="text"],
 .adminTable form input[type="email"],

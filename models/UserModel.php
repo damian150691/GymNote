@@ -329,6 +329,45 @@ class UserModel {
 
     }
 
+    public function getPlanById ($db, $planId) {
+        $sql = "SELECT * FROM mkp_plans WHERE plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $planId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $plan = $result->fetch_assoc();
+        return $plan;
+    }
+
+    public function getDaysByPlanId ($db, $planId) {
+        $sql = "SELECT * FROM mkp_days WHERE plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $planId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $days = $result->fetch_all(MYSQLI_ASSOC);
+        return $days;
+    }
+
+    public function getSetsByDayId ($db, $dayId) {
+        $sql = "SELECT * FROM mkp_sets WHERE day_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $dayId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $sets = $result->fetch_all(MYSQLI_ASSOC);
+        return $sets;
+    }
+
+    public function getExercisesBySetId ($db, $setId) {
+        $sql = "SELECT * FROM mkp_exercises WHERE set_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $setId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exercises = $result->fetch_all(MYSQLI_ASSOC);
+        return $exercises;
+    }
 }
 
 // Create an instance of UserModel with the database connection

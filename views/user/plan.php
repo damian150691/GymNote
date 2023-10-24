@@ -5,55 +5,57 @@
 <div id="content">
    
     <h2>
-        Plan
+        <?php echo $plan['plan_name'] . " (id=" . $plan['plan_id'] . ")"; ?>
     </h2>
-   
+    <div id="trainingDays" class="viewplan">
+        <?php 
+        //make a loop to create tables for each day based on $days array
+        foreach ($days as $day) {
+            echo "<div class=\"trainingDay\">";
+            echo "<h3>Day " . $day['day_name'] . "</h3>";
+            echo "<table id=\"MNP" . $day['day_name'] . "\" class=\"trainingTable\">";
+            echo "<tbody>";
+            //create thead with exercises names
+            echo "<thead>";
+            echo "<tr>";
+            echo "<th>No</th>";
+            echo "<th>Exercise</th>";
+            echo "<th>Set-reps</th>";
+            echo "<th>Reps</th>";
+            echo "<th>Weight</th>";
+            echo "<th>Rest</th>";
+            echo "<th>Comments</th>";
+            echo "</tr>";
+            echo "</thead>";
+            //list all sets for the day
+            foreach ($sets[$day['day_id']] as $set) {
+                echo "<tr class=\"setRow\">";
+                echo "<td></td>";
+                echo "<td></td>";
+                echo "<td colspan=\"3\">" . $set['set_name'] . "</td>";
+                echo "<td>" . $set['rest'] . "</td>";
+                echo "<td>" . $set['comments'] . "</td>";
+                echo "</tr>";
+                foreach ($exercises[$set['set_id']] as $exercise) {
+                    echo "<tr class=\"tableRow\">";
+                    echo "<td>" . $exercise['lp'] . "</td>";
+                    echo "<td>" . $exercise['exercise_name'] . "</td>";
+                    echo "<td>" . $exercise['sets'] . "</td>";
+                    echo "<td>" . $exercise['repetitions'] . "</td>";
+                    echo "<td>" . $exercise['weight'] . "</td>";
+                    echo "<td>" . $exercise['rest'] . "</td>";
+                    echo "<td>" . $exercise['comments'] . "</td>";
+                    echo "</tr>";
+                }
+            }
+            echo "</tbody>";
+            echo "</table>";
+            echo "</div>";
+        }
+
+        ?>
+    </div>
     
-    <table id="MNP1" class="trainingTable">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Exercise*</th>
-                <th>Sets*</th>
-                <th>Repetitions*</th>
-                <th>Weight[kg]*</th>
-                <th>Interval[s]</th>
-                <th>Comments</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="setRow">
-                <td colspan="5">Set ${dayCount}</td>
-                <td></td>
-                <td></td>
-                <td>
-                    <button class="edit-set-button">Edit</button>
-                    <button class="delete-set-button">Delete</button>
-                </td>
-            </tr>
-            <tr class="tableRow">
-                <td class="table-row-id">1</td>
-                <td>2</td>
-                <td>2</td>
-                <td>2</td>
-                <td>2</td>
-                <td>2</td>
-                <td>-</td>
-                <td>
-                    <button class="edit-button">Edit</button>
-                    <button class="delete-button">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td class="tfootAddExercise" colspan="8">
-                    <button class="addExercise">Add Exercise</button>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
     
     
 </div>
