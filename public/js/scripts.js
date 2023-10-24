@@ -287,8 +287,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function addEventListenerToAddExerciseButtonMNP(addExerciseButton, tableBody) {
         addExerciseButton.addEventListener("click", function (event) {
             event.preventDefault();
-            console.log (tableBody);
-            console.log (addExerciseButton);
+
             const inputRows = tableBody.querySelectorAll(".inputRow");
     
             if (inputRows.length === 0) {
@@ -306,7 +305,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
     
                 const setID = addExerciseButton.parentElement.nextElementSibling.textContent;
-                console.log(setID);
                 const setNumber = setID.match(/\d+/g).toString();
     
                 const confirmButton = newRow.querySelector(".confirm-button");
@@ -401,7 +399,6 @@ document.addEventListener("DOMContentLoaded", function () {
             tdButtons.appendChild(deleteButton);
 
             const tableBody = setRow.closest("tbody");
-            console.log(tableBody);
             let button = addExerciseButton (tableBody);
 
 
@@ -644,50 +641,50 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             
 
-            var tableData = {
-                mnp_days: [],
-                mnp_sets: [],
-                mnp_exercises: []
-            };
-        
             var allTables = document.querySelectorAll(".trainingTable");
         
-            allTables.forEach((table, dayIndex) => {
-                // Each table corresponds to a day
-                tableData.mnp_days.push({
-                    day_name: "Day " + dayIndex + 1
-                });
-        
-                var setRows = table.querySelectorAll(".setRow");
-                setRows.forEach((setRow, setIndex) => {
-                    
-                    var restElement = setRow.querySelector("td:nth-child(4)");
-                    var restTime = restElement ? restElement.textContent.trim() : "";
-        
-                    var commentsElement = setRow.querySelector("td:nth-child(5)");
-                    var comments = commentsElement ? commentsElement.textContent.trim() : "";
-        
-                    tableData.mnp_sets.push({
-                        set_name: "Set " + (setIndex + 1),
-                        rest: restTime,
-                        comments: comments
-                    });
-        
-                    // Find the exercises associated with this set
-                    var exercises = setRow.nextElementSibling;
-                    while (exercises && !exercises.classList.contains("setRow")) {
-                        tableData.mnp_exercises.push({
-                            lp: exercises.querySelector(".table-row-id").textContent.trim(),
-                            exercise_name: exercises.querySelector("td:nth-child(2)").textContent.trim(),
-                            sets: exercises.querySelector("td:nth-child(3)").textContent.trim(),
-                            repetitions: exercises.querySelector("td:nth-child(4)").textContent.trim(),
-                            weight: exercises.querySelector("td:nth-child(5)").textContent.trim(),
-                            rest: exercises.querySelector("td:nth-child(6)").textContent.trim(),
-                            comments: exercises.querySelector("td:nth-child(7)").textContent.trim()
-                        });
-                        exercises = exercises.nextElementSibling;
+            var tableData = [];
+
+            allTables.forEach((table, index) => {
+                var day = {
+                    dayNumber: index + 1,
+                    sets: []
+                };
+                
+                var rows = table.querySelectorAll('tbody tr');
+                var currentSet = null;
+
+                rows.forEach(row => {
+                    if (row.classList.contains('setRow')) {
+                        if (currentSet) {
+                            day.sets.push(currentSet);
+                        }
+                        currentSet = {
+                            setName: row.querySelector('td:nth-child(3)').textContent.trim(),
+                            rest: row.querySelector('td:nth-child(4)').textContent.trim(),
+                            comment: row.querySelector('td:nth-child(5)').textContent.trim(),
+                            exercises: []
+                        };
+                    } else if (row.classList.contains('tableRow')) {
+                        var exercise = {
+                            id: row.querySelector('.table-row-id').textContent.trim(),
+                            exercise: row.querySelector('td:nth-child(2)').textContent.trim(),
+                            sets: row.querySelector('td:nth-child(3)').textContent.trim(),
+                            repetitions: row.querySelector('td:nth-child(4)').textContent.trim(),
+                            weight: row.querySelector('td:nth-child(5)').textContent.trim(),
+                            rest: row.querySelector('td:nth-child(6)').textContent.trim(),
+                            comment: row.querySelector('td:nth-child(7)').textContent.trim()
+                        };
+                        currentSet.exercises.push(exercise);
                     }
                 });
+
+                // Add the last set to the day if there is any
+                if (currentSet) {
+                    day.sets.push(currentSet);
+                }
+
+                tableData.push(day);
             });
         
     
@@ -696,7 +693,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var jsonData = JSON.stringify(tableData);
 
             console.log(jsonData);
-
+            
             // Send the JSON string to the PHP script
             fetch('/saveplan', {
                 method: 'POST',

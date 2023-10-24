@@ -212,45 +212,67 @@ class UserModel {
 
     public function savePlan($db, $id, $data) {
         $response = [];
-        try {
-            // First, save to mkp_plans
-            $sql = "INSERT INTO mkp_plans (plan_name, date_created, created_by, user_id) VALUES (?, NOW(), ?, ?)";
-            $stmt = $db->prepare($sql);
-            $stmt->execute(['MyPlan', $id, $id]);
-            $planId = $db->lastInsertId();
+        $lastInsertedPlanId = 0;
+        $lastInsertedDayId = 0;
+        $lastInsertedSetId = 0;
+        
+        // Insert into mkp_plans
+        $plan_name = "MyPlan";
+        $date_created = date('Y-m-d H:i:s'); // Current date and time
+        $query = "INSERT INTO mkp_plans (plan_name, date_created, user_id) VALUES (?, ?, ?)";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("ssi", $plan_name, $date_created, $id);
+        if ($stmt->execute()) {
+            $lastInsertedPlanId = $db->insert_id;
+        } else {
+            $response['error'] = "Error inserting into mkp_plans: " . $stmt->error;
+            return $response;
+        }
     
-            // Save each day
-            foreach ($data['mnp_days'] as $dayIndex => $day) {
-                $sql = "INSERT INTO mkp_days (plan_id, day_name) VALUES (?, ?)";
-                $stmt = $db->prepare($sql);
-                $stmt->execute([$planId, $day['day_name']]);
-                $dayId = $db->lastInsertId();
-    
-                // Save the sets associated with this day
-                $set = $data['mnp_sets'][$dayIndex];
-                $sql = "INSERT INTO mkp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
-                $stmt = $db->prepare($sql);
-                $stmt->execute([$dayId, $set['set_name'], $set['rest'], $set['comments']]);
-                $setId = $db->lastInsertId();
-    
-                // Save the exercises associated with this set
-                foreach ($data['mnp_exercises'] as $exercise) {
-                    $sql = "INSERT INTO mkp_exercises (set_id, lp, exercise_name, sets, repetitions, weight, rest, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                    $stmt = $db->prepare($sql);
-                    $stmt->execute([$setId, $exercise['lp'], $exercise['exercise_name'], $exercise['sets'], $exercise['repetitions'], $exercise['weight'], $exercise['rest'], $exercise['comments']]);
+        // Iterate through the data and insert into other tables
+        foreach ($data as $day) {
+            // Insert into mkp_days
+            $query = "INSERT INTO mkp_days (plan_id, day_name) VALUES (?, ?)";
+            $stmt = $db->prepare($query);
+            $stmt->bind_param("is", $lastInsertedPlanId, $day['dayNumber']);
+            if ($stmt->execute()) {
+                $lastInsertedDayId = $db->insert_id;
+            } else {
+                $response['error'] = "Error inserting into mkp_days: " . $stmt->error;
+                return $response;
+            }
+            
+            foreach ($day['sets'] as $set) {
+                // Insert into mkp_sets
+                $query = "INSERT INTO mkp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
+                $stmt = $db->prepare($query);
+                $stmt->bind_param("issi", $lastInsertedDayId, $set['setName'], $set['rest'], $set['comment']);
+                if ($stmt->execute()) {
+                    $lastInsertedSetId = $db->insert_id;
+                } else {
+                    $response['error'] = "Error inserting into mkp_sets: " . $stmt->error;
+                    return $response;
+                }
+                
+                foreach ($set['exercises'] as $exercise) {
+                    // Insert into mkp_exercises
+                    $query = "INSERT INTO mkp_exercises (set_id, lp, exercise_name, sets, repetitions, weight, rest, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $db->prepare($query);
+                    $stmt->bind_param("isssssss", $lastInsertedSetId, $exercise['id'], $exercise['exercise'], $exercise['sets'], $exercise['repetitions'], $exercise['weight'], $exercise['rest'], $exercise['comment']);
+                    if (!$stmt->execute()) {
+                        $response['error'] = "Error inserting into mkp_exercises: " . $stmt->error;
+                        return $response;
+                    }
                 }
             }
-            $response['status'] = 'success';
-            $response['message'] = 'Plan saved successfully!';
-        } catch (PDOException $e) {
-            $response['status'] = 'error';
-            $response['message'] = 'Failed to save plan: ' . $e->getMessage();
         }
+        
+        $response['success'] = "Data inserted successfully!";
         return $response;
     }
 
     public function getPlans ($db, $id) {
-        $sql = "SELECT plan_id, plan_name, date_created FROM training_plans WHERE user_id = ?";
+        $sql = "SELECT plan_id, plan_name, date_created FROM mkp_plans WHERE user_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
