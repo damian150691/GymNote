@@ -714,8 +714,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // redirecting user to /myplans 
-            //window.location.replace("/myplans");
-            //window.location.href = "/myplans";
+            
+            window.location.replace("/myplans");
+            window.location.href = "/myplans";
             
         });
     }

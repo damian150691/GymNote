@@ -281,7 +281,53 @@ class UserModel {
         return $plans;
     }
 
-      
+    public function deletePlan ($db, $userId, $planId) {
+        $sql = "DELETE FROM mkp_plans WHERE user_id = ? AND plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $userId, $planId);
+        $stmt->execute();
+
+        $sql = "SELECT day_id FROM mkp_days WHERE plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $planId);
+        $stmt->execute();
+        $dayIds = $stmt->get_result();
+        $dayIdArray = [];
+        while ($row = $dayIds->fetch_assoc()) {
+            $dayIdArray[] = $row['day_id'];
+        }
+
+        $sql = "SELECT set_id FROM mkp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param(str_repeat('i', count($dayIdArray)), ...$dayIdArray);
+        $stmt->execute();
+        $setIds = $stmt->get_result();
+        $setIdArray = [];
+        while ($row = $setIds->fetch_assoc()) {
+            $setIdArray[] = $row['set_id'];
+        }
+        
+        $sql = "DELETE FROM mkp_days WHERE plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $planId);
+        $stmt->execute();
+
+        if (!empty($dayIdArray)) {
+            $sql = "DELETE FROM mkp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param(str_repeat('i', count($dayIdArray)), ...$dayIdArray);
+            $stmt->execute();
+        }
+        
+        if (!empty($setIdArray)) {
+            $sql = "DELETE FROM mkp_exercises WHERE set_id IN (" . implode(',', array_fill(0, count($setIdArray), '?')) . ")";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param(str_repeat('i', count($setIdArray)), ...$setIdArray);
+            $stmt->execute();
+        }
+
+
+    }
 
 }
 

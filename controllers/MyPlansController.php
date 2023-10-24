@@ -28,6 +28,23 @@ class MyPlansController {
         require_once '../views/shared/footer.php';
     }
 
+    public function deletePlan () {
+        $errors = array();
+        
+        $userModel = new UserModel($this->db);
+        
+        //check if there is a intiger in the url
+        $planId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
+        //remove all non numeric characters
+        $planId = preg_replace("/[^0-9]/", "", $planId);
+        $userId = $_SESSION['user_id'];
+        $userModel->deletePlan($this->db, $userId, $planId);
+        header('Location: /myplans');
+        
+
+        
+    }
+
 
     public function index() {
         $plansCount = 0;
@@ -43,6 +60,8 @@ class MyPlansController {
 
         $plans = $userModel->getPlans($this->db, $_SESSION['user_id']);
         $plansCount = count($plans);
+        $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
+        $createdBy = $user['username'];
 
 
 

@@ -30,6 +30,7 @@ $routes = [
     '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index', 'params' => ['db' => $db]],
     '/plan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'displayPlan', 'params' => ['db' => $db]],
+    '/deleteplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'deletePlan', 'params' => ['db' => $db]],
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
     '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
