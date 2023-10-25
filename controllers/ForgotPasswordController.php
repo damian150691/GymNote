@@ -41,7 +41,7 @@ class ForgotPasswordController {
             $userModel->updateToken($db, $user['id'], $token);
             //send email with token
             $to = $user['email'];
-            $subject = "Strenghtify - Reset password";
+            $subject = "GymNote - Reset password";
             $message = "Reset your password by clicking link below: \n\n http://localhost:8080/setnewpassword?token=$token \n\n If you did not request a password reset, please ignore this email.";
             $headers = "From: damian.miela@gmail.com";
             if ($userModel->sendEmail($to, $subject, $message, $headers)) {
@@ -61,7 +61,7 @@ class ForgotPasswordController {
 
 
     public function index() {
-        $titlePage = 'Strenghtify - Reset password';
+        $titlePage = 'GymNote - Reset password';
 
         if (isset($_POST['forgotpassword'])) {
             $email = $_POST['reset_email'];

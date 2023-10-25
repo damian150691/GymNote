@@ -70,7 +70,7 @@ class RegisterController {
             if ($registrationResult === true) {
                 $token = $user['token'];
                 $to = $email;
-                $subject = "Strenghtify - Verify your email";
+                $subject = "GymNote - Verify your email";
                 $message = "Please click on the link below to verify your email address: \n\n http://localhost:8080/verify?token=" . $token;
                 $headers = "From: damian.miela@gmail.com";
 
@@ -139,7 +139,7 @@ class RegisterController {
 
     public function index() {
 
-        $titlePage = 'Strenghtify - Register';
+        $titlePage = 'GymNote - Register';
         
        
         $registration_result = array(); // Initialize the $registration_result array

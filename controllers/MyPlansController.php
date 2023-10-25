@@ -21,7 +21,7 @@ class MyPlansController {
     }
 
     public function displayPlan () {
-        $titlePage = 'Strenghtify - View plan';
+        $titlePage = 'GymNote - View plan';
         $errors = array();
         $userModel = new UserModel($this->db);
 
@@ -67,7 +67,7 @@ class MyPlansController {
 
 
     public function index() {
-        $titlePage = 'Strenghtify - My plans';
+        $titlePage = 'GymNote - My plans';
         $plansCount = 0;
         $userModel = new UserModel($this->db);
         

@@ -62,7 +62,7 @@ class MakeNewPlanController {
 
 
     public function index() {
-        $titlePage = 'Strenghtify - Make a new Training Plan';
+        $titlePage = 'GymNote - Make a new Training Plan';
         $errors = array();
         if (!isset($_SESSION['user_id'])) {
             array_push($errors, "You need to login first.");

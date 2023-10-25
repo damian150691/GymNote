@@ -55,7 +55,7 @@ class SetNewPasswordController {
 
     public function index() {
         $errors = array();
-        $titlePage = 'Strenghtify - Set new password';
+        $titlePage = 'GymNote - Set new password';
 
         $url = "$_SERVER[REQUEST_URI]";
         $requestUri = $_SERVER['REQUEST_URI'];

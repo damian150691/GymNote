@@ -64,7 +64,7 @@ class LoginController {
                 if ($rememberMe) {
                     $token = $userModel->generateToken(100); 
                     $userModel->updateSessionToken($db, $user['id'], $token);
-                    setcookie('strenghtify_remember_me', $token, time() + 30 * 24 * 3600, '/');
+                    setcookie('remember_me', $token, time() + 30 * 24 * 3600, '/');
                 }
                 // Login was successful, redirect to dashboard 
                 $_SESSION['user_id'] = $user['id'];
@@ -93,17 +93,17 @@ class LoginController {
         session_start();
         session_unset();
         session_destroy();
-        if (isset($_COOKIE['strenghtify_remember_me'])) {
-            setcookie('strenghtify_remember_me', '', time() - 3600, '/');
+        if (isset($_COOKIE['remember_me'])) {
+            setcookie('remember_me', '', time() - 3600, '/');
         }
         header('Location: /');
         exit;
     }
 
     public function checkRememberMeCookie ($db) {
-        if (isset($_COOKIE['strenghtify_remember_me'])) {
+        if (isset($_COOKIE['remember_me'])) {
             $userModel = new UserModel($db);
-            $token = $_COOKIE['strenghtify_remember_me'];
+            $token = $_COOKIE['remember_me'];
             $user = $userModel->getUserBySessionToken($db, $token);
             if ($user) {
                 $_SESSION['user_id'] = $user['id'];
@@ -122,7 +122,7 @@ class LoginController {
 
 
     public function index() {
-        $titlePage = 'Strenghtify - Login';
+        $titlePage = 'GymNote - Login';
         $errors = array();
 
         if (isset($_SESSION['user_id'])) {

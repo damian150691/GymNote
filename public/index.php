@@ -21,20 +21,32 @@ $route = str_replace($base_url, '', $request_uri);
 // Define routes and their corresponding controllers and actions
 $routes = [
     '/' => ['controller' => 'HomeController', 'action' => 'index'],
+
     '/login' => ['controller' => 'LoginController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
+
     '/forgotpassword' => ['controller' => 'ForgotPasswordController', 'action' => 'index', 'params' => ['db' => $db]],
+
     '/setnewpassword' => ['controller' => 'SetNewPasswordController', 'action' => 'index', 'params' => ['db' => $db]],
+
     '/register' => ['controller' => 'RegisterController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
+
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
+
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
-    '/admin' => ['controller' => 'AdminPanelController', 'action' => 'index'],
+
+    '/admin' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/adduser' => ['controller' => 'AdminController', 'action' => 'handleAddUser', 'params' => ['db' => $db]],
+    '/deleteuser/(\d+)' => ['controller' => 'AdminController', 'action' => 'handleDeleteUser', 'params' => ['db' => $db]],
+
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index', 'params' => ['db' => $db]],
     '/plan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'displayPlan', 'params' => ['db' => $db]],
     '/deleteplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'deletePlan', 'params' => ['db' => $db]],
+
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
-    '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
-    '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
+
 ];
 
 

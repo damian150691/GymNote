@@ -19,7 +19,7 @@ class DashboardController {
 
 
     public function index() {
-        $titlePage = 'Strenghtify - Dashboard';
+        $titlePage = 'GymNote - Dashboard';
 
         if (!isset($_SESSION['user_id']) ) {
             header('Location: /login');

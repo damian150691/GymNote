@@ -2,6 +2,15 @@
 
 class UserModel {
 
+    public function getAllUsers ($db) {
+        $sql = "SELECT * FROM users";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = $result->fetch_all(MYSQLI_ASSOC);
+        return $users;
+    }
+
     public function getUserByUsername ($db, $username) {
         $sql = "SELECT * FROM users WHERE username = ?";
         $stmt = $db->prepare($sql);
@@ -205,6 +214,35 @@ class UserModel {
             }
         } else {
             // User not found
+            return false;
+        }
+    }
+
+    public function addUser ($db, $data) {
+        $confirmed = $data['confirmed'];
+        if ($confirmed == "yes") {
+            $confirmed = 1;
+        } else {
+            $confirmed = 0;
+        }
+        $sql = "INSERT INTO users (username, email, first_name, confirmed, user_role) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("sssis", $data['username'], $data['email'], $data['first_name'], $confirmed, $data['user_role']);
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteUser ($db, $id) {
+        $sql = "DELETE FROM users WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
             return false;
         }
     }
