@@ -1,7 +1,7 @@
 <?php
 // Database configuration
 $db_host = 'localhost';     // Database host
-$db_name = 'strnghtf';      // Database name
+$db_name = 'gymnote';      // Database name
 $db_user = 'damian';        // Database username
 $db_pass = 'zaq1@WSX';      // Database password
 

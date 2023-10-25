@@ -216,51 +216,51 @@ class UserModel {
         $lastInsertedDayId = 0;
         $lastInsertedSetId = 0;
         
-        // Insert into mkp_plans
+        // Insert into mnp_plans
         $plan_name = "MyPlan";
         $date_created = date('Y-m-d H:i:s'); // Current date and time
-        $query = "INSERT INTO mkp_plans (plan_name, date_created, user_id) VALUES (?, ?, ?)";
+        $query = "INSERT INTO mnp_plans (plan_name, date_created, user_id) VALUES (?, ?, ?)";
         $stmt = $db->prepare($query);
         $stmt->bind_param("ssi", $plan_name, $date_created, $id);
         if ($stmt->execute()) {
             $lastInsertedPlanId = $db->insert_id;
         } else {
-            $response['error'] = "Error inserting into mkp_plans: " . $stmt->error;
+            $response['error'] = "Error inserting into mnp_plans: " . $stmt->error;
             return $response;
         }
     
         // Iterate through the data and insert into other tables
         foreach ($data as $day) {
-            // Insert into mkp_days
-            $query = "INSERT INTO mkp_days (plan_id, day_name) VALUES (?, ?)";
+            // Insert into mnp_days
+            $query = "INSERT INTO mnp_days (plan_id, day_name) VALUES (?, ?)";
             $stmt = $db->prepare($query);
             $stmt->bind_param("is", $lastInsertedPlanId, $day['dayNumber']);
             if ($stmt->execute()) {
                 $lastInsertedDayId = $db->insert_id;
             } else {
-                $response['error'] = "Error inserting into mkp_days: " . $stmt->error;
+                $response['error'] = "Error inserting into mnp_days: " . $stmt->error;
                 return $response;
             }
             
             foreach ($day['sets'] as $set) {
-                // Insert into mkp_sets
-                $query = "INSERT INTO mkp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
+                // Insert into mnp_sets
+                $query = "INSERT INTO mnp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
                 $stmt = $db->prepare($query);
                 $stmt->bind_param("issi", $lastInsertedDayId, $set['setName'], $set['rest'], $set['comment']);
                 if ($stmt->execute()) {
                     $lastInsertedSetId = $db->insert_id;
                 } else {
-                    $response['error'] = "Error inserting into mkp_sets: " . $stmt->error;
+                    $response['error'] = "Error inserting into mnp_sets: " . $stmt->error;
                     return $response;
                 }
                 
                 foreach ($set['exercises'] as $exercise) {
-                    // Insert into mkp_exercises
-                    $query = "INSERT INTO mkp_exercises (set_id, lp, exercise_name, sets, repetitions, weight, rest, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    // Insert into mnp_exercises
+                    $query = "INSERT INTO mnp_exercises (set_id, lp, exercise_name, sets, repetitions, weight, rest, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $db->prepare($query);
                     $stmt->bind_param("isssssss", $lastInsertedSetId, $exercise['id'], $exercise['exercise'], $exercise['sets'], $exercise['repetitions'], $exercise['weight'], $exercise['rest'], $exercise['comment']);
                     if (!$stmt->execute()) {
-                        $response['error'] = "Error inserting into mkp_exercises: " . $stmt->error;
+                        $response['error'] = "Error inserting into mnp_exercises: " . $stmt->error;
                         return $response;
                     }
                 }
@@ -272,7 +272,7 @@ class UserModel {
     }
 
     public function getPlans ($db, $id) {
-        $sql = "SELECT plan_id, plan_name, date_created FROM mkp_plans WHERE user_id = ?";
+        $sql = "SELECT plan_id, plan_name, date_created FROM mnp_plans WHERE user_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -282,12 +282,12 @@ class UserModel {
     }
 
     public function deletePlan ($db, $userId, $planId) {
-        $sql = "DELETE FROM mkp_plans WHERE user_id = ? AND plan_id = ?";
+        $sql = "DELETE FROM mnp_plans WHERE user_id = ? AND plan_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("ii", $userId, $planId);
         $stmt->execute();
 
-        $sql = "SELECT day_id FROM mkp_days WHERE plan_id = ?";
+        $sql = "SELECT day_id FROM mnp_days WHERE plan_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $planId);
         $stmt->execute();
@@ -297,7 +297,7 @@ class UserModel {
             $dayIdArray[] = $row['day_id'];
         }
 
-        $sql = "SELECT set_id FROM mkp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
+        $sql = "SELECT set_id FROM mnp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
         $stmt = $db->prepare($sql);
         $stmt->bind_param(str_repeat('i', count($dayIdArray)), ...$dayIdArray);
         $stmt->execute();
@@ -307,20 +307,20 @@ class UserModel {
             $setIdArray[] = $row['set_id'];
         }
         
-        $sql = "DELETE FROM mkp_days WHERE plan_id = ?";
+        $sql = "DELETE FROM mnp_days WHERE plan_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $planId);
         $stmt->execute();
 
         if (!empty($dayIdArray)) {
-            $sql = "DELETE FROM mkp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
+            $sql = "DELETE FROM mnp_sets WHERE day_id IN (" . implode(',', array_fill(0, count($dayIdArray), '?')) . ")";
             $stmt = $db->prepare($sql);
             $stmt->bind_param(str_repeat('i', count($dayIdArray)), ...$dayIdArray);
             $stmt->execute();
         }
         
         if (!empty($setIdArray)) {
-            $sql = "DELETE FROM mkp_exercises WHERE set_id IN (" . implode(',', array_fill(0, count($setIdArray), '?')) . ")";
+            $sql = "DELETE FROM mnp_exercises WHERE set_id IN (" . implode(',', array_fill(0, count($setIdArray), '?')) . ")";
             $stmt = $db->prepare($sql);
             $stmt->bind_param(str_repeat('i', count($setIdArray)), ...$setIdArray);
             $stmt->execute();
@@ -330,7 +330,7 @@ class UserModel {
     }
 
     public function getPlanById ($db, $planId) {
-        $sql = "SELECT * FROM mkp_plans WHERE plan_id = ?";
+        $sql = "SELECT * FROM mnp_plans WHERE plan_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $planId);
         $stmt->execute();
@@ -340,7 +340,7 @@ class UserModel {
     }
 
     public function getDaysByPlanId ($db, $planId) {
-        $sql = "SELECT * FROM mkp_days WHERE plan_id = ?";
+        $sql = "SELECT * FROM mnp_days WHERE plan_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $planId);
         $stmt->execute();
@@ -350,7 +350,7 @@ class UserModel {
     }
 
     public function getSetsByDayId ($db, $dayId) {
-        $sql = "SELECT * FROM mkp_sets WHERE day_id = ?";
+        $sql = "SELECT * FROM mnp_sets WHERE day_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $dayId);
         $stmt->execute();
@@ -360,7 +360,7 @@ class UserModel {
     }
 
     public function getExercisesBySetId ($db, $setId) {
-        $sql = "SELECT * FROM mkp_exercises WHERE set_id = ?";
+        $sql = "SELECT * FROM mnp_exercises WHERE set_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $setId);
         $stmt->execute();

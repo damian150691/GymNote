@@ -40,6 +40,7 @@
             }
         ?>
         </table>
+        <button><a href='/makenewplan'>Make new plan</a></button>
     </div>
 
     
