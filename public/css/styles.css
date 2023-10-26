@@ -1,7 +1,22 @@
 body {
-	background-color: #40504e;
+	background: linear-gradient(-45deg, #515558, #2d3134, #515558, #2d3134);
+	background-size: 400% 400%;
+	animation: gradient 30s ease infinite;
+	height: 100vh;
 	font-family: Lato, sans-serif;
 	font-weight: 300;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 img {
@@ -170,11 +185,23 @@ form button, button {
     margin: 0;
     padding: 0 20px;
     color: white;
-    transition: background-color 0.3s, color 0.3s;
+    position: relative; /* Required for positioning the pseudo-element */
+    overflow: hidden; /* This ensures the pseudo-element does not show outside the boundary of the link */
 }
 
-#nav-bar a:hover {
-    color: white;
+#nav-bar a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px; /* adjust the height for desired underline thickness */
+    background-color: white; /* adjust the color for desired underline color */
+    transition: width 0.3s;
+}
+
+#nav-bar a:hover::after {
+    width: 100%; /* This causes the underline to appear and slide in from the left */
 }
 
 /* Dropdown Button */
@@ -195,21 +222,42 @@ form button, button {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #fff;
+  background-color: #515558;
   padding: 10px 0;
+  margin-top: 8px;
   z-index: 1;
-  border: #f2f2f2 1px solid;
   box-shadow: #404040 0 0 2px 0 ;
   min-width: 100%;
   text-align: center;
+  left: -70px;
+  box-shadow: rgba(84, 86, 87, 0.2) 0 0 10px 2px;
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
-  color: black !important;
+  color: rgb(255, 255, 255) !important;
   text-decoration: none;
   display: block;
-  border: 1px solid #f2f2f2;
+  width: 75px;
+  height: 30px;
+  line-height: 30px;
+}
+
+/* Change color of dropdown links on hover with animation*/
+.dropdown-content a:hover {
+  background-color: #515558;
+  transition: all 0.3s ease;
+}
+
+.dropdown-content::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  z-index: -1; /* Ensure it's beneath the actual content */
+  pointer-events: auto;
 }
 
 /* Show the dropdown menu on hover */
@@ -218,10 +266,27 @@ form button, button {
   
 }
 
-
-
+.userLink {
+  color: orange !important;
+}
 /* end menu */
 
+
+/* icons */
+.icon {
+  width: 12px;
+  height: 12px;
+  margin 0;
+  padding: 0;
+  display: inline-block;
+}
+
+/* end icons */
+
+.textlink {
+  display: inline-block;
+  margin: 0 5px;
+}
 
 .error {
   color: red;
@@ -235,6 +300,9 @@ form button, button {
   display: none;
 }
 
+.center {
+  text-align: center;
+}
 /* CSS for the training table */
 
 #trainingForm {
@@ -369,4 +437,33 @@ tbody button {
     color: grey; /* Set your desired link color */
     text-decoration: underline;
     cursor: pointer;
+}
+
+.grid {
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
+}
+
+.section {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed #c4c4c4;
+  text-align: left;
+  border-radius: 20px;
+}
+
+.two-thirds {
+  width: calc(66.66% - 10px); 
+  float: left;
+  min-height: 100%;
+  margin-right: 20px; 
+}
+
+.one-third {
+  width: calc(33.33% - 10px);
+  float: left;
+  min-height: 100%;
 }
