@@ -111,6 +111,7 @@ button {
 	min-height: 700px;
 	text-align: center;
 	position: relative;
+  display: block;
 	padding-top: 1px;
 }
 
@@ -122,19 +123,20 @@ form {
 	width: 260px;
 	margin: 0 auto;
 	position: relative;
+  display: block;
 }
 
-form label, form input, form button{
+form label, form input, form button, select{
 	width: 100%;
 }
 
 
-form input, form button, button{
+form input, form button, button, select{
 	margin-bottom: 20px;
 	height: 35px;
 }
 
-form input {
+form input, form select {
   border-style: solid;
   border-width: 1px;
   background-color: rgb(251 251 251 / 50%);
@@ -274,9 +276,9 @@ form button, button {
 
 /* icons */
 .icon {
-  width: 12px;
-  height: 12px;
-  margin 0;
+  width: 14px;
+  height: 14px;
+  margin: 0;
   padding: 0;
   display: inline-block;
 }
@@ -443,6 +445,8 @@ tbody button {
   position: relative;
   width: 95%;
   margin: 0 auto;
+  display: block;
+  overflow: hidden;
 }
 
 .section {
@@ -466,4 +470,84 @@ tbody button {
   width: calc(33.33% - 10px);
   float: left;
   min-height: 100%;
+}
+
+.fifty-fifty {
+  width: calc(50%);
+  float: left;
+  min-height: 200px;
+}
+
+.admin-left {
+  width: 180px;
+  float: left;
+  height: 100%;
+  margin-right: 20px;
+  display: block;
+  position: relative;
+}
+
+.admin-right {
+  width: calc(100% - 200px);
+  display: block;
+  position: relative;
+  float: left;
+  height: 100%;
+}
+
+.admin-nav {
+  background-color: orange;
+  
+}
+
+.admin-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  
+}
+
+.admin-nav ul li {
+  border-bottom: 1px solid #fff;
+}
+
+.admin-nav ul li a {
+  display: block;           /* Makes the <a> take the entire space of the <li> */
+  padding: 10px;            /* Moved the padding from <li> to <a> */
+  color: #fff;
+  text-decoration: none;
+  transition: all 1s ease;
+}
+
+.admin-nav ul li a:hover {
+  background-color: #fff; /* Add some hover background effect, if desired */
+  color: orange;
+  transition: all 0.1s ease;
+}
+
+.admin-nav ul li a::after {
+  width: 0;
+}
+
+#addUser {
+  width: 100% !important;
+  margin: 0 auto;
+  margin-bottom: 20px;
+
+}
+
+#addUser input {
+  width: 200px;
+  
+}
+
+#addUser label, #addUser select {
+  width: 200px;
+  display: inline-block;
+}
+
+#addUser button {
+  margin-top: 40px;
+  width: 200px;
 }

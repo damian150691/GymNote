@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded and parsed!");
   
-    function addUser () {
+    /*function addUser () {
         const addUserButton = document.getElementById("addUserButton");
         if (!addUserButton) {
             return;
@@ -100,6 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    addUser();
+    addUser();*/
   
 });

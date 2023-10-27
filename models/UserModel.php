@@ -219,20 +219,35 @@ class UserModel {
     }
 
     public function addUser ($db, $data) {
+        $username = $data['username'];
+        $email = $data['email'];
+        $password = $data['password'];
+        $firstName = $data['first_name'];
+        $lastName = $data['last_name'];
+        $userRole = $data['user_role'];
         $confirmed = $data['confirmed'];
-        if ($confirmed == "yes") {
-            $confirmed = 1;
-        } else {
-            $confirmed = 0;
-        }
-        $sql = "INSERT INTO users (username, email, first_name, confirmed, user_role) VALUES (?, ?, ?, ?, ?)";
+        // Hash the password (you should use a secure hashing algorithm)
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // generate token
+        $token = $this->generateToken(100);
+        // set date_registered to current date and time
+        $date_registered = date("Y-m-d H:i:s");
+        $sql = "INSERT INTO users (username, email, password, token, date_registered, first_name, last_name, user_role, confirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param("sssis", $data['username'], $data['email'], $data['first_name'], $confirmed, $data['user_role']);
-        if ($stmt->execute()) {
-            return true;
+        if ($stmt) {
+            $stmt->bind_param("ssssssssi", $username, $email, $hashedPassword, $token, $date_registered, $firstName, $lastName, $userRole, $confirmed);
+            if ($stmt->execute()) {
+                // Insertion was successful
+                return true;
+            } else {
+                // Insertion failed
+                return false;
+            }
         } else {
+            // Statement preparation failed
             return false;
         }
+
     }
 
     public function deleteUser ($db, $id) {
