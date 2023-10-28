@@ -114,8 +114,11 @@ class LoginController {
                 $_SESSION['last_logged'] = $user['last_logged'];
                 $_SESSION['user_role'] = $user['user_role'];
                 $_SESSION['last_activity'] = time();
+                $userModel->updateLastLoggedIn($db, $user['id']);
                 header('Location: /dashboard');
                 exit;
+            } else {
+                setcookie('remember_me', '', time() - 3600, '/');
             }
         }
     }
@@ -125,12 +128,13 @@ class LoginController {
         $titlePage = 'GymNote - Login';
         $errors = array();
 
+        $this->checkRememberMeCookie($this->db);
+
         if (isset($_SESSION['user_id'])) {
             header('Location: /dashboard');
             exit;
         } 
 
-        $this->checkRememberMeCookie($this->db);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Retrieve POST data

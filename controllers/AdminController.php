@@ -203,6 +203,10 @@ class AdminController {
             $titlePage = 'GymNote - Edit User';
         } else if ($url == 'viewdatabase') {
             $titlePage = 'GymNote - View Database';
+            $mnpPlans = $userModel->getTableAll ($this->db, 'mnp_plans');
+            $mnpDays = $userModel->getTableAll ($this->db, 'mnp_days');
+            $mnpSets = $userModel->getTableAll ($this->db, 'mnp_sets');
+            $mnpExercises = $userModel->getTableAll ($this->db, 'mnp_exercises');
         }
 
 

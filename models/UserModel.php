@@ -71,6 +71,15 @@ class UserModel {
         return $user;
     }
 
+    public function getTableAll ($db, $table) {
+        $sql = "SELECT * FROM " . $table;
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $table = $result->fetch_all(MYSQLI_ASSOC);
+        return $table;
+    }
+
 
     public function IsInputEmailOrUsername ($db, $loginInput) {
         //check if the input is email or username
@@ -143,6 +152,19 @@ class UserModel {
         $sql = "UPDATE users SET password = ? WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("si", $hashedPassword, $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateLastLoggedIn ($db, $id) {
+        $last_logged_in = date("Y-m-d H:i:s");
+        $sql = "UPDATE users SET last_logged = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("si", $last_logged_in, $id);
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             return true;

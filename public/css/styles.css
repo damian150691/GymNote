@@ -327,11 +327,10 @@ form button, button {
 
 table {
   table-layout: fixed;
-  width: 100%;
   margin-bottom: 40px;
 }
 
-table th {
+table th, table td {
   padding: 10px;
 }
 
@@ -375,13 +374,6 @@ table th {
   color: #fff;
   font-weight: 500;
   font-size: 1.2em;
-}
-
-/* Style to contain text within cells */
-table tbody td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 
@@ -550,4 +542,16 @@ tbody button {
 #addUser button {
   margin-top: 40px;
   width: 200px;
+}
+
+.dbview {
+  table-layout: fixed;
+
+}
+
+.dbview th, .dbview td {
+  width: 172px !important;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
 }
