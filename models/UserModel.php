@@ -247,7 +247,38 @@ class UserModel {
             // Statement preparation failed
             return false;
         }
+    }
 
+    public function editUser ($db, $data) {
+        $id = $data['id'];
+        $username = $data['username'];
+        $email = $data['email'];
+        $password = $data['password'];
+        $firstName = $data['first_name'];
+        $lastName = $data['last_name'];
+        $userRole = $data['user_role'];
+        $confirmed = $data['confirmed'];
+        // Hash the password (you should use a secure hashing algorithm)
+        if ($password !== "") {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            $hashedPassword = $this->getUserById($db, $id)['password'];
+        }
+        $sql = "UPDATE users SET username = ?, email = ?, password = ?, first_name = ?, last_name = ?, user_role = ?, confirmed = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sssssssi", $username, $email, $hashedPassword, $firstName, $lastName, $userRole, $confirmed, $id);
+            if ($stmt->execute()) {
+                // Insertion was successful
+                return true;
+            } else {
+                // Insertion failed
+                return false;
+            }
+        } else {
+            // Statement preparation failed
+            return false;
+        }
     }
 
     public function deleteUser ($db, $id) {

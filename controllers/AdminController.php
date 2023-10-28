@@ -73,8 +73,6 @@ class AdminController {
         } else {
             return $errors;
         }
-
-
     }
 
     public function handleDeleteUser () {
@@ -94,6 +92,74 @@ class AdminController {
         $userModel->deleteUser($this->db, $deleteUserId);
         header('Location: /admin');
         exit();
+    }
+
+    public function handleEditUser () {
+        $userModel = new UserModel($this->db);
+
+        $errors = array();
+
+        $url = $_SERVER['REQUEST_URI'];
+        $url = explode('/', $url);
+        $userId = end($url);
+        $user = $userModel->getUserById($this->db, $userId);
+
+        $titlePage = 'GymNote - Edit User';
+
+        $username = $user['username'];
+        $email = $user['email'];
+        $first_name = $user['first_name'];
+        $last_name = $user['last_name'];
+        $user_role = $user['user_role'];
+        $confirmed = $user['confirmed'];
+        $date_registered = $user['date_registered'];
+        $last_logged = $user['last_logged'];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Retrieve POST data
+            $data = $_POST;
+            
+            $username = $data['username'];
+            $email = $data['email'];
+            $password = $data['password'];
+            $confirm_password = $data['confirm_password'];
+
+
+            $errors = array();
+            if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username) || strlen($username) < 3 || strlen($username) > 20) {
+                array_push($errors, "Invalid username. Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores.");
+            }
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                array_push($errors, "Invalid email address.");
+            }
+            //check if password and confirm_password are not empty and if they match
+            if (!empty($password) || !empty($confirm_password)) {
+                if ($password !== $confirm_password) {
+                    array_push($errors, "Passwords do not match.");
+                } elseif (strlen($password) < 6 || strlen($password) > 20) {
+                    array_push($errors, "Password must be between 6 and 20 characters long.");
+                } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9!@#$%^&*])/', $password)) {
+                    array_push($errors, "Password must include at least one uppercase letter, one lowercase letter, and either one digit or one of the special characters: !@#$%^&*");
+                }
+            }
+            
+            
+            if (empty($errors)) {
+                $userModel->editUser($this->db, $data);
+                $_SESSION['message'] = "User successfully edited.";
+                header('Location: /admin');
+                exit();
+            } else {
+                return $errors;
+            }
+        
+        }
+
+        $isEdit = true;
+
+        require_once '../views/shared/head.php';
+        require_once '../views/admin_panel/admin.php';
+        require_once '../views/shared/footer.php';
     }
 
 
@@ -117,7 +183,8 @@ class AdminController {
         $url = explode('/', $url);
         $url = end($url);
         
-        if ($url == 'userlist') {
+        
+        if ($url == 'userlist' || $url == 'admin') {
             $titlePage = 'GymNote - User List';
             $users = $userModel->getAllUsers($this->db);
         } else if ($url == 'adduser') {

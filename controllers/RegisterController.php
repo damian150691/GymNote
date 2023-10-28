@@ -23,6 +23,8 @@ class RegisterController {
         }
     }
 
+    
+
 
 
     public function handleRegistration($db, $username, $email, $password, $confirm_password) {

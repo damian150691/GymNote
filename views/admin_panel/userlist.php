@@ -33,8 +33,8 @@
                 </td>
                 <td><?php echo $user['user_role']; ?></td>
                 <td>
-                    <a href="admin/edituser/<?php echo $user['id'] ?>">Edit</a>
-                    <a href="admin/deleteuser/<?php echo $user['id'] ?>">Delete</a>
+                    <a href="/admin/edituser/<?php echo $user['id'] ?>">Edit</a>
+                    <a href="/admin/deleteuser/<?php echo $user['id'] ?>">Delete</a>
                 </td>
             </tr>
             <?php endforeach; ?>

@@ -11,8 +11,11 @@
         </div>
         <div class="admin-right">
             <?php
+                require_once "../views/shared/errors.php";
                 if ($url == 'userlist' || $url == 'admin') {
                     require_once "../views/admin_panel/userlist.php";
+                } else if (isset($isEdit)) {
+                    require_once "../views/admin_panel/edituser.php";
                 } else {
                     require_once "../views/admin_panel/" . $url . ".php";
                 }
