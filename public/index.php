@@ -51,6 +51,7 @@ $routes = [
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
 
+    '/profile' => ['controller' => 'UserProfileController', 'action' => 'index', 'params' => ['db' => $db]],
 ];
 
 

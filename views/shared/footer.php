@@ -10,16 +10,29 @@
         $url = explode('/', $url);
         $baseUrl = $url[1];
         $url = end($url);
-        if ($url == 'makenewplan') {
-            $isScriptLoaded = true;
-            echo '<script src="../js/mnp.js"></script>';
-        } 
-        //check if url is admin or admin/* (admin with any other string after it)
-        if ($url == 'admin' || strpos($baseUrl, 'admin') !== false) {
-            $isScriptLoaded = true;
-            echo '<script src="../js/admin.js"></script>';
+        $scriptMap = [
+            'makenewplan' => function($url) {
+                return $url == 'makenewplan';
+            },
+            'profile' => function($url) {
+                return $url == 'profile';
+            },
+            'admin' => function($url, $baseUrl) {
+                return $url == 'admin' || strpos($baseUrl, 'admin') !== false;
+            },
+            // You can easily add more pages here...
+        ];
+        
+        $isScriptLoaded = false;
+        
+        foreach ($scriptMap as $page => $condition) {
+            if ($condition($url, $baseUrl)) {
+                $isScriptLoaded = true;
+                echo '<script src="../js/' . $page . '.js"></script>';
+                break; // Exit the loop once a script is loaded
+            }
         }
-
+        
         if ($isScriptLoaded) {
             echo '<script src="../js/jquery-3.2.1.min.js"></script>';
         }

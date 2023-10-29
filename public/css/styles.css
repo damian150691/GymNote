@@ -117,7 +117,7 @@ form input, form button, button, select{
 	height: 35px;
 }
 
-form input, form select {
+form input, form select, .custom-file-upload {
   border-style: solid;
   border-width: 1px;
   background-color: rgb(251 251 251 / 50%);
@@ -126,6 +126,28 @@ form input, form select {
   margin: 5px;
   width: 80%;
   text-align: center;
+}
+
+.uploadPictureForm {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.custom-file-upload {
+  padding: 0 10px;
+  margin: 20px;
+  
+}
+
+#fileToUpload {
+  display: none;
+}
+
+.file-upload-wrapper {
+  position: relative;
+  display: block;
+  margin: 10px;
 }
 
 #remember_me {
@@ -256,8 +278,8 @@ form button, button {
 
 /* icons */
 .icon {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   margin: 0;
   padding: 0;
   display: inline-block;
@@ -544,4 +566,51 @@ tbody button {
 
 .myPlansTable {
   width: 100%;
+}
+
+.profile-section {
+  width: calc(33% - 80px);
+  text-align: left;
+  padding: 40px;
+  display: block;
+  float: left;
+}
+
+.userProfileRowName {
+  font-weight: bold;
+}
+
+.profile-picture {
+  width: 450px;
+  height: 450px;
+  border: 1px solid #c4c4c4;
+  border-radius: 50%;
+  display: block;
+  float: left;
+  margin-bottom: 20px;
+}
+
+.profile-picture-min {
+  width: 16px !important;
+  height: 16px !important;
+  
+  border: 0;
+  border-radius: 10%;
+  margin: 0 auto;
+}
+
+.uploadPictureForm input[type="submit"] {
+  /* Your styles here */
+  background-color: #4CAF50; /* Example: green background */
+  color: white; /* Example: white text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s; /* Optional: for hover transition effect */
+}
+
+
+.uploadPictureForm input[type="submit"]:hover {
+  background-color: #45a049; /* Darker green on hover */
 }

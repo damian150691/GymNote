@@ -20,5 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add the "active" class to the first <li> of the admin-nav-list
         navLinks[0].parentElement.classList.add('active');
     }
+
+
+
+
+    
   
 });

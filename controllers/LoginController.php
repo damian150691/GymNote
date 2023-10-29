@@ -61,6 +61,7 @@ class LoginController {
             // Call the user login function in UserModel
             $loginResult = $userModel->loginUser($db, $loginInput, $password);
             if ($loginResult === true) {
+                $userBio = $userModel->getUserBioById($db, $user['id']);
                 if ($rememberMe) {
                     $token = $userModel->generateToken(100); 
                     $userModel->updateSessionToken($db, $user['id'], $token);
@@ -75,6 +76,11 @@ class LoginController {
                 $_SESSION['last_logged'] = $user['last_logged'];
                 $_SESSION['user_role'] = $user['user_role'];
                 $_SESSION['last_activity'] = time();
+                if ($userBio) {
+                    $_SESSION['profile_picture'] = $userBio['profile_picture'];
+                }
+                
+
 
                 header('Location: /dashboard');
                 exit;
@@ -106,6 +112,7 @@ class LoginController {
             $token = $_COOKIE['remember_me'];
             $user = $userModel->getUserBySessionToken($db, $token);
             if ($user) {
+                $userBio = $userModel->getUserBioById($db, $user['id']);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
@@ -115,6 +122,9 @@ class LoginController {
                 $_SESSION['user_role'] = $user['user_role'];
                 $_SESSION['last_activity'] = time();
                 $userModel->updateLastLoggedIn($db, $user['id']);
+                if ($userBio) {
+                    $_SESSION['profile_picture'] = $userBio['profile_picture'];
+                }
                 header('Location: /dashboard');
                 exit;
             } else {

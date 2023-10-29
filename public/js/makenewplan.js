@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM fully loaded and parsed!");
+  console.log("makeNewPlan.js loaded");
   var dayCount = 0;
 
     function updateDayHeadersMNP () {

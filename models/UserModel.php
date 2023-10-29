@@ -80,6 +80,15 @@ class UserModel {
         return $table;
     }
 
+    public function getUserBioById ($db, $id) {
+        $sql = "SELECT * FROM users_bio WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userBio = $result->fetch_assoc();
+        return $userBio;
+    }
 
     public function IsInputEmailOrUsername ($db, $loginInput) {
         //check if the input is email or username
@@ -170,6 +179,39 @@ class UserModel {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function updateProfilePicture ($db, $id, $pictureName) {
+        //check if there is already a row with user_id in users_bio
+        $sql = "SELECT * FROM users_bio WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userBio = $result->fetch_assoc();
+        if ($userBio) {
+            //if there is update the row
+            $sql = "UPDATE users_bio SET profile_picture = ? WHERE user_id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("si", $pictureName, $id);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //if there isn't insert a new row
+            $sql = "INSERT INTO users_bio (user_id, profile_picture) VALUES (?, ?)";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("is", $id, $pictureName);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     
