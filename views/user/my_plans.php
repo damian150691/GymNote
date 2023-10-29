@@ -20,7 +20,7 @@
     </h2>
    
     <div id="plans">
-        <table>
+        <table class="myPlansTable">
             <tr>
                 <th>Plan Id</th>
                 <th>Plan Name</th>

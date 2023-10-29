@@ -1,22 +1,9 @@
 body {
-	background: linear-gradient(-45deg, #515558, #2d3134, #515558, #2d3134);
+	background: linear-gradient(-45deg, #515558, #2d3134);
 	background-size: 400% 400%;
-	animation: gradient 30s ease infinite;
 	height: 100vh;
 	font-family: Lato, sans-serif;
 	font-weight: 300;
-}
-
-@keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
 }
 
 img {
@@ -65,12 +52,6 @@ a:hover::after {
 
 button {
   cursor: pointer;
-}
-
-.popup {
-  width: 300px; 
-  max-height: 200px; 
-  overflow-y: auto; 
 }
 
 #container {
@@ -150,7 +131,6 @@ form input, form select {
 #remember_me {
   width: 20px;
   height: 20px;
-
 }
 
 form button, button {
@@ -305,6 +285,13 @@ form button, button {
 .center {
   text-align: center;
 }
+
+.active {
+  font-weight: bold;
+}
+
+
+
 /* CSS for the training table */
 
 #trainingForm {
@@ -546,12 +533,15 @@ tbody button {
 
 .dbview {
   table-layout: fixed;
-
 }
 
 .dbview th, .dbview td {
-  width: 172px !important;
+  width: 172px;
   overflow: hidden; 
   text-overflow: ellipsis; 
   white-space: nowrap; 
+}
+
+.myPlansTable {
+  width: 100%;
 }
