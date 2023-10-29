@@ -182,6 +182,40 @@ class UserModel {
         }
     }
 
+    public function updateUserBio ($db, $userId, $data) {
+
+        //check if there is already a row with user_id in users_bio
+        $sql = "SELECT * FROM users_bio WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userBio = $result->fetch_assoc();
+        if (!$userBio) {
+            //insert the data into the row
+            $sql = "INSERT INTO users_bio (user_id, age, gender, height, weight, calories_goal) VALUES (?, ?, ?, ?, ?, ?) ";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("iisidi", $userId, $data['age'], $data['gender'], $data['height'], $data['weight'], $data['calories_goal']);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //update the row
+            $sql = "UPDATE users_bio SET age = ?, gender = ?, height = ?, weight = ?, calories_goal = ? WHERE user_id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("isidii", $data['age'], $data['gender'], $data['height'], $data['weight'], $data['calories_goal'], $userId);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public function updateProfilePicture ($db, $id, $pictureName) {
         //check if there is already a row with user_id in users_bio
         $sql = "SELECT * FROM users_bio WHERE user_id = ?";

@@ -30,9 +30,7 @@ a {
   margin: 0 10px;
 }
 
-button a {
-  color: white;
-}
+
 
 a::after {
   content: ''; /* Create an empty pseudo-element */
@@ -52,6 +50,40 @@ a:hover::after {
 
 button {
   cursor: pointer;
+  background-color: #4CAF50; /* Example: green background */
+  color: white; /* Example: white text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s; /* Optional: for hover transition effect */
+}
+
+button a {
+  color: white;
+}
+
+button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+button:disabled a {
+  color: #666;
+}
+
+a:hover::after {
+  width: 0; /* This causes the underline to appear and slide in from the left */
+}
+
+.editBioButton, .editAccountButton {
+  width: 90%;
+
 }
 
 #container {
@@ -112,7 +144,7 @@ form label, form input, form button, select{
 }
 
 
-form input, form button, button, select{
+form input, form button, select{
 	margin-bottom: 20px;
 	height: 35px;
 }
@@ -155,7 +187,7 @@ form input, form select, .custom-file-upload {
   height: 20px;
 }
 
-form button, button {
+form button {
   border-style: solid;
   border-width: 0;
   background-color: #40504e;
@@ -593,13 +625,13 @@ tbody button {
 .profile-picture-min {
   width: 16px !important;
   height: 16px !important;
-  
+  background-color: #fff;
   border: 0;
   border-radius: 10%;
   margin: 0 auto;
 }
 
-.uploadPictureForm input[type="submit"] {
+input[type="submit"] {
   /* Your styles here */
   background-color: #4CAF50; /* Example: green background */
   color: white; /* Example: white text */
@@ -610,7 +642,17 @@ tbody button {
   transition: 0.3s; /* Optional: for hover transition effect */
 }
 
-
-.uploadPictureForm input[type="submit"]:hover {
+input[type="submit"]:hover {
   background-color: #45a049; /* Darker green on hover */
+}
+
+#edit_bio {
+  width: 100% !important;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#edit_bio label {
+  display: inline-block;
 }

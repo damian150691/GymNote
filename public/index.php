@@ -34,8 +34,6 @@ $routes = [
 
     '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
 
-    '/profile' => ['controller' => 'UserProfileController', 'action' => 'index'],
-
     '/admin' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],
     '/admin/adduser' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],
     '/admin/edituser/(\d+)' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],

@@ -23,6 +23,39 @@ class UserProfileController {
         }
     }
 
+    public function handleEditBio ($db, $user, $data) {
+        $errors = array();
+        $userModel = new UserModel($db);
+        $age = $data['age'];
+        $gender = $data['gender'];
+        $height = $data['height'];
+        $weight = $data['weight'];
+        $calories_goal = $data['calories_goal'];
+
+        //check if user fills anything, then check if that value is between 0 and 99
+        if ($age != NULL && ($age < 0 || $age > 99)) {
+            array_push($errors, "Age must be between 0 and 99.");
+        }
+        
+        if ($height != NULL && ($height < 0 || $height > 300)) {
+            array_push($errors, "Height must be between 0 and 300.");
+        }
+
+        if ($weight != NULL && ($weight < 0 || $weight > 1000)) {
+            array_push($errors, "Weight must be between 0 and 1000.");
+        }
+
+        if ($calories_goal != NULL && ($calories_goal < 0 || $calories_goal > 15000)) {
+            array_push($errors, "Calories goal must be between 0 and 15000.");
+        }
+
+        if ($errors == NULL) {
+            $userModel->updateUserBio($db, $user['id'], $data);
+        } else {
+            return $errors;
+        }
+    }
+
     
     public function handleUploadPicture ($db, $picture, $user) {
         $errors = array();
@@ -42,10 +75,7 @@ class UserProfileController {
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
         $pictureName = $user['id'] . "." . $imageFileType;
         $target_file = $target_dir . $pictureName;
-        
-        
-        
-        
+
         //check file size (max 5mb)
         if ($picture["size"] > 5000000) {
             array_push($errors, "Your file is too large. Max size is 5MB.");
@@ -78,11 +108,19 @@ class UserProfileController {
             }
         }
         
-        return $errors;
-        
-                
+        return $errors;      
     }
     
+    public function handleDeletePicture ($db, $user) {
+        $userModel = new UserModel($db);
+        $userBio = $userModel->getUserBioById($db, $user['id']);
+        $target_dir = "../public/img/uploads/profile_pictures/";
+        $oldPicture = $target_dir . $userBio['profile_picture'];
+        unlink($oldPicture);
+        $userModel->updateProfilePicture($db, $user['id'], NULL);
+        $_SESSION['profile_picture'] = NULL;
+        $_SESSION['message'] = "Profile picture deleted successfully.";
+    }
 
 
     public function index() {
@@ -94,15 +132,33 @@ class UserProfileController {
             $errors = array();
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $picture = $_FILES['fileToUpload'];
-                $errors = $this->handleUploadPicture($this->db, $picture, $user);
-                if (empty($errors)) {
-                    $_SESSION['message'] = "Profile picture changed successfully.";
+
+                if (isset($_POST['delete_picture'])) {
+                    $this->handleDeletePicture($this->db, $user);
                     header('Location: /profile');
                     exit;
                 }
-                
-                
+
+                if (isset($_POST['submit_picture'])) {
+                    $picture = $_FILES['fileToUpload'];
+                    $errors = $this->handleUploadPicture($this->db, $picture, $user);
+                    if (empty($errors)) {
+                        $_SESSION['message'] = "Profile picture changed successfully.";
+                        header('Location: /profile');
+                        exit;
+                    }    
+                }
+
+                if (isset($_POST['save_bio'])) {
+                    $data = $_POST;
+                    $errors = $this->handleEditBio($this->db, $user, $data);
+                    if (empty($errors)) {
+                        $_SESSION['message'] = "Bio changed successfully.";
+                        header('Location: /profile');
+                        exit;
+                    }
+                }
+                 
             }
 
             $userBio = $userModel->getUserBioById($this->db, $_SESSION['user_id']);

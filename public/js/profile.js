@@ -1,5 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
    console.log("profile.js loaded");
+
+   function editBio () {
+        
+        editBioButton = document.querySelector('.editBioButton');
+        if (editBioButton) {
+           
+            editBioButton.addEventListener('click', function() {
+                //hide the bio
+                document.querySelector('.bio').classList.add('hidden');
+                //show the edit bio form
+                document.getElementById('edit_bio').classList.remove('hidden');
+
+            });
+        }
+
+        cancelEditBioButton = document.getElementById('cancelEditBioButton');
+        if (cancelEditBioButton) {
+            cancelEditBioButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                //hide the edit bio form
+                document.getElementById('edit_bio').classList.add('hidden');
+                //show the bio
+                document.querySelector('.bio').classList.remove('hidden');
+
+            });
+        }
+
+   }
   
 
     //check if there is fileToUpload input
@@ -12,8 +40,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    //add alert to delete button
+    deleteBtn = document.querySelector('input[name="delete"]');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(event) {
+            if (!confirm('Are you sure you want to remove your profile picture?')) {
+                event.preventDefault();
+            }
+        });
+    }
 
 
+editBio();
     
   
 });
