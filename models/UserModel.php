@@ -566,6 +566,46 @@ class UserModel {
         $exercises = $result->fetch_all(MYSQLI_ASSOC);
         return $exercises;
     }
+
+    public function createNotification ($db, $notification) {
+        $sql = "INSERT INTO notifications (user_id, content, type, related_object_id) VALUES (?, ?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("issi", $notification['user_id'], $notification['content'], $notification['type'], $notification['related_object_id']);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getNotificationsforUser ($db, $userId, $status = NULL) {
+        if ($status == NULL) {
+            $sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("i", $userId);
+        } else {
+            $sql = "SELECT * FROM notifications WHERE user_id = ? AND status = ? ORDER BY created_at DESC";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("is", $userId, $status);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = $result->fetch_all(MYSQLI_ASSOC);
+        return $notifications;
+    }
+
+    public function markNotificationAsRead ($db, $notificationId) {
+        $sql = "UPDATE notifications SET status = 'read' WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $notificationId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 // Create an instance of UserModel with the database connection

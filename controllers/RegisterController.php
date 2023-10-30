@@ -70,6 +70,14 @@ class RegisterController {
             $user = $userModel->getUserByUsername($db, $username);
     
             if ($registrationResult === true) {
+                $notification = [
+                    'user_id' => $user['id'],
+                    'content' => "Welcome to GymNote! We hope you will enjoy our app. If you have any questions, please contact us.",
+                    'type' => 'registration',
+                    'related_object_id' => 'contact_us'
+                ];
+                $userModel->createNotification($db, $notification);
+                
                 $token = $user['token'];
                 $to = $email;
                 $subject = "GymNote - Verify your email";
@@ -77,6 +85,9 @@ class RegisterController {
                 $headers = "From: damian.miela@gmail.com";
 
                 if ($userModel->sendEmail($to, $subject, $message, $headers)) {
+                    
+                    
+
                     $_SESSION['message'] = "You have been registered successfully. Please check your email to verify your account.";
                     header('Location: /login');
                     exit;

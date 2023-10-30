@@ -60,6 +60,8 @@ class DashboardController {
                 else
                     return $number . $ends[$number % 10];
             }
+
+            $notifications = $userModel->getNotificationsforUser($this->db, $user['id']);
             
         }
 

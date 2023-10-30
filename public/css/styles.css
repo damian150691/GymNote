@@ -678,8 +678,8 @@ input[type="submit"]:hover {
 
 }
 
-.bio-dashboard {
-  width: 100%;
+.bio-dashboard, .notifications {
+  width: calc(100% - 40px);
   padding: 20px;
 }
 
@@ -693,4 +693,34 @@ input[type="submit"]:hover {
   background-color: orange;
   color: #fff;
   transition: all 0.3s ease;
+}
+
+
+.notification-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-list li {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notification-list li .type {
+  font-weight: bold;
+  color: #333;
+}
+
+.notification-list li .content {
+  margin: 5px 0;
+}
+
+.notification-list li .created-at {
+  font-size: 0.8em;
+  color: #888;
 }
