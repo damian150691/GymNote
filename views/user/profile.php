@@ -103,7 +103,7 @@
             <p><span class="userProfileRowName">Height: </span><?php echo $userBio['height'] ?></p>
             <p><span class="userProfileRowName">Weight: </span><?php echo $userBio['weight'] ?></p>
             <p><span class="userProfileRowName">Calories goal: </span><?php echo $userBio['calories_goal'] ?></p>
-            <button class="editBioButton">Edit Bio</button>
+            <button class="editBioButton">Edit bio</button>
         </div>
 
         <form action="/profile" method="post" id="edit_bio" class="hidden">

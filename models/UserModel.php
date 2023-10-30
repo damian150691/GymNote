@@ -470,7 +470,7 @@ class UserModel {
     }
 
     public function getPlans ($db, $id) {
-        $sql = "SELECT plan_id, plan_name, date_created FROM mnp_plans WHERE user_id = ?";
+        $sql = "SELECT plan_id, plan_name, date_created, user_id FROM mnp_plans WHERE user_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();

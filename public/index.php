@@ -32,7 +32,7 @@ $routes = [
     '/register' => ['controller' => 'RegisterController', 'action' => 'index', 'params' => ['db' => $db]],
     '/verify' => ['controller' => 'RegisterController', 'action' => 'verifyUser', 'params' => ['db' => $db]],
 
-    '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
+    '/dashboard' => ['controller' => 'DashboardController', 'action' => 'index', 'params' => ['db' => $db]],
 
     '/admin' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],
     '/admin/adduser' => ['controller' => 'AdminController', 'action' => 'index', 'params' => ['db' => $db]],

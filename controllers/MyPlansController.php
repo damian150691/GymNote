@@ -80,6 +80,7 @@ class MyPlansController {
         } 
 
         $plans = $userModel->getPlans($this->db, $_SESSION['user_id']);
+        $plans = array_reverse($plans);
         $plansCount = count($plans);
         $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
         $createdBy = $user['username'];
