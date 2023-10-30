@@ -646,13 +646,20 @@ input[type="submit"]:hover {
   background-color: #45a049; /* Darker green on hover */
 }
 
-#edit_bio {
+.profile-section form {
   width: 100% !important;
   margin: 0 auto;
   margin-bottom: 20px;
   text-align: center;
 }
 
-#edit_bio label {
+.profile-section form label {
   display: inline-block;
+}
+
+.accountDetails {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 40px;
+
 }

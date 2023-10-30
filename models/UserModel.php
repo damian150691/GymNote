@@ -182,6 +182,22 @@ class UserModel {
         }
     }
 
+    public function updateUserAccount ($db, $id, $data) {
+        $username = $data['username'];
+        $email = $data['email'];
+        $first_name = $data['first_name'];
+        $last_name = $data['last_name'];
+        $sql = "UPDATE users SET username = ?, email = ?, first_name = ?, last_name = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ssssi", $username, $email, $first_name, $last_name, $id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function updateUserBio ($db, $userId, $data) {
 
         //check if there is already a row with user_id in users_bio

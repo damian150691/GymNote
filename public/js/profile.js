@@ -1,6 +1,34 @@
 document.addEventListener("DOMContentLoaded", function () {
    console.log("profile.js loaded");
 
+   function editAccount () {
+        
+        editAccountButton = document.querySelector('.editAccountButton');
+        if (editAccountButton) {
+           
+            editAccountButton.addEventListener('click', function() {
+                //hide the account details
+                document.querySelector('.accountDetails').classList.add('hidden');
+                //show the edit account form
+                document.getElementById('edit_account').classList.remove('hidden');
+
+            });
+        }
+
+        cancelEditAccountButton = document.getElementById('cancelEditAccountButton');
+        if (cancelEditAccountButton) {
+            cancelEditAccountButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                //hide the edit account form
+                document.getElementById('edit_account').classList.add('hidden');
+                //show the account details
+                document.querySelector('.accountDetails').classList.remove('hidden');
+
+            });
+        }
+
+   }
+
    function editBio () {
         
         editBioButton = document.querySelector('.editBioButton');
@@ -52,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 editBio();
+editAccount();
     
   
 });

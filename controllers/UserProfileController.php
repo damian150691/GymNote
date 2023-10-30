@@ -23,6 +23,77 @@ class UserProfileController {
         }
     }
 
+    public function handleEditAccount ($db, $user, $data) {
+        $errors = array();
+        $userModel = new UserModel($db);
+        $username = $user['username'];
+        $newUsername = $data['username'];
+        $email = $user['email'];
+        $newEmail = $data['email'];
+        $first_name = $data['first_name'];
+        $last_name = $data['last_name'];
+
+        //check if user fills anything, then check if that value is between 0 and 99
+        if ($username != NULL && (strlen($username) < 3 || strlen($username) > 20)) {
+            array_push($errors, "Username must be between 3 and 20 characters.");
+        }
+        
+        if ($email != NULL && (strlen($email) < 3 || strlen($email) > 50)) {
+            array_push($errors, "Email must be between 3 and 50 characters.");
+        }
+
+        if ($first_name != NULL && (strlen($first_name) < 3 || strlen($first_name) > 20)) {
+            array_push($errors, "First name must be between 3 and 20 characters.");
+        }
+
+        if ($last_name != NULL && (strlen($last_name) < 3 || strlen($last_name) > 20)) {
+            array_push($errors, "Last name must be between 3 and 20 characters.");
+        }
+
+        if ($username != NULL && $username != $newUsername) {
+            $userExists = $userModel->getUserByUsername($db, $newUsername);
+            if ($userExists != NULL && $userExists['id'] != $user['id']) {
+                array_push($errors, "Username already exists.");
+            }
+        }
+
+        if ($email != NULL && $email != $newEmail) {
+            $emailExists = $userModel->getUserByEmail($db, $newEmail);
+            if ($emailExists != NULL && $emailExists['id'] != $user['id']) {
+                array_push($errors, "Email already exists.");
+            }
+        }
+
+        if ($errors == NULL) {
+            $userModel->updateUserAccount($db, $user['id'], $data);
+        } else {
+            return $errors;
+        }
+    } 
+
+    public function handleChangePassword ($db, $user, $data) {
+        $errors = array();
+        $userModel = new UserModel($db);
+        $oldPassword = $data['old_password'];
+        $newPassword = $data['password'];
+        $confirmPassword = $data['confirm_password'];
+
+        //check if the old password is correct
+        if (!password_verify($oldPassword, $user['password'])) {
+            array_push($errors, "Old password is incorrect.");
+        }
+
+        if ($newPassword != $confirmPassword) {
+            array_push($errors, "New password and confirm password must match.");
+        }
+
+        if ($errors == NULL) {
+            $userModel->updatePassword($db, $user['id'], $newPassword);
+        } else {
+            return $errors;
+        }
+    }
+
     public function handleEditBio ($db, $user, $data) {
         $errors = array();
         $userModel = new UserModel($db);
@@ -158,6 +229,26 @@ class UserProfileController {
                         exit;
                     }
                 }
+
+                if (isset($_POST['save_account'])) {
+                    $data = $_POST;
+                    $errors = $this->handleEditAccount($this->db, $user, $data);
+                    if (empty($errors)) {
+                        $_SESSION['message'] = "Account info changed successfully.";
+                        header('Location: /profile');
+                        exit;
+                    }
+                }
+
+                if (isset($_POST['change_password'])) {
+                    $data = $_POST;
+                    $errors = $this->handleChangePassword($this->db, $user, $data);
+                    if (empty($errors)) {
+                        $_SESSION['message'] = "Password changed successfully.";
+                        header('Location: /profile');
+                        exit;
+                    }
+                }
                  
             }
 
@@ -175,6 +266,14 @@ class UserProfileController {
 
                 ]
             ;}
+
+            function ordinal($number) {
+                $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+                if ((($number % 100) >= 11) && (($number % 100) <= 13))
+                    return $number . 'th';
+                else
+                    return $number . $ends[$number % 10];
+            }
 
             
         } else {
