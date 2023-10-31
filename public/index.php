@@ -50,6 +50,10 @@ $routes = [
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],
 
     '/profile' => ['controller' => 'UserProfileController', 'action' => 'index', 'params' => ['db' => $db]],
+
+    '/friends' => ['controller' => 'FriendsController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/searchfriend' => ['controller' => 'FriendsController', 'action' => 'handleSearchFriend', 'params' => ['db' => $db]],
+    '/addfriend' => ['controller' => 'FriendsController', 'action' => 'handleAddFriend', 'params' => ['db' => $db]],
 ];
 
 

@@ -72,7 +72,7 @@ class RegisterController {
             if ($registrationResult === true) {
                 $notification = [
                     'user_id' => $user['id'],
-                    'content' => "Welcome to GymNote! We hope you will enjoy our app. If you have any questions, please contact us.",
+                    'content' => "We hope you will enjoy our app. If you have any questions, please contact us.",
                     'type' => 'registration',
                     'related_object_id' => 'contact_us'
                 ];

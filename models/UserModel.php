@@ -396,15 +396,21 @@ class UserModel {
     }
 
     public function deleteUser ($db, $id) {
+        $sql = "DELETE FROM users_bio WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        $sql = "DELETE FROM notifications WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
         $sql = "DELETE FROM users WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        if ($stmt->affected_rows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+
     }
 
 
@@ -606,6 +612,79 @@ class UserModel {
             return false;
         }
     }
+
+    public function searchFriend ($db, $userId, $searchQuery) {
+        //get all users except the logged in user and users that are already friends
+
+        $sql = "SELECT * FROM users WHERE id != ? AND id NOT IN (SELECT user_id2 FROM friends WHERE user_id1 = ?) AND id NOT IN (SELECT user_id1 FROM friends WHERE user_id2 = ?) AND username LIKE ?";
+        $stmt = $db->prepare($sql);
+        $searchPattern = $searchQuery . '%';  // Append % wildcard to search for usernames that start with $searchQuery
+        $stmt->bind_param("iiis", $userId, $userId, $userId, $searchPattern);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = $result->fetch_all(MYSQLI_ASSOC);
+        return $users;
+    }
+
+    public function addFriend ($db, $userId, $friendId) {
+        $status = "pending";
+        
+        $sql = "INSERT INTO friends (user_id1, user_id2, status, action_user_id) VALUES (?, ?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("iisi", $userId, $friendId, $status, $userId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getFriendsList ($db, $userId) {
+        $sql = "SELECT * FROM friends WHERE (user_id1 = ? OR user_id2 = ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $userId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $friends = $result->fetch_all(MYSQLI_ASSOC);
+        return $friends;
+    }
+
+    public function getFriendRequests ($db, $userId) {
+        $sql = "SELECT * FROM friends WHERE user_id2 = ? AND status = 'pending'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $friendRequests = $result->fetch_all(MYSQLI_ASSOC);
+        return $friendRequests;
+    }
+
+    public function getSentRequests ($db, $userId) {
+        $sql = "SELECT * FROM friends WHERE user_id1 = ? AND status = 'pending'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $sentRequests = $result->fetch_all(MYSQLI_ASSOC);
+        return $sentRequests;
+    }
+
+    public function getProfilePicture ($db, $userId) {
+        $sql = "SELECT profile_picture FROM users_bio WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $profilePicture = $result->fetch_assoc();
+        //return only value of profile_picture
+        if ($profilePicture != NULL) {
+            $profilePicture = $profilePicture['profile_picture'];
+        }
+        return $profilePicture;
+
+    }
+
 }
 
 // Create an instance of UserModel with the database connection

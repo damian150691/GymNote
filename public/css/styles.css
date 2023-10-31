@@ -139,17 +139,17 @@ form {
   display: block;
 }
 
-form label, form input, form button, select{
+form label, input, form button, select{
 	width: 100%;
 }
 
 
-form input, form button, select{
+input, form button, select{
 	margin-bottom: 20px;
 	height: 35px;
 }
 
-form input, form select, .custom-file-upload {
+input, select, .custom-file-upload {
   border-style: solid;
   border-width: 1px;
   background-color: rgb(251 251 251 / 50%);
@@ -709,6 +709,10 @@ input[type="submit"]:hover {
   margin-bottom: 10px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .notification-list li .type {
@@ -718,9 +722,40 @@ input[type="submit"]:hover {
 
 .notification-list li .content {
   margin: 5px 0;
+  flex: 100%;
 }
 
 .notification-list li .created-at {
   font-size: 0.8em;
   color: #888;
+}
+
+.suggestions {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 40px;
+}
+
+.user-row {
+  display: flex;             
+  align-items: center;   
+  justify-content: space-between;      
+}
+
+.user-row-element {
+  margin: 0 10px;              
+}
+
+.friendRequest {
+  border: 1px solid #c4c4c4;
+}
+
+.friendRequestAvatar {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #c4c4c4;
+  border-radius: 50%;
+  display: block;
+  float: left;
+  margin-right: 10px;
 }

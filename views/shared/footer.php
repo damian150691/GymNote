@@ -20,7 +20,10 @@
             'admin' => function($url, $baseUrl) {
                 return $url == 'admin' || strpos($baseUrl, 'admin') !== false;
             },
-            // You can easily add more pages here...
+            'friends' => function($url) {
+                return $url == 'friends';
+            },
+        
         ];
         
         $isScriptLoaded = false;

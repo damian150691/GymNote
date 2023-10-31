@@ -106,8 +106,8 @@
                             foreach ($notifications as $notification) {
                                 echo "<li>";
                                 echo "<span class='type'>{$notification['type']}</span>";
-                                echo "<p class='content'>{$notification['content']}</p>";
                                 echo "<span class='created-at'>{$notification['created_at']}</span>";
+                                echo "<p class='content'>{$notification['content']}</p>";
                                 echo "</li>";
                             }
                         ?>
