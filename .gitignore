@@ -1,3 +1,4 @@
 # Ignore resource folder
 _resources/
+# Ignore profile_pictures folder
 public/img/uploads/profile_pictures/
