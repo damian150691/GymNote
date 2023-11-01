@@ -616,13 +616,19 @@ class UserModel {
     public function searchFriend ($db, $userId, $searchQuery) {
         //get all users except the logged in user and users that are already friends
 
-        $sql = "SELECT * FROM users WHERE id != ? AND id NOT IN (SELECT user_id2 FROM friends WHERE user_id1 = ?) AND id NOT IN (SELECT user_id1 FROM friends WHERE user_id2 = ?) AND username LIKE ?";
+        $sql = "SELECT id, username FROM users WHERE id != ? AND id NOT IN (SELECT user_id2 FROM friends WHERE user_id1 = ?) AND id NOT IN (SELECT user_id1 FROM friends WHERE user_id2 = ?) AND username LIKE ?";
         $stmt = $db->prepare($sql);
         $searchPattern = $searchQuery . '%';  // Append % wildcard to search for usernames that start with $searchQuery
         $stmt->bind_param("iiis", $userId, $userId, $userId, $searchPattern);
         $stmt->execute();
         $result = $stmt->get_result();
         $users = $result->fetch_all(MYSQLI_ASSOC);
+
+        //add profile-picture to each user
+        foreach ($users as $key => $user) {
+            $profilePicture = $this->getProfilePicture($db, $user['id']);
+            $users[$key]['profile_picture'] = $profilePicture;
+        }
         return $users;
     }
 
@@ -632,6 +638,72 @@ class UserModel {
         $sql = "INSERT INTO friends (user_id1, user_id2, status, action_user_id) VALUES (?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("iisi", $userId, $friendId, $status, $userId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function cancelFriendRequest ($db, $userId, $friendId) {
+        $sql = "DELETE FROM friends WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $userId, $friendId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            //delete notification
+            $sql = "DELETE FROM notifications WHERE user_id = ? AND related_object_id = ? AND type = 'friend_request'";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("ii", $friendId, $userId);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function acceptFriendRequest ($db, $userId, $friendId) {
+        $sql = "UPDATE friends SET status = 'accepted' WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $friendId, $userId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            //create notification
+            $user = $this->getUserById($db, $userId);
+            $notification = [
+                'user_id' => $friendId,
+                'content' => $user['username'] . " has accepted your friend request",
+                'type' => "friend_accepted",
+                'related_object_id' => $userId
+            ];
+            $this->createNotification($db, $notification);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function denyFriendRequest ($db, $userId, $friendId) {
+        $sql = "DELETE FROM friends WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $friendId, $userId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function removeFriend ($db, $userId, $friendId) {
+        $sql = "DELETE FROM friends WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("iiii", $userId, $friendId, $friendId, $userId);
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             return true;
@@ -682,7 +754,16 @@ class UserModel {
             $profilePicture = $profilePicture['profile_picture'];
         }
         return $profilePicture;
+    }
 
+    public function getAcceptedFriends ($db, $userId) {
+        $sql = "SELECT * FROM friends WHERE (user_id1 = ? OR user_id2 = ?) AND status = 'accepted'";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $userId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $friends = $result->fetch_all(MYSQLI_ASSOC);
+        return $friends;
     }
 
 }

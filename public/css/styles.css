@@ -759,3 +759,12 @@ input[type="submit"]:hover {
   float: left;
   margin-right: 10px;
 }
+
+.fade-out {
+  animation: fadeOut 2s forwards; /* 2 seconds duration */
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

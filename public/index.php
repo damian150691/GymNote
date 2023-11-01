@@ -54,6 +54,10 @@ $routes = [
     '/friends' => ['controller' => 'FriendsController', 'action' => 'index', 'params' => ['db' => $db]],
     '/searchfriend' => ['controller' => 'FriendsController', 'action' => 'handleSearchFriend', 'params' => ['db' => $db]],
     '/addfriend' => ['controller' => 'FriendsController', 'action' => 'handleAddFriend', 'params' => ['db' => $db]],
+    '/cancelfriendrequest' => ['controller' => 'FriendsController', 'action' => 'handleCancelFriendRequest', 'params' => ['db' => $db]],
+    '/acceptfriendrequest' => ['controller' => 'FriendsController', 'action' => 'handleAcceptFriendRequest', 'params' => ['db' => $db]],
+    '/denyfriendrequest' => ['controller' => 'FriendsController', 'action' => 'handleDenyFriendRequest', 'params' => ['db' => $db]],
+    '/removefriend' => ['controller' => 'FriendsController', 'action' => 'handleRemoveFriend', 'params' => ['db' => $db]],
 ];
 
 

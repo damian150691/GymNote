@@ -65,7 +65,7 @@ class DashboardController {
             
         }
 
-        // Load the login view with any necessary data
+       
         require_once '../views/shared/head.php';
         require_once '../views/user/dashboard.php';
         require_once '../views/shared/footer.php';

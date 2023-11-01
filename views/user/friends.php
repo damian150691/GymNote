@@ -15,12 +15,46 @@
     </div>
     <div class="one-third">
         <h3>My friends</h3>
+        <div id="friends">
+            <?php
+                if (count($acceptedFriends) > 0) {
+                    foreach ($acceptedFriends as $friend) {
+                        if ($friend['user_id1'] === $_SESSION['user_id']) {
+                            $friend['user_id'] = $friend['user_id2'];
+                        } else {
+                            $friend['user_id'] = $friend['user_id1'];
+                        }
+                        //convert $friend['profile_picture'] to string
+                        
+                        echo '<div class="friend user-row">';
+                        echo '    <div class="friendAvatar user-row-element">';
+
+                        if ($friend['profile_picture'] !== null) {
+                            echo '        <img width="50px" height="50px" src="../img/uploads/profile_pictures/' . $friend['profile_picture'] . '" alt="Profile picture">';
+                        } else {
+                            echo '        <img width="50px" height="50px" src="../img/uploads/profile_pictures/default.png" alt="Profile picture">';
+                        }
+
+                        echo '    </div>';
+                        echo '    <div class="friendUsername user-row-element">';
+                        echo '        <p>' . $friend['username'] . '</p>';
+                        echo '    </div>';
+                        echo '    <div class="friendButtons user-row-element">';
+                        echo '        <button class="removeFriend" data-user-id="' . $friend['user_id'] . '">Remove</button>';
+                        echo '    </div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p id="noFriends">You have no friends yet. You can use the search bar to find new friends.</p>';
+                }
+            ?>
+        </div>
     </div>
     <div class="one-third">
         <h3>Friend requests</h3>
         <div id="friendRequests">
-            <div class="recievedRequests">
-                <h4>Recieved requests</h4>
+            <div id="receivedRequests">
+                <h4>Received requests</h4>
                 <?php
                     if (count($friendRequests) > 0) {
                         foreach ($friendRequests as $friendRequest) {
@@ -41,16 +75,16 @@
                             echo '    </div>';
                             echo '    <div class="friendRequestButtons user-row-element">';
                             echo '        <button class="acceptFriendRequest" data-user-id="' . $friendRequest['user_id1'] . '">Accept</button>';
-                            echo '        <button class="denyFriendRequest" data-user-id="' . $friendRequest['user_id2'] . '">Deny</button>';
+                            echo '        <button class="denyFriendRequest" data-user-id="' . $friendRequest['user_id1'] . '">Deny</button>';
                             echo '    </div>';
                             echo '</div>';
                         }
                     } else {
-                        echo '<p>You have no friend requests.</p>';
+                        echo '<p>You have not received any friend requests.</p>';
                     }
                 ?>
             </div>
-            <div class="sentRequests">
+            <div id="sentRequests">
                 <h4>Sent requests</h4>
                 <?php
                     if (count($sentRequests) > 0) {
@@ -76,7 +110,7 @@
                             echo '</div>';
                         }
                     } else {
-                        echo '<p>You have no sent requests.</p>';
+                        echo '<p id="noSentRequests">You have not sent any friend requests</p>';
                     }
                 ?>
             </div>

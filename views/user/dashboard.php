@@ -103,6 +103,8 @@
                     
                     <ul class="notification-list">
                         <?php
+                            //limit the number of notifications to 5
+                            $notifications = array_slice($notifications, 0, 5);
                             foreach ($notifications as $notification) {
                                 echo "<li>";
                                 echo "<span class='type'>{$notification['type']}</span>";
