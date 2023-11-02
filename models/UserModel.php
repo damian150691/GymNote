@@ -766,7 +766,19 @@ class UserModel {
         return $friends;
     }
 
+    public function getExercisesQuery ($db, $query) {
+        $sql = "SELECT * FROM list_of_exercises WHERE name LIKE ?";
+        $stmt = $db->prepare($sql);
+        $searchPattern = '%' . $query . '%'; 
+        $stmt->bind_param("s", $searchPattern);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exercises = $result->fetch_all(MYSQLI_ASSOC);
+        return $exercises;
+    }
 }
+
+
 
 // Create an instance of UserModel with the database connection
 $userModel = new UserModel();

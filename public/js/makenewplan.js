@@ -2,6 +2,91 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("makeNewPlan.js loaded");
   var dayCount = 0;
 
+    function addDropdownListOfExercises () {
+        const exerciseNameInputFields = document.querySelectorAll("input[name='exerciseName[]']");
+        
+        exerciseNameInputFields.forEach(inputField => {
+            let dropdown;
+
+            inputField.addEventListener("keyup", function () {
+                let input = this.value;
+                if(input.length >= 2) {
+                    console.log(input);
+                    clearTimeout(window.timer);
+                    window.timer = setTimeout(function() {
+                        fetch('/exercises/getexercises', {
+                            method: 'POST',
+                            body: new URLSearchParams('query=' + input),
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            let isMore = false;
+                            console.log(data);
+                            // Handle the response from the PHP script
+                            if (dropdown) {
+                                dropdown.remove(); // Remove the previous dropdown if it exists
+                            }
+
+                            if (data.length === 0) {
+                                return; // Don't show the dropdown if there are no results
+                            }
+
+                            //limit the number of results to 20
+                            if (data.length > 10) {
+                                data.length = 10;
+                                isMore = true;
+                            }
+                            
+                            dropdown = document.createElement('ul');
+                            dropdown.style.position = 'absolute';
+                            dropdown.style.zIndex = '1000';
+                            console.log(inputField.offsetTop);
+                            console.log(inputField.offsetHeight);
+                            dropdown.style.left = `${inputField.offsetLeft}px`;
+                            dropdown.style.width = `${inputField.offsetWidth}px`;
+                            dropdown.className = 'exercisesDropdownQuery'; // Add a class for styling
+                
+                            data.forEach(item => {
+                                const option = document.createElement('li');
+                                option.textContent = item.name;
+                                option.addEventListener('click', function () {
+                                    inputField.value = item.name;
+                                    dropdown.remove(); // Remove the dropdown when an item is clicked
+                                });
+                    
+                                dropdown.appendChild(option);
+                            });
+
+                            if (isMore) {
+                                const option = document.createElement('li');
+                                option.textContent = '...';
+                                option.style.fontStyle = 'italic';
+                                option.style.textAlign = 'center';
+                                
+                    
+                                dropdown.appendChild(option);
+                            }
+
+                            inputField.parentNode.appendChild(dropdown);
+
+                            document.addEventListener('click', function (event) {
+                            if (dropdown && event.target !== inputField && !dropdown.contains(event.target)) {
+                                dropdown.remove();
+                            }
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    }, 500);
+                }
+            });
+        });
+    }
+
     function updateDayHeadersMNP () {
         //update all of the day headers so that they are in order
         const dayHeaders = document.querySelectorAll("#trainingDays h3");
@@ -118,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
             //change the text content into input fields with values
             tableRow.innerHTML = `
             <td class="table-row-id">${tableRowCount}</td>
-            <td><input type="text" name="exerciseName[]" value="${exerciseName}"/></td>
+            <td><div class="exerciseDropdownWrapper"<input type="text" name="exerciseName[]" value="${exerciseName}"/></div></td>
             <td><input type="text" name="exerciseSets[]" value="${exerciseSets}"/></td>
             <td><input type="text" name="exerciseRepeats[]" value="${exerciseRepeats}"/></td>
             <td><input type="text" name="exerciseWeight[]" value="${exerciseWeight}"/></td>
@@ -295,7 +380,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 newRow.classList.add("inputRow");
                 newRow.innerHTML = `
                     <td></td>
-                    <td><input type="text" name="exerciseName[]"/></td>
+                    <td><div class="exercisesDropdownWrapper"><input type="text" name="exerciseName[]"/></div></td>
                     <td><input type="text" name="exerciseSets[]"/></td>
                     <td><input type="text" name="exerciseRepeats[]"/></td>
                     <td><input type="text" name="exerciseWeight[]"/></td>
@@ -325,6 +410,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     // If there's no next setRow, simply append it to the tableBody
                     tableBody.appendChild(newRow);
                 }
+                addDropdownListOfExercises ();
+
             } else {
                 alert("Please confirm the exercise you are currently editing before adding a new one.");
             }
@@ -721,6 +808,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    
 
     addDayButton ();
     savePlanButton ();

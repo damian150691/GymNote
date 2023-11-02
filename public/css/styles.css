@@ -768,3 +768,26 @@ input[type="submit"]:hover {
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+.exercisesDropdownQuery {
+  background: white;
+  border: 1px solid #ccc;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.exercisesDropdownQuery li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.exercisesDropdownQuery li:hover {
+  background-color: #f2f2f2;
+}
+
+.exercisesDropdownWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
