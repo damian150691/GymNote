@@ -22,6 +22,7 @@
     <div id="plans">
         <table class="myPlansTable">
             <tr>
+                <th>No</th>
                 <th>Plan Id</th>
                 <th>Plan Name</th>
                 <th>Date Created</th>
@@ -29,8 +30,12 @@
                 <th>Actions</th>
             </tr>
         <?php
+            $i = 0;
             foreach ($plans as $plan) {
+                $i++;
                 echo "<tr>";
+                //echo column with number
+                echo "<td>" . $i . "</td>";
                 echo "<td>" . $plan['plan_id'] . "</td>";
                 echo "<td>" . $plan['plan_name'] . "</td>";
                 echo "<td>" . $plan['date_created'] . "</td>";

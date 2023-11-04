@@ -39,11 +39,19 @@ class ExercisesController {
         $titlePage = 'GymNote - Exercises';
         $userModel = new UserModel($this->db);
         
+        $categories = $userModel->getCategories($this->db);
+        
+        //get exercises from all categories and save it into array
+        $exercises = [];
+        foreach ($categories as $category) {
+            $exercises[$category['id']] = $userModel->getExercisesByCategory($this->db, $category['category']);
+        }
+
+        
         
 
-        // Load the login view with any necessary data
         require_once '../views/shared/head.php';
-        require_once '../views/shared/exercises.php';
+        require_once '../views/user/exercises.php';
         require_once '../views/shared/footer.php';
     }
 

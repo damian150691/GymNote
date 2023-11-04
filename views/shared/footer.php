@@ -23,6 +23,9 @@
             'friends' => function($url) {
                 return $url == 'friends';
             },
+            'exercises' => function($url) {
+                return $url == 'exercises';
+            },
         
         ];
         

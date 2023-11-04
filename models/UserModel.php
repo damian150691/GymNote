@@ -776,6 +776,38 @@ class UserModel {
         $exercises = $result->fetch_all(MYSQLI_ASSOC);
         return $exercises;
     }
+
+    public function getExercisesByCategory ($db, $category) {
+        $sql = "SELECT * FROM list_of_exercises WHERE category = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("s", $category);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exercises = $result->fetch_all(MYSQLI_ASSOC);
+        return $exercises;
+    }
+
+
+    public function getCategories ($db) {
+        $sql = "SELECT * FROM list_of_exercises";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $categories = $result->fetch_all(MYSQLI_ASSOC);
+        //count how many unique catergories there is
+        $categories = array_column($categories, 'category');
+        $categories = array_unique($categories);
+        //set id to each category
+        $categories = array_values($categories);
+        $categories = array_map(function($category, $index) {
+            return [
+                'id' => $index + 1,
+                'category' => $category
+            ];
+        }, $categories, array_keys($categories));
+        return $categories;
+
+    }
 }
 
 

@@ -382,7 +382,7 @@ table th, table td {
 }
 
 .setRow {
-  color: #eee;
+  color: orange;
   font-weight: 500;
   font-size: 1.2em;
 }
@@ -772,4 +772,30 @@ input[type="submit"]:hover {
   border-radius: 10px;
   padding: 10px;
   margin: 10px;
+}
+
+#categories ul {
+  text-align: left;
+  list-style-type: square;
+}
+
+#categories ul ul {
+  list-style-type: circle;
+  display: none;
+  overflow: hidden;
+}
+
+#categories ul li {
+  margin: 10px;
+  font-weight: bold;
+  user-select: none;
+  cursor: pointer;
+}
+
+#categories ul li ul li {
+  font-weight: normal;
+}
+
+#categories ul li a {
+  color: #eee;
 }
