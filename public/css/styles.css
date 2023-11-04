@@ -1,96 +1,25 @@
+/*structure*/
 body {
-	background: linear-gradient(-45deg, #515558, #2d3134);
+	background-color: #222831;
 	background-size: 400% 400%;
 	height: 100vh;
 	font-family: Lato, sans-serif;
 	font-weight: 300;
 }
 
-img {
-    margin: 0;
-    padding: 0;
-}
-
-h1 {
-	font-weight: normal;
-	margin-top: 40px;
-	text-align: center;
-}
-
-h2 {
-	font-weight: normal;
-	margin: 40px 0 20px 100px;
-	text-align: left;
-}
-
-a {
-  text-decoration: none; /* Remove the default underline */
-  color: grey; /* Link color */
-  position: relative; /* Required for pseudo-element positioning */
-  margin: 0 10px;
-}
-
-
-
-a::after {
-  content: ''; /* Create an empty pseudo-element */
-  display: block;
-  width: 0;
-  height: 2px; /* Set the initial underline height */
-  background-color: #40504e; /* Underline color */
-  position: absolute;
-  bottom: -2px; /* Position the underline below the text */
-  left: 0;
-  transition: width 0.3s ease; /* Add a smooth transition */
-}
-
-a:hover::after {
-  width: 100%; /* Expand the underline on hover */
-}
-
-button {
-  cursor: pointer;
-  background-color: #4CAF50; /* Example: green background */
-  color: white; /* Example: white text */
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s; /* Optional: for hover transition effect */
-}
-
-button a {
-  color: white;
-}
-
-button:hover {
-  background-color: #45a049; /* Darker green on hover */
-}
-
-button:disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
-}
-
-button:disabled a {
-  color: #666;
-}
-
-a:hover::after {
-  width: 0; /* This causes the underline to appear and slide in from the left */
-}
-
-.editBioButton, .editAccountButton {
-  width: 90%;
-
-}
-
 #container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    color: #404040;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: #EEEEEE;
+}
+
+#content {
+	background-color: #393E46;
+	min-height: 700px;
+	text-align: center;
+  display: block;
+	padding-top: 1px;
 }
 
 #content, #top, #footer {
@@ -108,28 +37,180 @@ a:hover::after {
 	height: 70px;
 }
 
-.logo {
-	margin-top: 20px;
-	margin-left: 20px;
-	display: block;
-	float: left;
+#footer {
+	color: #fff;
+	text-align: right;
+}
+#footer span {
+	padding: 10px;
+}
+/*end structure*/
+
+
+
+/* menu */
+#nav-bar {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: right;
+text-transform: uppercase;
+font-weight: bold;
+padding-top: 40px;
 }
 
-.logo img {
-  height: 40px;
+#nav-bar a {
+  text-decoration: none;
+  display: inline-block;
+  margin: 0 20px;
+  padding: 0;
+  color: #eeeeee;
+  position: relative; /* Required for positioning the pseudo-element */
+  overflow: hidden; /* This ensures the pseudo-element does not show outside the boundary of the link */
 }
 
-#content {
-	background-color: #fff;
-	min-height: 700px;
-	text-align: center;
-	position: relative;
+#nav-bar a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px; /* adjust the height for desired underline thickness */
+  background-color: white; /* adjust the color for desired underline color */
+  transition: width 0.3s;
+}
+
+#nav-bar a:hover::after {
+  width: 100%; /* This causes the underline to appear and slide in from the left */
+}
+/* Dropdown Button */
+.dropbtn {
+color: white;
+padding: 16px;
+font-size: 16px;
+border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #515558;
+padding: 10px 0;
+margin-top: 8px;
+z-index: 1;
+box-shadow: #404040 0 0 2px 0 ;
+min-width: 100%;
+text-align: center;
+left: -70px;
+box-shadow: rgba(84, 86, 87, 0.2) 0 0 10px 2px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+color: rgb(255, 255, 255) !important;
+text-decoration: none;
+display: block;
+width: 75px;
+height: 30px;
+line-height: 30px;
+}
+
+/* Change color of dropdown links on hover with animation*/
+.dropdown-content a:hover {
+background-color: #515558;
+transition: all 0.3s ease;
+}
+
+.dropdown-content::before {
+content: "";
+position: absolute;
+top: -8px;
+left: -8px;
+right: -8px;
+bottom: -8px;
+z-index: -1; /* Ensure it's beneath the actual content */
+pointer-events: auto;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+display: block; 
+}
+
+.userLink {
+color: #D65A31 !important;
+}
+/* end menu */
+
+
+
+/*general*/
+img {
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+	font-weight: normal;
+	margin: 40px 0 20px 100px;
+	text-align: left;
+}
+h3 {
+  font-weight: normal;
+  margin: 10px 0 10px 0;
+}
+
+a {
+  text-decoration: none; /* Remove the default underline */
+  color: #D65A31; /* Link color */
+  position: relative; /* Required for pseudo-element positioning */
+  margin: 0 10px;
+}
+a::after {
+  content: ''; /* Create an empty pseudo-element */
   display: block;
-	padding-top: 1px;
+  width: 0;
+  height: 2px; /* Set the initial underline height */
+  background-color: #EEEEEE; /* Underline color */
+  position: absolute;
+  bottom: -2px; /* Position the underline below the text */
+  left: 0;
+  transition: width 0.3s ease; /* Add a smooth transition */
+}
+a:hover::after {
+  width: 100%; /* Expand the underline on hover */
 }
 
-.spcr {
-	clear: both;
+button {
+  cursor: pointer;
+  background-color: #4CAF50; /* Example: green background */
+  color: #EEEEEE; /* Example: white text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s; /* Optional: for hover transition effect */
+}
+button a {
+  color: #EEEEEE;
+}
+button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+button:disabled {
+  background-color: #eee;
+  color: #666;
+  cursor: not-allowed;
+}
+button:disabled a {
+  color: #666;
 }
 
 form {
@@ -138,21 +219,17 @@ form {
 	position: relative;
   display: block;
 }
-
-form label, input, form button, select{
+form label, input, select{
 	width: 100%;
 }
-
-
-input, form button, select{
+input, select{
 	margin-bottom: 20px;
 	height: 35px;
 }
-
 input, select, .custom-file-upload {
   border-style: solid;
   border-width: 1px;
-  background-color: rgb(251 251 251 / 50%);
+  background-color: #eeeeee;
   box-shadow: inset 0 3px 21px 0 rgb(0 1 1 / 10%);
   border-radius: 10px;
   margin: 5px;
@@ -160,164 +237,15 @@ input, select, .custom-file-upload {
   text-align: center;
 }
 
-.uploadPictureForm {
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
+
+/*end general*/
+
+
+
+/*common classes*/
+.spcr {
+	clear: both;
 }
-
-.custom-file-upload {
-  padding: 0 10px;
-  margin: 20px;
-  
-}
-
-#fileToUpload {
-  display: none;
-}
-
-.file-upload-wrapper {
-  position: relative;
-  display: block;
-  margin: 10px;
-}
-
-#remember_me {
-  width: 20px;
-  height: 20px;
-}
-
-form button {
-  border-style: solid;
-  border-width: 0;
-  background-color: #40504e;
-  border-radius: 10px;
-  color: white;
-}
-
-#footer {
-	color: #fff;
-	text-align: right;
-}
-
-#footer span {
-	padding: 10px;
-}
-
-/* menu */
-#nav-bar {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    text-align: right;
-	text-transform: uppercase;
-	font-weight: bold;
-	padding-top: 40px;
-}
-
-#nav-bar a {
-    text-decoration: none;
-    display: inline-block;
-    margin: 0;
-    padding: 0 20px;
-    color: white;
-    position: relative; /* Required for positioning the pseudo-element */
-    overflow: hidden; /* This ensures the pseudo-element does not show outside the boundary of the link */
-}
-
-#nav-bar a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1px; /* adjust the height for desired underline thickness */
-    background-color: white; /* adjust the color for desired underline color */
-    transition: width 0.3s;
-}
-
-#nav-bar a:hover::after {
-    width: 100%; /* This causes the underline to appear and slide in from the left */
-}
-
-/* Dropdown Button */
-.dropbtn {
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #515558;
-  padding: 10px 0;
-  margin-top: 8px;
-  z-index: 1;
-  box-shadow: #404040 0 0 2px 0 ;
-  min-width: 100%;
-  text-align: center;
-  left: -70px;
-  box-shadow: rgba(84, 86, 87, 0.2) 0 0 10px 2px;
-}
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: rgb(255, 255, 255) !important;
-  text-decoration: none;
-  display: block;
-  width: 75px;
-  height: 30px;
-  line-height: 30px;
-}
-
-/* Change color of dropdown links on hover with animation*/
-.dropdown-content a:hover {
-  background-color: #515558;
-  transition: all 0.3s ease;
-}
-
-.dropdown-content::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
-  z-index: -1; /* Ensure it's beneath the actual content */
-  pointer-events: auto;
-}
-
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-  
-}
-
-.userLink {
-  color: orange !important;
-}
-/* end menu */
-
-
-/* icons */
-.icon {
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-}
-
-/* end icons */
 
 .textlink {
   display: inline-block;
@@ -343,26 +271,68 @@ form button {
 .active {
   font-weight: bold;
 }
+/*end common classes*/
+
+
+
+/*classes*/
+.logo {
+	margin-top: 20px;
+	margin-left: 20px;
+	display: block;
+	float: left;
+}
+
+.logo img {
+  height: 40px;
+}
+
+
+.custom-file-upload {
+  width: 30%;
+  padding: 10px;
+  margin: 20px;
+  color: #393E46;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.file-upload-wrapper {
+  position: relative;
+  display: block;
+  margin: 10px;
+}
+
+#fileToUpload {
+  display: none;
+}
+
+
+#remember_me {
+  width: 20px;
+  height: 20px;
+}
+/*end classes*/
+
+
+
+
+
 
 
 
 /* CSS for the training table */
-
 #trainingForm {
   width: 90%;
 }
 
-.addDay, .savePlanBtn {
-  width: 52%;
-  margin: 10px;
-}
+
 
 .savePlanBtn {
   margin-bottom: 100px;
 }
 
 .trainingDay button {
-  width: 100px;
   margin: 10px;
 }
 
@@ -408,11 +378,11 @@ table th, table td {
 }
 
 .setRow, .inputSetRow {
-  background-color: orange !important;
+  background-color: #191d24 !important;
 }
 
 .setRow {
-  color: #fff;
+  color: #eee;
   font-weight: 500;
   font-size: 1.2em;
 }
@@ -420,7 +390,7 @@ table th, table td {
 
 /* Style alternate row background colors */
 table tbody tr:nth-child(even) {
-  background-color: #f2f2f2; 
+  background-color: #222831; 
 }
 
 .tfootAddExercise {
@@ -432,7 +402,6 @@ table tbody tr:nth-child(even) {
   margin-bottom: 50px;
 }
 
-
 tbody button {
   margin-top: 14px;
   height: 30px;
@@ -440,11 +409,11 @@ tbody button {
   margin-top: -2px;
 }
 
-.edit-button, .delete-button, .confirm-button {
-  margin-top: 14px;
-  height: 30px;
-  width: 40% !important;
+.edit-button, .delete-button {
+
+  width: calc(40% - 10px); 
   margin: 5px !important;
+  padding: 2px;
 }
 
 .trainingDay {
@@ -531,7 +500,7 @@ tbody button {
 }
 
 .admin-nav {
-  background-color: orange;
+  background-color: #D65A31;
   
 }
 
@@ -557,7 +526,7 @@ tbody button {
 
 .admin-nav ul li a:hover {
   background-color: #fff; /* Add some hover background effect, if desired */
-  color: orange;
+  color: #D65A31;
   transition: all 0.1s ease;
 }
 
@@ -690,7 +659,7 @@ input[type="submit"]:hover {
 }
 
 .dashboardTable tbody tr:hover {
-  background-color: orange;
+  background-color: #D65A31;
   color: #fff;
   transition: all 0.3s ease;
 }
@@ -703,11 +672,12 @@ input[type="submit"]:hover {
 }
 
 .notification-list li {
-  background-color: #fff;
+  background-color: #eee;
+  color: #222831;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #eee;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
@@ -746,10 +716,6 @@ input[type="submit"]:hover {
   margin: 0 10px;              
 }
 
-.friendRequest {
-  border: 1px solid #c4c4c4;
-}
-
 .friendRequestAvatar {
   width: 50px;
   height: 50px;
@@ -770,11 +736,12 @@ input[type="submit"]:hover {
 }
 
 .exercisesDropdownQuery {
-  background: white;
-  border: 1px solid #ccc;
+  background: #eee;
+  border: 1px solid #eee;
   list-style-type: none;
   padding: 0;
   margin: 0;
+  color: #222831;
 }
 
 .exercisesDropdownQuery li {
@@ -783,11 +750,26 @@ input[type="submit"]:hover {
 }
 
 .exercisesDropdownQuery li:hover {
-  background-color: #f2f2f2;
+  background-color: #222831;
+  color: #eee;
 }
 
 .exercisesDropdownWrapper {
   position: relative;
   display: inline-block;
   width: 100%;
+}
+
+.user-row-element img {
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.user-row {
+  background-color: #eee;
+  color: #222831;
+  box-shadow: #000 0 0 2px 0 ;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
 }

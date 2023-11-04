@@ -24,7 +24,7 @@
                 echo $day . " " . $month . " " . $year; 
                 ?>
             </p>
-            <button class="editAccountButton">Edit account</button>
+            <button class="editAccountButton centerbtn">Edit account</button>
         </div>
 
         <form action="/profile" method="post" id="edit_account" class="hidden">
@@ -103,7 +103,7 @@
             <p><span class="userProfileRowName">Height: </span><?php echo $userBio['height'] ?></p>
             <p><span class="userProfileRowName">Weight: </span><?php echo $userBio['weight'] ?></p>
             <p><span class="userProfileRowName">Calories goal: </span><?php echo $userBio['calories_goal'] ?></p>
-            <button class="editBioButton">Edit bio</button>
+            <button class="editBioButton centerbtn">Edit bio</button>
         </div>
 
         <form action="/profile" method="post" id="edit_bio" class="hidden">

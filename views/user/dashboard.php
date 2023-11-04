@@ -93,7 +93,7 @@
                             echo "<p><span class=\"userProfileRowName\">Calories goal: </span>" . $userBio['calories_goal'] . "</p>";
                         }
                     ?>
-                    <a href="/profile"><button class="editBioButton">Edit profile</button></a>
+                    <a href="/profile"><button class="editBioButton centerbtn">Edit profile</button></a>
                 </div>
             </div>
         
