@@ -20,6 +20,10 @@ body {
 	text-align: center;
   display: block;
 	padding-top: 1px;
+  background-image: url('../img/background-barbell.png'); /* Replace with your image path */
+  background-repeat: no-repeat;
+  background-position: calc(0% + 50px) calc(100% - 50px);
+  background-size: 200px auto;
 }
 
 #content, #top, #footer {
@@ -101,31 +105,42 @@ display: inline-block;
 .dropdown-content {
 display: none;
 position: absolute;
-background-color: #515558;
+background-color: #eee;
+color: #222831;
 padding: 10px 0;
 margin-top: 8px;
 z-index: 1;
 box-shadow: #404040 0 0 2px 0 ;
-min-width: 100%;
+min-width: 200px;
 text-align: center;
-left: -70px;
 box-shadow: rgba(84, 86, 87, 0.2) 0 0 10px 2px;
+top: 100%; /* Positioned just below the button */
+left: 50%; /* Positioned at the half width of the dropbtn */
+/* Translate the dropdown back by 50% of its own width */
+transform: translateX(-50%);
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
-color: rgb(255, 255, 255) !important;
+color: #222831 !important;
 text-decoration: none;
 display: block;
 width: 75px;
 height: 30px;
 line-height: 30px;
+width: 70%;
 }
 
 /* Change color of dropdown links on hover with animation*/
 .dropdown-content a:hover {
 background-color: #515558;
+color: #eee !important;
 transition: all 0.3s ease;
+}
+
+/* remove animation from dropdown content */
+.dropdown-content a:hover::after {
+  width: 0% !important; /* Expand the underline on hover */
 }
 
 .dropdown-content::before {
@@ -146,6 +161,10 @@ display: block;
 
 .userLink {
 color: #D65A31 !important;
+}
+
+.activeMainNav {
+border-bottom: 1px solid #eee;
 }
 /* end menu */
 
@@ -247,7 +266,7 @@ input, select, .custom-file-upload {
 	clear: both;
 }
 
-.textlink {
+.textlink, .textIcon {
   display: inline-block;
   margin: 0 5px;
 }
@@ -257,7 +276,7 @@ input, select, .custom-file-upload {
 }
 
 .message {
-  color: green;
+  color: #eee;
 }
 
 .hidden {
@@ -270,6 +289,13 @@ input, select, .custom-file-upload {
 
 .active {
   font-weight: bold;
+}
+
+.flex-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
 }
 /*end common classes*/
 
@@ -474,6 +500,12 @@ tbody button {
   width: calc(33.33% - 10px);
   float: left;
   min-height: 100%;
+}
+
+.one-third:nth-child(2) {
+  border-left: 1px dashed rgba(238, 238, 238, 0.2);
+  border-right: 1px dashed rgba(238, 238, 238, 0.2);
+
 }
 
 .fifty-fifty {
@@ -726,14 +758,7 @@ input[type="submit"]:hover {
   margin-right: 10px;
 }
 
-.fade-out {
-  animation: fadeOut 2s forwards; /* 2 seconds duration */
-}
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
 
 .exercisesDropdownQuery {
   background: #eee;
@@ -774,28 +799,16 @@ input[type="submit"]:hover {
   margin: 10px;
 }
 
-#categories ul {
-  text-align: left;
-  list-style-type: square;
+#categories table {
+  width: 60%;
+  padding: 20px;
 }
 
-#categories ul ul {
-  list-style-type: circle;
-  display: none;
-  overflow: hidden;
+#categories table th:nth-child(1) {
+  width: 4%;
 }
 
-#categories ul li {
-  margin: 10px;
-  font-weight: bold;
-  user-select: none;
-  cursor: pointer;
+#categories table th:nth-child(2) {
+  width: 40%;
 }
 
-#categories ul li ul li {
-  font-weight: normal;
-}
-
-#categories ul li a {
-  color: #eee;
-}

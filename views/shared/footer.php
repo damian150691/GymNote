@@ -2,7 +2,8 @@
     </div>
 
     
-    
+    <!-- Scripts -->
+    <script src="../js/scripts.js"></script>
     <?php 
     //check if the current page is the makenewplan page
         $isScriptLoaded = false;
@@ -41,6 +42,7 @@
         
         if ($isScriptLoaded) {
             echo '<script src="../js/jquery-3.2.1.min.js"></script>';
+        } else {
         }
 
     ?>

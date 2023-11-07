@@ -11,24 +11,31 @@
     ?>
 
     <div id="categories">
-        <ul>
-            <?php
-            foreach ($categories as $category) {
-                echo "<li class=\"category\">" . $category['category'];
-                
-                //display exercises from the category
-                echo "<ul class=\"exercises\">";
-                
-                foreach ($exercises[$category['id']] as $exercise) {
-                    echo "<li><a href=\"/exercise/" . $exercise['id'] . "\">" . $exercise['name'] . "</a></li>";
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name of exercise</th>
+                    <th>Category</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($categories as $category) {
+                    
+                    foreach ($exercises[$category['id']] as $exercise) {
+                        echo "<tr class=\"exercise-row\">";
+                        echo "<td>" . htmlspecialchars($exercise['id']) . "</td>";
+                        echo "<td><a href=\"/exercise/" . htmlspecialchars($exercise['id']) . "\">" . htmlspecialchars($exercise['name']) . "</a></td>";
+                        echo "<td>" . htmlspecialchars($category['category']) . "</td>";
+                        
+                        echo "</tr>";
+                    }
                 }
-                
-                echo "</ul>";
-
-                echo "</li>";
-            }
-            ?>
-        </ul>
+                ?>
+            </tbody>
+        </table>
     </div>
     
     
