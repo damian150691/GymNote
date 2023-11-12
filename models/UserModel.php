@@ -476,7 +476,7 @@ class UserModel {
     }
 
     public function getPlans ($db, $id) {
-        $sql = "SELECT plan_id, plan_name, date_created, user_id FROM mnp_plans WHERE user_id = ?";
+        $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id FROM mnp_plans WHERE user_id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -529,12 +529,32 @@ class UserModel {
             $stmt->bind_param(str_repeat('i', count($setIdArray)), ...$setIdArray);
             $stmt->execute();
         }
+    }
 
-
+    public function setActivePlan ($db, $userId, $planId) {
+        //update mnp_plans. Set is_active to 1 where user_id = $userId and plan_id = $planId
+        $sql = "UPDATE mnp_plans SET is_active = 1 WHERE user_id = ? AND plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $userId, $planId);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            //set all other user plans to is_active = 0
+            $sql = "UPDATE mnp_plans SET is_active = 0 WHERE user_id = ? AND plan_id != ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("ii", $userId, $planId);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function getPlanById ($db, $planId) {
-        $sql = "SELECT * FROM mnp_plans WHERE plan_id = ?";
+        $sql = "SELECT * FROM mnp_plans WHERE plan_id = ? LIMIT 1";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $planId);
         $stmt->execute();

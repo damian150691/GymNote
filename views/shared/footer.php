@@ -27,6 +27,9 @@
             'exercises' => function($url) {
                 return $url == 'exercises';
             },
+            'addtrainingsession' => function($url, $baseUrl) {
+                return $url == 'addtrainingsession' || strpos($baseUrl, 'addtrainingsession') !== false;
+            },
         
         ];
         

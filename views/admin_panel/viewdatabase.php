@@ -1,5 +1,5 @@
 <h3>mnp_plans table:</h3>
-<table id="mnp_plans" class ="dbview">
+<table id="mnp_plans" class ="dbview stripped">
     <thead>
         <tr>
             <th>plan_id</th>
@@ -25,7 +25,7 @@
 </table>
 
 <h3>mnp_days table:</h3>
-<table id="mnp_days" class ="dbview">
+<table id="mnp_days" class ="dbview stripped">
     <thead>
         <tr>
             <th>day_id</th>
@@ -49,7 +49,7 @@
 </table>
 
 <h3>mnp_sets table:</h3>
-<table id="mnp_sets" class ="dbview">
+<table id="mnp_sets" class ="dbview stripped">
     <thead>
         <tr>
             <th>set_id</th>
@@ -77,7 +77,7 @@
 </table>
 
 <h3>mnp_exercises table:</h3>
-<table id="mnp_exercises" class ="dbview">
+<table id="mnp_exercises" class ="dbview stripped">
     <thead>
         <tr>
             <th>exercise_id</th>

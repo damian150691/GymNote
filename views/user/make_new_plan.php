@@ -11,6 +11,7 @@
         ?>
             
         <form id="trainingForm">
+            <input type="text" name="planName" id="planName" placeholder="Plan Name" required>
             <div id="trainingDays">
             <!-- Here will be added the training days tables -->
             </div>

@@ -415,7 +415,7 @@ table th, table td {
 
 
 /* Style alternate row background colors */
-table tbody tr:nth-child(even) {
+.stripped tbody tr:nth-child(even) {
   background-color: #222831; 
 }
 
@@ -473,8 +473,10 @@ tbody button {
   position: relative;
   width: 95%;
   margin: 0 auto;
-  display: block;
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
 }
 
 .section {
@@ -493,7 +495,6 @@ tbody button {
   width: calc(66.66% - 10px); 
   float: left;
   min-height: 100%;
-  margin-right: 18px; 
 }
 
 .one-third {
@@ -603,6 +604,23 @@ tbody button {
   width: 100%;
 }
 
+.myPlansTable th:nth-child(1) {
+  width: 5%;
+}
+
+.myPlansTable th:nth-child(2) {
+  width: 5%;
+}
+
+.dashboardTable {
+  width: 100%;
+}
+
+.dashboardTable th:nth-child(1) {
+  width: 5%;
+}
+
+
 .profile-section {
   width: calc(33% - 80px);
   text-align: left;
@@ -689,6 +707,15 @@ input[type="submit"]:hover {
   margin: 0 auto;
   display: block;
 }
+
+.smallbtn {
+  width: 70px;
+  padding: 5px;
+  margin: 0 auto;
+  display: block;
+}
+
+
 
 .dashboardTable tbody tr:hover {
   background-color: #D65A31;
@@ -812,3 +839,56 @@ input[type="submit"]:hover {
   width: 40%;
 }
 
+#addTrainingSession {
+  width: 95%;
+}
+
+#addTrainingSession select {
+  width: 200px;
+}
+
+#addTrainingSession input {
+  height: 20px;
+}
+
+#addTrainingSession label {
+  display: inline-block;
+}
+
+.ATStrainingTable {
+  width: 100%;
+  border: 1px dashed #eee;
+  border-radius: 10px;
+}
+
+.ATStrainingTable th, .ATStrainingTable td {
+  padding: 5px;
+}
+
+.ATSsetRow {
+  background-color: #191d24;
+  color: orange;
+}
+
+.ATSexerciseHeader {
+  background-color: #222831;
+  color: #eee;
+}
+
+.ATSexerciseHeader:hover {
+  background-color: #D65A31;
+  cursor: pointer;
+}
+
+.ATSsetRow, .ATSexerciseHeader {
+  font-weight: bold;
+}
+
+.ATSinputRow {
+  border: 1px solid #eee;
+  font-size: 0.8em;
+}
+
+.recordTrainingCheckbox {
+  width: 20px;
+}

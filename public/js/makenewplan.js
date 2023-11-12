@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
             //change the text content into input fields with values
             tableRow.innerHTML = `
             <td class="table-row-id">${tableRowCount}</td>
-            <td><div class="exerciseDropdownWrapper"<input type="text" name="exerciseName[]" value="${exerciseName}"/></div></td>
+            <td><div class="exerciseDropdownWrapper"><input type="text" name="exerciseName[]" value="${exerciseName}"/></div></td>
             <td><input type="text" name="exerciseSets[]" value="${exerciseSets}"/></td>
             <td><input type="text" name="exerciseRepeats[]" value="${exerciseRepeats}"/></td>
             <td><input type="text" name="exerciseWeight[]" value="${exerciseWeight}"/></td>
@@ -654,6 +654,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //add id (MPNdayCount) to the table so that it can be found later
         newTable.id = `MNP${dayCount}`;
         newTable.classList.add("trainingTable");
+        newTable.classList.add("stripped");
         const tableHeader = document.createElement("thead");
         tableHeader.innerHTML = `
             <tr>
@@ -729,6 +730,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
 
             var allTables = document.querySelectorAll(".trainingTable");
+            console.log(allTables);
         
             var tableData = [];
 
@@ -793,7 +795,12 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 // Handle the response from the PHP script
                 console.log(data);
-
+                if (data.message) {
+                    alert('Plan saved successfully!');
+                    window.location.href = '/myplans';
+                } else {
+                    alert('Something went wrong!');
+                }
                 // If you want to display the response data on the page, you can do it here.
             })
             .catch(error => {
@@ -802,8 +809,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // redirecting user to /myplans 
             
-            window.location.replace("/myplans");
-            window.location.href = "/myplans";
+            
             
         });
     }

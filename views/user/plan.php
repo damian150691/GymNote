@@ -13,7 +13,7 @@
         foreach ($days as $day) {
             echo "<div class=\"trainingDay\">";
             echo "<h3>Day " . $day['day_name'] . "</h3>";
-            echo "<table id=\"MNP" . $day['day_name'] . "\" class=\"trainingTable\">";
+            echo "<table id=\"MNP" . $day['day_name'] . "\" class=\"trainingTable stripped\">";
             echo "<tbody>";
             //create thead with exercises names
             echo "<thead>";

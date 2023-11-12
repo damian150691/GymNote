@@ -21,8 +21,17 @@ class MyPlansController {
     }
 
     public function displayPlan () {
-        $titlePage = 'GymNote - View plan';
         $errors = array();
+        $userId = $_SESSION['user_id'];
+        if (!isset($_SESSION['user_id'])) {
+            array_push($errors, "You need to login first.");
+            $_SESSION['message'] = $errors;
+            header('Location: /login');
+            exit();
+        }
+
+        $titlePage = 'GymNote - View plan';
+        
         $userModel = new UserModel($this->db);
 
         $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
@@ -51,16 +60,54 @@ class MyPlansController {
     }
 
     public function deletePlan () {
-        $errors = array();
         
+        $errors = array();
+
+        $userId = $_SESSION['user_id'];
+        if (!isset($_SESSION['user_id'])) {
+
+            $_SESSION['message'] = "You need to login first.";
+            header('Location: /login');
+            exit();
+        }
+
         $userModel = new UserModel($this->db);
         
         //check if there is a intiger in the url
         $planId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
         //remove all non numeric characters
         $planId = preg_replace("/[^0-9]/", "", $planId);
-        $userId = $_SESSION['user_id'];
+        
         $userModel->deletePlan($this->db, $userId, $planId);
+        header('Location: /myplans');
+        exit();
+    }
+
+    public function handleSetActivePlan () {
+        $errors = array();
+
+        $userId = $_SESSION['user_id'];
+        if (!isset($_SESSION['user_id'])) {
+
+            $_SESSION['message'] = "You need to login first.";
+            header('Location: /login');
+            exit();
+        }
+
+        $userModel = new UserModel($this->db);
+        
+        //check if there is a intiger in the url
+        $planId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
+        //remove all non numeric characters
+        $planId = preg_replace("/[^0-9]/", "", $planId);
+        
+        $result = $userModel->setActivePlan($this->db, $userId, $planId);
+
+        if ($result) {
+            $_SESSION['message'] = "Active plan changed successfully.";
+        } else {
+            $_SESSION['message'] = "Something went wrong. Please try again.";
+        }
         header('Location: /myplans');
         exit();
     }
@@ -73,8 +120,7 @@ class MyPlansController {
         
 
         if (!isset($_SESSION['user_id'])) {
-            array_push($errors, "You need to login first.");
-            $_SESSION['message'] = $errors;
+            $_SESSION['message'] = "You need to login first.";
             header('Location: /login');
             exit();
         } 
@@ -83,7 +129,34 @@ class MyPlansController {
         $plans = array_reverse($plans);
         $plansCount = count($plans);
         $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
-        $createdBy = $user['username'];
+        //add new key to plans array - created_by
+
+        foreach ($plans as $key => $plan) {
+            $created_by = $userModel->getUserById($this->db, $plan['user_id']);
+
+            if (isset($created_by['first_name'])) {
+                $created_by['username'] = $created_by['first_name'] . " (" . $created_by['username'] . ")";
+            } 
+
+            $plans[$key]['created_by'] = $created_by['username'];
+        }
+
+        
+
+        if ($plansCount > 0) {
+            $activePlan = array();
+            foreach ($plans as $plan) {
+
+            if ($plan['is_active'] == 1) {
+                $activePlan = $plan;
+                //remove active plan from plans array
+                $plans = array_filter($plans, function ($p) use ($plan) {
+                        return $p !== $plan;
+                    });
+                }
+            }
+        }
+        
 
 
 

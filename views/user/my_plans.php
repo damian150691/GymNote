@@ -18,34 +18,57 @@
             
             ?>)
     </h2>
+
+    
    
     <div id="plans">
-        <table class="myPlansTable">
-            <tr>
-                <th>No</th>
-                <th>Plan Id</th>
-                <th>Plan Name</th>
-                <th>Date Created</th>
-                <th>Created By</th>
-                <th>Actions</th>
-            </tr>
-        <?php
-            $i = 0;
-            foreach ($plans as $plan) {
-                $i++;
-                echo "<tr>";
-                //echo column with number
-                echo "<td>" . $i . "</td>";
-                echo "<td>" . $plan['plan_id'] . "</td>";
-                echo "<td>" . $plan['plan_name'] . "</td>";
-                echo "<td>" . $plan['date_created'] . "</td>";
-                echo "<td>" . $createdBy . "</td>";
-                echo "<td><a href='/plan/" . $plan['plan_id'] . "'>View</a><a href='/deleteplan/" . $plan['plan_id'] . "'>Delete</a></td>";
-                echo "</tr>";
-            }
-        ?>
+        <table class="myPlansTable stripped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Id</th>
+                    <th>Plan Name</th>
+                    <th>Date Created</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6"><h3>Active plan:</h3></td>
+                </tr>
+                <tr class="activePlan">
+                    <?php
+                    $i = 1;
+                    echo "<td>" . $i . "</td>";
+                    echo "<td>#" . $activePlan['plan_id'] . "</td>";
+                    echo "<td>" . $activePlan['plan_name'] . "</td>";
+                    echo "<td>" . $activePlan['date_created'] . "</td>";
+                    echo "<td>" . $activePlan['created_by'] . "</td>";
+                    echo "<td><a href='/plan/" . $activePlan['plan_id'] . "'>View</a><a href='/deleteplan/" . $activePlan['plan_id'] . "'>Delete</a><a href='/addtrainingsession/" . $activePlan['plan_id'] . "'>Add training session</a></td>";
+                    ?>
+                </tr>
+                <tr>
+                    <td colspan="6"><h3>Other plans:</h3></td>
+                </tr>
+                <?php
+                    
+                    foreach ($plans as $plan) {
+                        $i++;
+                        echo "<tr>";
+                        //echo column with number
+                        echo "<td>" . $i . "</td>";
+                        echo "<td>#" . $plan['plan_id'] . "</td>";
+                        echo "<td>" . $plan['plan_name'] . "</td>";
+                        echo "<td>" . $plan['date_created'] . "</td>";
+                        echo "<td>" . $plan['created_by'] . "</td>";
+                        echo "<td><a href='/plan/" . $plan['plan_id'] . "'>View</a><a href='/deleteplan/" . $plan['plan_id'] . "'>Delete</a><a href='/setactiveplan/" . $plan['plan_id'] . "'>Set as active</a></td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>
         </table>
-        <button><a href='/makenewplan'>Make new plan</a></button>
+        <a href='/makenewplan'><button class="centerbtn">Make new plan</button></a>
     </div>
 
     

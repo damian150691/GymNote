@@ -19,9 +19,10 @@
                         $plans = array_slice($plans, 0, 5);
 
 
-                        echo "<table class=\"myPlansTable dashboardTable\">";
+                        echo "<table class=\"dashboardTable stripped\">";
                         echo "<thead>";
                         echo "<tr>";
+                        echo "<th>ID</th>";
                         echo "<th>Plan Name</th>";
                         echo "<th>Date Created</th>";
                         echo "<th>Created By</th>";
@@ -31,6 +32,7 @@
                         foreach ($plans as $plan) {
                             $link = "/plan/" . $plan['plan_id'];
                             echo "<tr onclick=\"window.location.href='$link'\" style=\"cursor:pointer\">";
+                            echo "<td>#" . $plan['plan_id'] . "</td>";
                             echo "<td>" . $plan['plan_name'] . "</td>";
                             echo "<td>" . $plan['date_created'] . "</td>";
                             echo "<td>" . $createdBy . "</td>";

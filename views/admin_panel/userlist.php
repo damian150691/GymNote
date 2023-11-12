@@ -1,5 +1,5 @@
 <div class="UserList">
-    <table id="adminUserList">
+    <table id="adminUserList" class="stripped">
         <thead>
             <tr>
                 <th>User ID</th>

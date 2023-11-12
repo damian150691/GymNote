@@ -34,12 +34,12 @@ class MakeNewPlanController {
                 $userModel = new UserModel($this->db);
                 $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
                 $userId = $user['id'];
-                $userModel->savePlan($this->db, $userId, $data);
+                $response = $userModel->savePlan($this->db, $userId, $data);
             
                 
                 $response = array(
-                    "message" => "Data received on the server",
-                    "data" => $data
+                    "message" => "Plan saved successfully.",
+                    "data" => $data,
                 );
 
                 // Set the response content type to JSON
