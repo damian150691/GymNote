@@ -2,11 +2,59 @@
     <?php require_once "../views/shared/logo.php"; ?>
     <?php require_once "../views/shared/navbar.php"; ?>
 </div>
-<div id="content">
+<div id="content" >
    
     <h2>
-        <?php echo $plan['plan_name'] . " (id=" . $plan['plan_id'] . ")"; ?>
+        <?php echo $plan['plan_name'] . " (#" . $plan['plan_id'] . ")"; ?>
     </h2>
+
+    <?php 
+        if ($plan['initial_weight'] != 0 || $plan['calories_goal'] != 0 || $plan['proteins_goal'] != 0 || $plan['carbs_goal'] != 0 || $plan['fats_goal'] != 0) {
+            echo "<div class=\"planDetails\">";
+                if ($plan['initial_weight'] != 0) {
+                    echo "<p>";
+                    echo "<span class=\"bold\">Initial weight: </span>";
+                    echo $plan['initial_weight']; 
+                    echo " kg";
+                    echo "</p>";
+                }
+
+                if ($plan['calories_goal'] != 0) {
+                    echo "<p>";
+                    echo "<span class=\"bold\">Calories goal: </span>";
+                    echo $plan['calories_goal']; 
+                    echo " kcal";
+                    echo "</p>";
+                }
+
+                if ($plan['proteins_goal'] != 0) {
+                    echo "<p>";
+                    echo "<span class=\"bold\">Proteins goal: </span>";
+                    echo $plan['proteins_goal']; 
+                    echo " g";
+                    echo "</p>";
+                }
+
+                if ($plan['carbs_goal'] != 0) {
+                    echo "<p>";
+                    echo "<span class=\"bold\">Carbohydrates goal: </span>";
+                    echo $plan['carbs_goal']; 
+                    echo " g";
+                    echo "</p>";
+                }
+
+                if ($plan['fats_goal'] != 0) {
+                    echo "<p>";
+                    echo "<span class=\"bold\">Fats goal: </span>";
+                    echo $plan['fats_goal']; 
+                    echo " g";
+                    echo "</p>";
+                }
+            echo "</div>";
+        }
+    ?>
+    
+
     <div id="trainingDays" class="viewplan">
         <?php 
         //make a loop to create tables for each day based on $days array

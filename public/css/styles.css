@@ -279,6 +279,19 @@ input, select, .custom-file-upload {
   color: #eee;
 }
 
+.bold {
+  font-weight: bold;
+
+}
+
+.small {
+  font-size: 0.8em;
+}
+
+.left {
+  text-align: left !important;
+}
+
 .hidden {
   display: none;
 }
@@ -295,7 +308,6 @@ input, select, .custom-file-upload {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-
 }
 /*end common classes*/
 
@@ -352,7 +364,30 @@ input, select, .custom-file-upload {
   width: 90%;
 }
 
+.MNPheaderInputs {
+  width: 300px;
+  margin-bottom: 20px;
+}
 
+.MNPheaderNutrientsInputs {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+#trainingForm label {
+  display: inline-block;
+  margin: 10px 0 0 0;
+}
+
+#trainingForm input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 10px auto 30px auto;
+}
+
+#trainingForm select {
+  width: 300px !important;
+}
 
 .savePlanBtn {
   margin-bottom: 100px;
@@ -448,12 +483,16 @@ tbody button {
   width: 100%;
   margin-bottom: 60px;
   box-shadow: 0 0 10px 5px rgb(0 0 0 / 4%);
-
 }
 
 .viewplan {
   width: 90%;
   margin: 0 auto;
+}
+
+.planDetails {
+  width: 100%
+
 }
 
 .adminTable form input[type="text"],
@@ -499,7 +538,6 @@ tbody button {
 
 .one-third {
   width: calc(33.33% - 10px);
-  float: left;
   min-height: 100%;
 }
 
@@ -511,7 +549,6 @@ tbody button {
 
 .fifty-fifty {
   width: calc(50%);
-  float: left;
   min-height: 200px;
 }
 

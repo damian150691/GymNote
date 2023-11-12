@@ -121,6 +121,13 @@ class FriendsController {
 
     public function index() {
         $titlePage = 'GymNote - Friends';
+
+        // Check if the user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /login");
+            exit();
+        }
+
         $userModel = new UserModel($this->db);
         $friends = $userModel->getFriendsList($this->db, $_SESSION['user_id']);
         $friendRequests = $userModel->getFriendRequests($this->db, $_SESSION['user_id']);

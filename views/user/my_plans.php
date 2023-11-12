@@ -34,26 +34,32 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="6"><h3>Active plan:</h3></td>
-                </tr>
-                <tr class="activePlan">
-                    <?php
-                    $i = 1;
-                    echo "<td>" . $i . "</td>";
-                    echo "<td>#" . $activePlan['plan_id'] . "</td>";
-                    echo "<td>" . $activePlan['plan_name'] . "</td>";
-                    echo "<td>" . $activePlan['date_created'] . "</td>";
-                    echo "<td>" . $activePlan['created_by'] . "</td>";
-                    echo "<td><a href='/plan/" . $activePlan['plan_id'] . "'>View</a><a href='/deleteplan/" . $activePlan['plan_id'] . "'>Delete</a><a href='/addtrainingsession/" . $activePlan['plan_id'] . "'>Add training session</a></td>";
+                
+                <?php
+                    if (isset($activePlan) && $activePlan != null) {
+                        $i = 1;
+                        echo "<tr>";
+                        echo "<td colspan=\"6\"><h3>Active plan:</h3></td>";
+                        echo "</tr>";
+
+
+                        echo "<tr class=\"activePlan\">";
+                        echo "<td>" . $i . "</td>";
+                        echo "<td>#" . $activePlan['plan_id'] . "</td>";
+                        echo "<td>" . $activePlan['plan_name'] . "</td>";
+                        echo "<td>" . $activePlan['date_created'] . "</td>";
+                        echo "<td>" . $activePlan['created_by'] . "</td>";
+                        echo "<td><a href='/plan/" . $activePlan['plan_id'] . "'>View</a><a href='/deleteplan/" . $activePlan['plan_id'] . "'>Delete</a><a href='/addtrainingsession/" . $activePlan['plan_id'] . "'>Add training session</a></td>";
+                        echo "</tr>";
+                    }
                     ?>
-                </tr>
                 <tr>
                     <td colspan="6"><h3>Other plans:</h3></td>
                 </tr>
                 <?php
-                    
+                        $i = 1;
                     foreach ($plans as $plan) {
+                        
                         $i++;
                         echo "<tr>";
                         //echo column with number

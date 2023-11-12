@@ -414,7 +414,7 @@ class UserModel {
     }
 
 
-    public function savePlan($db, $id, $data) {
+    public function savePlan($db, $id, $data, $userInputs) {
         $response = [];
         $lastInsertedPlanId = 0;
         $lastInsertedDayId = 0;
@@ -450,7 +450,7 @@ class UserModel {
                 // Insert into mnp_sets
                 $query = "INSERT INTO mnp_sets (day_id, set_name, rest, comments) VALUES (?, ?, ?, ?)";
                 $stmt = $db->prepare($query);
-                $stmt->bind_param("issi", $lastInsertedDayId, $set['setName'], $set['rest'], $set['comment']);
+                $stmt->bind_param("isss", $lastInsertedDayId, $set['setName'], $set['rest'], $set['comment']);
                 if ($stmt->execute()) {
                     $lastInsertedSetId = $db->insert_id;
                 } else {
@@ -470,10 +470,23 @@ class UserModel {
                 }
             }
         }
+
+        if ($userInputs != NULL) {
+            $sql = "UPDATE mnp_plans SET plan_name = ?, initial_weight = ?, calories_goal = ?, proteins_goal = ?, carbs_goal = ?, fats_goal = ?, created_for = ? WHERE user_id = ? AND plan_id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("sdiiiiiii", $userInputs['planName'], $userInputs['initialWeight'], $userInputs['caloriesGoal'], $userInputs['proteinsGoal'], $userInputs['carbsGoal'], $userInputs['fatsGoal'], $userInputs['makePlanFor'], $id, $lastInsertedPlanId);
+            $stmt->execute();
+            
+            if ($userInputs['isActive'] == "1") {
+                $this->setActivePlan($db, $id, $lastInsertedPlanId);
+            }
+        }
         
         $response['success'] = "Data inserted successfully!";
         return $response;
     }
+
+
 
     public function getPlans ($db, $id) {
         $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id FROM mnp_plans WHERE user_id = ?";

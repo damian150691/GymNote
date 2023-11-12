@@ -29,17 +29,31 @@ class MakeNewPlanController {
             $json = file_get_contents("php://input");
             $data = json_decode($json, true);
 
+            // Initialize an empty array for userInputs
+            $userInputs = [];
+
+            // Check if the last element of the array contains userInputs
+            $lastElementKey = array_key_last($data);
+            if (isset($data[$lastElementKey]['userInputs'])) {
+                // Extract userInputs and remove it from the data
+                $userInputs = $data[$lastElementKey]['userInputs'];
+                if (!isset($userInputs['planName'])) {
+                    $userInputs['planName'] = "MyPlan";
+                }
+                unset($data[$lastElementKey]);
+            }
+
             if ($data) {
-                
                 $userModel = new UserModel($this->db);
                 $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
                 $userId = $user['id'];
-                $response = $userModel->savePlan($this->db, $userId, $data);
-            
-                
+
+                // Save the plan
+                $response = $userModel->savePlan($this->db, $userId, $data, $userInputs);
+
                 $response = array(
                     "message" => "Plan saved successfully.",
-                    "data" => $data,
+                    "data" => $userInputs
                 );
 
                 // Set the response content type to JSON
@@ -71,7 +85,20 @@ class MakeNewPlanController {
             exit();
         } 
 
-        
+        $userModel = new UserModel($this->db);
+        $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
+        $friendsList = $userModel->getAcceptedFriends($this->db, $_SESSION['user_id']);
+
+        foreach ($friendsList as $key => $friendship) {
+            if ($friendship['user_id1'] == $user['id']) {
+                $friend = $userModel->getUserById($this->db, $friendship['user_id2']);
+                $friendsList[$key] = $friend;
+            } else {
+                $friend = $userModel->getUserById($this->db, $friendship['user_id1']);
+                $friendsList[$key] = $friend;
+            }
+           
+        }
 
 
 

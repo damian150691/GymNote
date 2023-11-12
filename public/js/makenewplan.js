@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
         addEventListenerToDeleteDayButtonMNP (deleteButton);
 
         const addSetButton = document.createElement("button");
-        addSetButton.textContent = "Add Set";
+        addSetButton.textContent = "Create Set";
         addSetButton.classList.add("addSetBtn");
 
         addEventListenerToAddSetButtonMNP (addSetButton, trainingDayDiv);
@@ -641,7 +641,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addExerciseButton (tableBody) {
         const addExerciseButton = document.createElement("button");
-        addExerciseButton.textContent = "Add Exercise";
+        addExerciseButton.textContent = "Create Exercise";
         addExerciseButton.classList.add("addExercise");
 
         addEventListenerToAddExerciseButtonMNP (addExerciseButton, tableBody);
@@ -775,8 +775,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 tableData.push(day);
             });
+
+            var planName = document.getElementById('planName').value.trim();
+            let initialWeight = document.getElementById('initialWeight').value.trim();
+            var makePlanFor = document.getElementById('makePlanFor').value.trim();
+            var caloriesGoal = document.getElementById('caloriesGoal').value.trim();
+            var proteinsGoal = document.getElementById('proteinsGoal').value.trim();
+            var carbsGoal = document.getElementById('carbsGoal').value.trim();
+            var fatsGoal = document.getElementById('fatsGoal').value.trim();
+            var isActive = document.getElementById('isActive').checked;
+
+            // Create an object for optional user inputs
+            var userInputs = {};
+
+            // Check and add each input to the userInputs object if provided
+            if (planName) {
+                userInputs.planName = planName;
+            }
+            if (initialWeight) {
+                userInputs.initialWeight = initialWeight;
+            }
+            if (makePlanFor) {
+                userInputs.makePlanFor = makePlanFor;
+            }
+            if (caloriesGoal) {
+                userInputs.caloriesGoal = caloriesGoal;
+            }
+            if (proteinsGoal) {
+                userInputs.proteinsGoal = proteinsGoal;
+            }
+            if (carbsGoal) {
+                userInputs.carbsGoal = carbsGoal;
+            }
+            if (fatsGoal) {
+                userInputs.fatsGoal = fatsGoal;
+            }
+            if (isActive) {
+                userInputs.isActive = 1;
+            } else {
+                userInputs.isActive = 0;
+            }
+
+            // Add the userInputs object to the tableData if it's not empty
+            if (Object.keys(userInputs).length !== 0) {
+                tableData.push({ userInputs: userInputs });
+            }
         
-    
             // Convert the tableData object to a JSON string
             
             var jsonData = JSON.stringify(tableData);
@@ -807,7 +851,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(error);
             });
 
-            // redirecting user to /myplans 
+            
             
             
             
