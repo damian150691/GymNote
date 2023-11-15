@@ -65,6 +65,7 @@
                 echo "<th>Weight</th>";
                 echo "<th>Rest</th>";
                 echo "<th>Comments</th>";
+                echo "<th>Record?</th>";
                 echo "<th>Actions</th>";
                 echo "</tr>";
                 echo "</thead>";
@@ -77,36 +78,41 @@
                     echo "<td>" . $set['rest'] . "</td>";
                     echo "<td>" . $set['comments'] . "</td>";
                     echo "<td></td>";
+                    echo "<td></td>";
                     echo "</tr>";
                     foreach ($exercises[$set['set_id']] as $exercise) {
                         echo "<tr class=\"ATSexerciseHeader \">";
-                        echo "<td>" . $exercise['lp'] . "</td>";
+                        echo "<td reference_id=\"" . $exercise['reference_id'] . "\">" . $exercise['lp'] . "</td>";
                         echo "<td>" . $exercise['exercise_name'] . "</td>";
                         echo "<td>" . $exercise['sets'] . "</td>";
                         echo "<td>" . $exercise['repetitions'] . "</td>";
                         echo "<td>" . $exercise['weight'] . "</td>";
                         echo "<td>" . $exercise['rest'] . "</td>";
                         echo "<td>" . $exercise['comments'] . "</td>";
-                        echo "<td><input type=\"checkbox\" name=\"record_trainng\" class=\"recordTrainingCheckbox\"><p>Record</p></td>";
+                        echo "<td><input type=\"checkbox\" name=\"record_trainng\" class=\"recordTrainingCheckbox\"></td>";
+                        echo "<td></td>";
                         echo "</tr>";
                         if ($exercise['sets'] >= 1) {
                             for ($i = 1; $i <= $exercise['sets']; $i++) {
-                                echo "<tr class=\"ATSinputRow e" . $exercise['lp'] . " hidden\">";
-                                echo "<td>(" . $exercise['lp'] . ")</td>";
+                                echo "<tr reference_id=\"" . $exercise['reference_id'] . "\" day_id=\"" . $day['day_id'] . "\" set_id=\"" . $set['set_id'] . "\" sub_id=\"" . $i . "\" class=\"ATSinputRow e" . $exercise['lp'] . " hidden\">";
+                                echo "<td reference_id=\"" . $exercise['reference_id'] . "\">(" . $exercise['lp'] . ")</td>";
                                 echo "<td></td>";
                                 echo "<td></td>";
                                 echo "<td><input type=\"number\" name=\"reps_input\"></td>";
-                                echo "<td><input type=\"text\" name=\"weight_input\"></td>";
+                                echo "<td><input type=\"number\" step=\"0.1\" name=\"weight_input\"></td>";
                                 echo "<td>" . $exercise['rest'] . "</td>";
                                 echo "<td><input type=\"text\" name=\"comments_input\"></td>";
-                                echo "<td><button class=\"smallbtn\">Delete</button></td>";
+                                echo "<td></td>";
+                                echo "<td><button class=\"smallbtn deleteButton\">Delete</button></td>";
                                 echo "</tr>";
                             }
                         } 
                     }
                 }
+                
                 echo "</tbody>";
                 echo "</table>";
+                echo "<button id=\"saveTrainingSession\">Save Training Session</button>";
                 echo "</div>";
             }
             echo "</div>";

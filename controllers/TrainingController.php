@@ -20,6 +20,53 @@ class TrainingController {
         }
     }
 
+    public function handleSaveTrainingSession () {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $json = file_get_contents("php://input");
+            $data = json_decode($json, true);
+
+            if ($data) {
+                $userModel = new UserModel($this->db);
+                $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
+                
+                $date = date('Y-m-d');
+                $todaysSession = $userModel->checkTrainingSessionByDate($this->db, $user['id'], $date);
+
+                if ($todaysSession == true) {
+                    $response = $userModel->updateTrainingSession($this->db, $user['id'], $data, $date);
+                    $response = array(
+                        "message" => "Training session updated successfully.",
+                        "data" => $data
+                    );
+
+                } else {
+                    $response = $userModel->saveTrainingSession($this->db, $user['id'], $data);
+                    $response = array(
+                        "message" => "Training session saved successfully.",
+                        "data" => $data
+                    );
+                }
+                
+                
+                
+                
+
+                header("Content-Type: application/json");
+
+                echo json_encode($response);
+
+            } else {
+                http_response_code(400); // Bad Request
+                echo json_encode(array("error" => "Invalid JSON data."));
+            }
+
+        } else {
+            http_response_code(405); // Method Not Allowed
+            echo json_encode(array("error" => "Invalid request method."));
+        }
+
+    }
+
     public function handleAddTrainingSession() {
         $errors = array();
         $userId = $_SESSION['user_id'];

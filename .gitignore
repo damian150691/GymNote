@@ -2,3 +2,4 @@
 _resources/
 # Ignore profile_pictures folder
 public/img/uploads/
+count_lines.py

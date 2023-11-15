@@ -216,6 +216,7 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s; /* Optional: for hover transition effect */
+  margin-bottom: 20px;
 }
 button a {
   color: #EEEEEE;
@@ -302,6 +303,10 @@ input, select, .custom-file-upload {
 
 .active {
   font-weight: bold;
+}
+
+.mg5 {
+  margin: 5px;
 }
 
 .flex-wrapper {
@@ -747,6 +752,13 @@ input[type="submit"]:hover {
 
 .smallbtn {
   width: 70px;
+  padding: 5px;
+  margin: 0 auto;
+  display: block;
+}
+
+.mediumbtn {
+  width: 200px;
   padding: 5px;
   margin: 0 auto;
   display: block;
