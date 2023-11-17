@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Get the current selected option
         const currentOption = this.options[this.selectedIndex];
+        
 
         // Check if the previous value was the placeholder and if the current option is not disabled
         if (previousValue !== '' && !currentOption.disabled) {
@@ -44,14 +45,31 @@ document.addEventListener("DOMContentLoaded", function () {
     function addRow(rowWithButton) {
         let exerciseName = rowWithButton.previousSibling.firstChild.textContent.trim()
         let referenceId = rowWithButton.previousSibling.firstChild.getAttribute('reference_id');
+        let setId = rowWithButton.previousSibling.firstChild.getAttribute('set_id');
+        let dayId = rowWithButton.previousSibling.firstChild.getAttribute('day_id');
+        let subId = 1;
+        var nextRow = rowWithButton.nextSibling;
+
+        while (nextRow != null && !nextRow.classList.contains('ATSexerciseHeader') && !nextRow.classList.contains('ATSsetRow')) {
+            subId++;
+            nextRow = nextRow.nextSibling;
+            console.log(subId);
+        }
+
         
 
         var newRow = document.createElement('tr');
+        newRow.setAttribute('reference_id', referenceId);
+        newRow.setAttribute('day_id', dayId);
+        newRow.setAttribute('set_id', setId);
+        newRow.setAttribute('sub_id', subId);
+
         newRow.classList.add('ATSinputRow');
         newRow.classList.add('e' + exerciseName);
+        
 
         // Helper function to create a td element with optional content and attribute
-        function createCell(content = '', attribute = null) {
+        function createCell(content = '', attributes = []) {
             var cell = document.createElement('td');
             if (content !== '') {
                 if (content instanceof HTMLElement) {
@@ -60,17 +78,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     cell.textContent = content;
                 }
             }
-            // Check if attribute is provided and set it
-            if (attribute !== null && typeof attribute === 'object') {
-                const attributeName = Object.keys(attribute)[0];
-                const attributeValue = attribute[attributeName];
-                cell.setAttribute(attributeName, attributeValue);
+            // Check if attributes are provided and set them
+            if (Array.isArray(attributes) && attributes.length > 0) {
+                attributes.forEach(attribute => {
+                    if (attribute !== null && typeof attribute === 'object') {
+                        const attributeName = Object.keys(attribute)[0];
+                        const attributeValue = attribute[attributeName];
+                        cell.setAttribute(attributeName, attributeValue);
+                    }
+                });
             }
             return cell;
         }
-
-        // Add cells to the row with attribute for the first cell
-        newRow.appendChild(createCell('(' + exerciseName + ')', { 'reference_id': referenceId }));
+        
+        // Add cells to the row with multiple attributes for the first cell
+        newRow.appendChild(createCell('(' + exerciseName + ')', [{ 'reference_id': referenceId } ]));
         newRow.appendChild(createCell()); // Empty cell
         newRow.appendChild(createCell()); // Empty cell
 
@@ -107,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // find next row with class ATSexerciseHeader and insert new row before it. If there is none insert it at the end of the table
         let currentRow = rowWithButton;
-        var nextRow = rowWithButton.nextSibling;
+        nextRow = rowWithButton.nextSibling;
 
         while (nextRow != null && !nextRow.classList.contains('ATSexerciseHeader') && !nextRow.classList.contains('ATSsetRow')) {
             currentRow = nextRow;
@@ -231,6 +253,48 @@ document.addEventListener("DOMContentLoaded", function () {
             dataToSave["plan_id: " + plan_id].push(rowData);
         });
 
+
+        
+        var date = document.getElementById('dateInput').value.trim();
+        let bodyWeight = document.getElementById('bodyWeight').value.trim();
+        var caloriesGoal = document.getElementById('caloriesGoal').value.trim();
+        var proteinsGoal = document.getElementById('proteinsGoal').value.trim();
+        var carbsGoal = document.getElementById('carbsGoal').value.trim();
+        var fatsGoal = document.getElementById('fatsGoal').value.trim();
+
+        
+
+        // Create an object for optional user inputs
+        var userInputs = {};
+
+        // Check and add each input to the userInputs object if provided
+        if (date) {
+            userInputs.date = date;
+        }
+        if (bodyWeight) {
+            userInputs.bodyWeight = bodyWeight;
+        }
+        if (caloriesGoal) {
+            userInputs.caloriesGoal = caloriesGoal;
+        }
+        if (proteinsGoal) {
+            userInputs.proteinsGoal = proteinsGoal;
+        }
+        if (carbsGoal) {
+            userInputs.carbsGoal = carbsGoal;
+        }
+        if (fatsGoal) {
+            userInputs.fatsGoal = fatsGoal;
+        }
+
+        
+
+        // Add the userInputs object to the tableData if it's not empty
+        if (Object.keys(userInputs).length !== 0) {
+            dataToSave.userInputs = userInputs;
+        }
+
+
         var jsonData = JSON.stringify(dataToSave);
                 console.log(jsonData);
 
@@ -269,39 +333,41 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the select element with a data attribute for the previous value
     var plansSelectElement = document.getElementById('choosePlans');
     plansSelectElement.setAttribute('data-previous', plansSelectElement.value);
-
+    
     // Add event listener to the select element
     plansSelectElement.addEventListener('change', redirectToPlan);
-
+    
     var daysSelectElement = document.getElementById('chooseDays');
-
-    //check how many options are in the select element
+    
+    // Function to handle showing and hiding divs based on the selected day
+    function handleDaySelection() {
+        var selectedDay = daysSelectElement.options[daysSelectElement.selectedIndex].text.split(" (")[0];
+        
+        var otherDays = document.querySelectorAll('.ATStrainingDay');
+    
+        // Loop through all divs with class ATStrainingDay
+        for (var i = 0; i < otherDays.length; i++) {
+            var dayId = otherDays[i].id;
+            if (dayId == selectedDay) {
+                otherDays[i].classList.remove('hidden');
+            } else {
+                otherDays[i].classList.add('hidden');
+            }
+        }
+    }
+    
+    // Check how many options are in the select element
     var optionsLength = daysSelectElement.options.length;
-
+    
     if (optionsLength == 1) {
         var trainingDayDiv = document.querySelector('.ATStrainingDay');
-        //remove hidden class
         trainingDayDiv.classList.remove('hidden');
     } else {
-        daysSelectElement.addEventListener('change', function () {
-            //get current name of the option
-            var selectedDay = this.options[this.selectedIndex].text;
-            
-            var otherDays = document.querySelectorAll('.ATStrainingDay');
-
-            //loop through all divs with class ATStrainingDay
-            for (var i = 0; i < otherDays.length; i++) {
-                //get the id of the div
-                var dayId = otherDays[i].id;
-                //if the id of the div is the same as the selected option, remove hidden class
-                if (dayId == selectedDay) {
-                    otherDays[i].classList.remove('hidden');
-                } else {
-                    //if the id of the div is not the same as the selected option, add hidden class
-                    otherDays[i].classList.add('hidden');
-                }
-            }
-        });
+        // Call the function on page load to handle the initially selected day
+        handleDaySelection();
+    
+        // Add event listener to handle changes
+        daysSelectElement.addEventListener('change', handleDaySelection);
     }
     /*--------- End of Redirect to Plan ---------*/
 

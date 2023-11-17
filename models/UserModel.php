@@ -413,7 +413,7 @@ class UserModel {
 
     }
 
-    public function saveTrainingSession ($db, $userId, $data) {
+    public function saveTrainingSession ($db, $userId, $data, $date) {
 
         $planIdKey = array_keys($data)[0]; // This gets the first key of the array, which should be your plan_id key
         $planId = str_replace("plan_id: ", "", $planIdKey); // Removing the prefix to get the actual planId
@@ -422,9 +422,11 @@ class UserModel {
         //convert planId to int
         $planId = (int)$planId;
 
-        $sql = "INSERT INTO training_sessions (user_id, plan_id) VALUES (?, ?)";
+        $dayId = $data[$planIdKey][0]['day_id'];
+
+        $sql = "INSERT INTO training_sessions (user_id, plan_id, session_date, current_body_weight, calories_goal, proteins_goal, carbs_goal, fats_goal, day_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param("ii", $userId, $planId);
+        $stmt->bind_param("iisdiiiii", $userId, $planId, $date, $data['userInputs']['bodyWeight'], $data['userInputs']['caloriesGoal'], $data['userInputs']['proteinsGoal'], $data['userInputs']['carbsGoal'], $data['userInputs']['fatsGoal'], $dayId);
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             $lastInsertedSessionId = $db->insert_id;
@@ -452,6 +454,8 @@ class UserModel {
         //convert planId to int
         $planId = (int)$planId;
 
+        $dayId = $data[$planIdKey][0]['day_id'];
+
         // Select the session ID that matches your criteria
         $sql = "SELECT session_id FROM training_sessions WHERE user_id = ? AND session_date = ?";
         $stmt = $db->prepare($sql);
@@ -468,48 +472,29 @@ class UserModel {
         }
 
         // Check if a session was found
-        if ($sessionId !== null) {
+        if ($sessionId != null) {
             // Perform the update
-            $sql = "UPDATE training_sessions SET plan_id = ? WHERE user_id = ? AND session_date = ?";
+            $sql = "UPDATE training_sessions SET plan_id = ?, current_body_weight = ?, calories_goal = ?, proteins_goal = ?, carbs_goal = ?, fats_goal = ?, day_id = ? WHERE user_id = ? AND session_date = ?";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param("iis", $planId, $userId, $date);
+            $stmt->bind_param("idiiiiiis", $planId, $data['userInputs']['bodyWeight'], $data['userInputs']['caloriesGoal'], $data['userInputs']['proteinsGoal'], $data['userInputs']['carbsGoal'], $data['userInputs']['fatsGoal'], $dayId, $userId, $date,);
             $stmt->execute();
 
         } else {
             return false; // No session found with the given criteria
         }
 
-
-        
         // Extracting the data associated with this planId
         $trainingData = $data[$planIdKey];
 
         foreach ($trainingData as $row) {
 
-            /*
-
-            if ($doesExist) {
-                // update training_sessions_exercises
-                $sql = "UPDATE training_session_exercises SET reps = ?, weight = ?, comments = ? WHERE session_id = ? AND exercise_id = ? AND set_id = ? AND sub_id = ?";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("ddssii", $row['reps'], $row['weight'], $row['comments'], $sessionId, $row['reference_id'], $row['set_id'], $row['sub_id']);
-                $stmt->execute();  
-            } else {
-                // Insert into training_sessions_exercises
-                $sql = "INSERT INTO training_session_exercises (session_id, exercise_id, reps, weight, lp, comments, set_id, sub_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("iiidssii", $sessionId, $row['reference_id'], $row['reps'], $row['weight'], $row['lp'], $row['comments'], $row['set_id'], $row['sub_id']);
-                $stmt->execute();  
-            }
-            */
-
             $doesExist = $this->checkTrainingSessionExercise ($db, $sessionId, $row['reference_id'], $row['set_id'], $row['sub_id']);
 
             if ($doesExist) {
                 // Insert into training_sessions_exercises
-                $sql = "UPDATE training_session_exercises SET reps = ?, weight = ?, comments = ? WHERE session_id = ? AND exercise_id = ? AND set_id = ? AND sub_id = ?";
+                $sql = "UPDATE training_session_exercises SET reps = ?, weight = ?, comments = ? WHERE session_id = ? AND exercise_id = ? AND set_id = ? AND sub_id = ? AND lp = ?";
                 $stmt = $db->prepare($sql);
-                $stmt->bind_param("idssiii", $row['reps'], $row['weight'], $row['comments'], $sessionId, $row['reference_id'], $row['set_id'], $row['sub_id']);
+                $stmt->bind_param("idsiiiis", $row['reps'], $row['weight'], $row['comments'], $sessionId, $row['reference_id'], $row['set_id'], $row['sub_id'], $row['lp']);
                 $stmt->execute();   
             } else {
                 // Insert into training_sessions_exercises
@@ -555,6 +540,56 @@ class UserModel {
         }
     }
 
+    public function getTrainingSessionsByUserId ($db, $userId) {
+        $sql = "SELECT * FROM training_sessions WHERE user_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $trainingSessions = $result->fetch_all(MYSQLI_ASSOC);
+        return $trainingSessions;
+    }
+
+    public function getPreviousTrainingSession($db, $sessionId, $userId, $planId) {
+        $sql = "SELECT * FROM training_sessions WHERE session_id < ? AND user_id = ? AND plan_id = ? ORDER BY session_id DESC LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("iii", $sessionId, $userId, $planId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $previousSession = $result->fetch_assoc();
+        return $previousSession;
+    }
+
+    public function getNextTrainingSession ($db, $sessionId, $userId, $planId) {
+        $sql = "SELECT * FROM training_sessions WHERE session_id > ? AND user_id = ? AND plan_id = ? ORDER BY session_id ASC LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("iii", $sessionId, $userId, $planId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $nextSession = $result->fetch_assoc();
+        return $nextSession;
+    }
+
+    public function getTrainingSessionById ($db, $sessionId, $userId) {
+        $sql = "SELECT * FROM training_sessions WHERE session_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $sessionId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $trainingSession = $result->fetch_assoc();
+        return $trainingSession;
+    }
+
+    public function getExercisesByTrainingSessionId ($db, $sessionId) {
+        $sql = "SELECT * FROM training_session_exercises WHERE session_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $sessionId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exercises = $result->fetch_all(MYSQLI_ASSOC);
+        return $exercises;
+    }
+
 
     public function savePlan($db, $id, $data, $userInputs) {
         $response = [];
@@ -580,9 +615,9 @@ class UserModel {
         // Iterate through the data and insert into other tables
         foreach ($data as $day) {
             // Insert into mnp_days
-            $query = "INSERT INTO mnp_days (plan_id, day_name) VALUES (?, ?)";
+            $query = "INSERT INTO mnp_days (plan_id, day_name, day_of_the_week) VALUES (?, ?, ?)";
             $stmt = $db->prepare($query);
-            $stmt->bind_param("is", $lastInsertedPlanId, $day['dayNumber']);
+            $stmt->bind_param("iss", $lastInsertedPlanId, $day['dayNumber'], $day['dayOfTheWeek']);
             if ($stmt->execute()) {
                 $lastInsertedDayId = $db->insert_id;
             } else {
@@ -673,7 +708,15 @@ class UserModel {
         return $response;
     }
 
-
+    public function getPlanByPlanId ($db, $planId) {
+        $sql = "SELECT * FROM mnp_plans WHERE plan_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $planId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $plan = $result->fetch_assoc();
+        return $plan;
+    }
 
     public function getPlans ($db, $id) {
         $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id FROM mnp_plans WHERE user_id = ?";
@@ -773,6 +816,26 @@ class UserModel {
         return $days;
     }
 
+    public function getDayOfTheWeekByDayId ($db, $dayId) {
+        $sql = "SELECT day_of_the_week FROM mnp_days WHERE day_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $dayId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dayOfTheWeek = $result->fetch_assoc();
+        return $dayOfTheWeek;
+    }
+
+    public function getDayNameByDayId ($db, $dayId) {
+        $sql = "SELECT day_name FROM mnp_days WHERE day_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $dayId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dayName = $result->fetch_assoc();
+        return $dayName;
+    }
+
     public function getSetsByDayId ($db, $dayId) {
         $sql = "SELECT * FROM mnp_sets WHERE day_id = ?";
         $stmt = $db->prepare($sql);
@@ -792,6 +855,8 @@ class UserModel {
         $exercises = $result->fetch_all(MYSQLI_ASSOC);
         return $exercises;
     }
+
+
 
     public function createNotification ($db, $notification) {
         $sql = "INSERT INTO notifications (user_id, content, type, related_object_id) VALUES (?, ?, ?, ?)";
@@ -1083,7 +1148,16 @@ class UserModel {
             ];
         }, $categories, array_keys($categories));
         return $categories;
+    }
 
+    public function getExerciseNameByExerciseId ($db, $exerciseId) {
+        $sql = "SELECT name FROM list_of_exercises WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("i", $exerciseId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exerciseName = $result->fetch_assoc();
+        return $exerciseName;
     }
 }
 

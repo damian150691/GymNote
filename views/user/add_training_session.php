@@ -10,6 +10,18 @@
     </h2>
     
     <form id="addTrainingSession">
+
+        <label for="dateInput">Date: </label>
+        <input type="date" name="dateInput" id="dateInput" class="MNPheaderInputs"
+            <?php
+                // Set the default value to today's date
+                echo 'value="' . date("Y-m-d") . '"';
+
+                // Limit the maximum date to today to prevent future dates
+                echo ' max="' . date("Y-m-d") . '"';
+            ?>
+        >
+
         <label for="choosePlans">Add training session to:</label>
         <select id="choosePlans" name="choosePlans" class="form-control" required>
             <?php
@@ -27,30 +39,139 @@
         <div class="spcr"></div>
         <?php
 
-            if (isset($chosenPlan)) {
-                $daysCount = count($days);
-                echo "<select id=\"chooseDays\" name=\"chooseDays\" class=\"form-control\" required>";
-                if ($daysCount > 1) {
-                    echo "<option value='' disabled selected>Please select a day</option>";
-                    foreach ($days as $day) {
-                        echo "<option value='" . $day['day_id'] . "'>Day " . $day['day_name'] . "</option>";
+        if (isset($chosenPlan)) {
+            $daysCount = count($days);
+            echo "<select id=\"chooseDays\" name=\"chooseDays\" class=\"form-control\" required>";
+
+            // Map day names to numeric values, using lowercase for consistency
+            $dayMap = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
+
+            // Getting the current day of the week as a number (1 for Monday, 7 for Sunday)
+            $currentDayOfWeek = date('N');
+
+            // Default selected day
+            $selectedDayId = null;
+            $closestDifference = PHP_INT_MAX;
+
+            foreach ($days as $day) {
+                // Convert the day name to a number, making sure to use lowercase for comparison
+                $dayOfWeek = isset($dayMap[strtolower($day['day_of_the_week'])]) ? $dayMap[strtolower($day['day_of_the_week'])] : null;
+
+                if ($dayOfWeek) {
+                    // Calculate the difference in days
+                    $difference = abs($dayOfWeek - $currentDayOfWeek);
+
+                    // Check if this day is closer to the current day
+                    if ($difference < $closestDifference) {
+                        $closestDifference = $difference;
+                        $selectedDayId = $day['day_id'];
                     }
                 }
-                else {
-                    echo "<option value='" . $days[0]['day_id'] . "' selected>Day " . $days[0]['day_name'] . "</option>";
-                }
-                
-                
-                
-                
-                echo "</select>";
-                echo "<div class=\"spcr\"></div>";
             }
 
-            echo "<a href=\"editplan/". $defaultPlan['plan_id'] ."\"><button>Edit original Plan</button></a>";
+            if ($daysCount > 1) {
+                echo "<option value='' disabled" . (!$selectedDayId ? " selected" : "") . ">Please select a day</option>";
+                foreach ($days as $day) {
+                    $selected = ($day['day_id'] == $selectedDayId) ? " selected" : "";
             
-            echo "<div id=\"days\">";
+                    // Prepare the day of the week display
+                    $dayOfWeekDisplay = "";
+                    if (!empty($day['day_of_the_week']) && $day['day_of_the_week'] != '0') {
+                        $dayOfWeekDisplay = " (" . $day['day_of_the_week'] . ")";
+                    }
+            
+                    echo "<option value='" . $day['day_id'] . "'" . $selected . ">Day " . $day['day_name'] . $dayOfWeekDisplay . "</option>";
+                }
+            } else {
+                echo "<option value='" . $days[0]['day_id'] . "' selected>Day " . $days[0]['day_name'] . "</option>";
+            }
+
+            echo "</select>";
+            echo "<div class=\"spcr\"></div>";
+        }
+
+
+
+
+
+        echo "<a href=\"editplan/". $chosenPlan['plan_id'] ."\"><button>Edit original Plan</button></a>";
+        
+        echo "<div id=\"days\">";
+
+        ?>
+            <div class="flex-wrapper">
+                <div class ="sessionOptions">
+
+                    <label for="bodyWeight">Body weight <span class="small">(optional):</span></label>
+                    <input type="number" name="bodyWeight" id="bodyWeight" class="MNPheaderInputs" placeholder="kg" min="0" step="0.1"
+                    <?php
+                        if ($chosenPlan['initial_weight'] != NULL) {
+                            echo 'value="' . $chosenPlan['initial_weight'] . '"';
+                        }
+                    ?>
+                    >
+                
+                
+                    <label for="caloriesGoal">Calories goal <span class="small">(optional):</span></label>
+                    <input type="number" name="caloriesGoal" id="caloriesGoal" class="MNPheaderInputs" placeholder="kcal"
+                    <?php
+                        if ($chosenPlan['calories_goal'] != NULL) {
+                            echo 'value="' . $chosenPlan['calories_goal'] . '"';
+                        }
+                    ?>
+                    >
+
+                    
+
+                    <div class="spcr"></div>   
+
+                    <div class="flex-wrapper">
+                        <div class="one-third">
+                            <label for="proteinsGoal">Proteins goal <span class="small">(optional):</span></label>
+                            <input type="number" name="proteinsGoal" id="proteinsGoal" class="MNPheaderNutrientsInputs" placeholder="g"
+                            <?php
+                                if ($chosenPlan['proteins_goal'] != NULL) {
+                                    echo 'value="' . $chosenPlan['proteins_goal'] . '"';
+                                }
+                            ?>
+                            >
+                        </div>
+
+                        <div class="one-third">
+                            <label for="carbsGoal">Carbohydrates goal <span class="small">(optional):</span></label>
+                            <input type="number" name="carbsGoal" id="carbsGoal" class="MNPheaderNutrientsInputs" placeholder="g"
+                            <?php
+                                if ($chosenPlan['carbs_goal'] != NULL) {
+                                    echo 'value="' . $chosenPlan['carbs_goal'] . '"';
+                                }
+                            ?>
+                            >
+                        </div>
+
+                        <div class="one-third">
+                            <label for="fatsGoal">Fats goal <span class="small">(optional):</span></label>
+                            <input type="number" name="fatsGoal" id="fatsGoal" class="MNPheaderNutrientsInputs" placeholder="g"
+                            <?php
+                                if ($chosenPlan['fats_goal'] != NULL) {
+                                    echo 'value="' . $chosenPlan['fats_goal'] . '"';
+                                }
+                            ?>
+                            >
+                        </div>
+                    </div>
+
+                    
+                </div>
+                
+            </div>
+        <?php
             foreach ($days as $day) {
+
+
+                
+                
+
+
                 echo "<div id=\"Day " . $day['day_name'] . "\" class=\"ATStrainingDay hidden\">";
                 echo "<h3>Day " . $day['day_name'] . "</h3>";
                 echo "<table id=\"ATS" . $day['day_name'] . "\" class=\"ATStrainingTable\">";
@@ -82,7 +203,7 @@
                     echo "</tr>";
                     foreach ($exercises[$set['set_id']] as $exercise) {
                         echo "<tr class=\"ATSexerciseHeader \">";
-                        echo "<td reference_id=\"" . $exercise['reference_id'] . "\">" . $exercise['lp'] . "</td>";
+                        echo "<td reference_id=\"" . $exercise['reference_id'] . "\" day_id=\"" . $day['day_id'] . "\" set_id=\"" . $set['set_id'] . "\">" . $exercise['lp'] . "</td>";
                         echo "<td>" . $exercise['exercise_name'] . "</td>";
                         echo "<td>" . $exercise['sets'] . "</td>";
                         echo "<td>" . $exercise['repetitions'] . "</td>";
@@ -100,7 +221,7 @@
                                 echo "<td></td>";
                                 echo "<td><input type=\"number\" name=\"reps_input\"></td>";
                                 echo "<td><input type=\"number\" step=\"0.1\" name=\"weight_input\"></td>";
-                                echo "<td>" . $exercise['rest'] . "</td>";
+                                echo "<td></td>";
                                 echo "<td><input type=\"text\" name=\"comments_input\"></td>";
                                 echo "<td></td>";
                                 echo "<td><button class=\"smallbtn deleteButton\">Delete</button></td>";

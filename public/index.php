@@ -47,9 +47,10 @@ $routes = [
     '/deleteplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'deletePlan', 'params' => ['db' => $db]],
     '/setactiveplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'handleSetActivePlan', 'params' => ['db' => $db]],
 
-    '/addtrainingsession' => ['controller' => 'TrainingController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/trainings' => ['controller' => 'TrainingController', 'action' => 'index', 'params' => ['db' => $db]],
     '/addtrainingsession/(\d+)' => ['controller' => 'TrainingController', 'action' => 'handleAddTrainingSession', 'params' => ['db' => $db]],
     '/savetrainingsession' => ['controller' => 'TrainingController', 'action' => 'handleSaveTrainingSession', 'params' => ['db' => $db]],
+    '/trainingsession/(\d+)' => ['controller' => 'TrainingController', 'action' => 'displayTrainingSession', 'params' => ['db' => $db]],
 
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],

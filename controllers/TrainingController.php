@@ -20,6 +20,24 @@ class TrainingController {
         }
     }
 
+    private function sortExercisesByLP($exercises) {
+        usort($exercises, function ($a, $b) {
+            // Split 'lp' into numeric and letter parts
+            preg_match('/(\d+)([a-zA-Z]*)/', $a['lp'], $matchesA);
+            preg_match('/(\d+)([a-zA-Z]*)/', $b['lp'], $matchesB);
+    
+            // Compare the numeric parts
+            if ($matchesA[1] == $matchesB[1]) {
+                // If numeric parts are equal, compare the letter parts
+                return strcmp($matchesA[2], $matchesB[2]);
+            }
+    
+            return $matchesA[1] - $matchesB[1];
+        });
+    
+        return $exercises;
+    }
+
     public function handleSaveTrainingSession () {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $json = file_get_contents("php://input");
@@ -29,10 +47,11 @@ class TrainingController {
                 $userModel = new UserModel($this->db);
                 $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
                 
-                $date = date('Y-m-d');
-                $todaysSession = $userModel->checkTrainingSessionByDate($this->db, $user['id'], $date);
+                //get date that is under data->userInputs->date
+                $date = $data['userInputs']['date'];
+                $doesSessionExist = $userModel->checkTrainingSessionByDate($this->db, $user['id'], $date);
 
-                if ($todaysSession == true) {
+                if ($doesSessionExist == true) {
                     $response = $userModel->updateTrainingSession($this->db, $user['id'], $data, $date);
                     $response = array(
                         "message" => "Training session updated successfully.",
@@ -40,7 +59,7 @@ class TrainingController {
                     );
 
                 } else {
-                    $response = $userModel->saveTrainingSession($this->db, $user['id'], $data);
+                    $response = $userModel->saveTrainingSession($this->db, $user['id'], $data, $date);
                     $response = array(
                         "message" => "Training session saved successfully.",
                         "data" => $data
@@ -68,6 +87,7 @@ class TrainingController {
     }
 
     public function handleAddTrainingSession() {
+        $titlePage = 'GymNote - Add training session';
         $errors = array();
         $userId = $_SESSION['user_id'];
 
@@ -85,25 +105,6 @@ class TrainingController {
         $userModel = new UserModel($this->db);
         $defaultPlan = $userModel->getPlanById($this->db, $planId);
 
-        $this->index($defaultPlan);
-
-
-    }
-
-
-    public function index($defaultPlan = null) {
-        $titlePage = 'GymNote - Add training session';
-
-        $errors = array();
-        $userId = $_SESSION['user_id'];
-
-        if (!isset($_SESSION['user_id'])) {
-            array_push($errors, "You need to login first.");
-            $_SESSION['message'] = $errors;
-            header('Location: /login');
-            exit();
-        }
-        $userModel = new UserModel($this->db);
         $plans = $userModel->getPlans($this->db, $userId);
 
         if ($defaultPlan != null) {
@@ -121,15 +122,112 @@ class TrainingController {
                     $exercises[$s['set_id']] = $userModel->getExercisesBySetId($this->db, $s['set_id']);
                 }
             }
-
-
-
-
-            
+           
         }
 
         require_once '../views/shared/head.php';
         require_once '../views/user/add_training_session.php';
+        require_once '../views/shared/footer.php';
+    }
+
+
+    public function displayTrainingSession () {
+        
+        $errors = array();
+        $userId = $_SESSION['user_id'];
+
+        if (!isset($_SESSION['user_id'])) {
+            array_push($errors, "You need to login first.");
+            $_SESSION['message'] = $errors;
+            header('Location: /login');
+            exit();
+        }
+
+        $sessionId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
+        $sessionId = preg_replace("/[^0-9]/", "", $sessionId);
+
+        $titlePage = 'GymNote - Training session #'.$sessionId.'';
+
+        $userModel = new UserModel($this->db);
+
+        $trainingSession = $userModel->getTrainingSessionById($this->db, $sessionId, $userId);
+
+        $plan = $userModel->getPlanByPlanId($this->db, $trainingSession['plan_id']);
+        $trainingSession['plan_name'] = $plan['plan_name'] ?? 'MyPlan';
+
+        $trainingSessionExercises = $userModel->getExercisesByTrainingSessionId($this->db, $sessionId);
+        // Sort all exercises
+        $sortedExercises = $this->sortExercisesByLP($trainingSessionExercises);
+        foreach ($sortedExercises as &$exercise) {
+            $exerciseName = $userModel->getExerciseNameByExerciseId($this->db, $exercise['exercise_id']);
+            if ($exerciseName) {
+                $exercise['name'] = $exerciseName['name'];
+            }
+        }
+        unset($exercise);
+
+        $dayName = $userModel->getDayNameByDayId($this->db, $trainingSession['day_id'])['day_name'];
+        
+        $dayOfTheWeek = $userModel->getDayOfTheWeekByDayId($this->db, $trainingSession['day_id'])['day_of_the_week'];
+
+        $sessionDayOfTheWeek = date('l', strtotime($trainingSession['session_date']));
+
+
+        $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id']);
+        if ($previousSession != NULL) {
+            $previousSessionExercises = $userModel->getExercisesByTrainingSessionId($this->db, $previousSession['session_id']);
+        }
+
+        $nextSession = $userModel->getNextTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id']);
+        
+        
+
+        require_once '../views/shared/head.php';
+        require_once '../views/user/training_session.php';
+        require_once '../views/shared/footer.php';
+    }
+
+
+    public function index() {
+        $titlePage = 'GymNote - Add training session';
+
+        $errors = array();
+        $userId = $_SESSION['user_id'];
+
+        if (!isset($_SESSION['user_id'])) {
+            array_push($errors, "You need to login first.");
+            $_SESSION['message'] = $errors;
+            header('Location: /login');
+            exit();
+        }
+        $userModel = new UserModel($this->db);
+
+        $trainingSessions = $userModel->getTrainingSessionsByUserId($this->db, $userId);
+        
+        foreach ($trainingSessions as &$trainingSession) {
+            $plan = $userModel->getPlanByPlanId($this->db, $trainingSession['plan_id']);
+            $trainingSession['plan_name'] = $plan['plan_name'] ?? 'MyPlan';
+        
+            $trainingSessionExercises = $userModel->getExercisesByTrainingSessionId($this->db, $trainingSession['session_id']);
+            // Sort all exercises
+            $sortedExercises = $this->sortExercisesByLP($trainingSessionExercises);
+            $trainingSession['exercises'] = $sortedExercises;
+        
+            // Extract unique exercises
+            $uniqueExercises = [];
+            foreach ($sortedExercises as $exercise) {
+                $uniqueExercises[$exercise['exercise_id']] = $exercise;
+            }
+        
+            // Assign the unique (and already sorted) exercises back to the training session
+            $trainingSession['unique_exercises'] = array_values($uniqueExercises);
+        }
+        unset($trainingSession);
+
+        
+
+        require_once '../views/shared/head.php';
+        require_once '../views/user/trainings.php';
         require_once '../views/shared/footer.php';
     }
 

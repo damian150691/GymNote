@@ -150,9 +150,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function createHeaderMNP (dayCount, trainingDaysDiv) {
         const trainingDayDiv = trainingDaysDiv.closest(".trainingDay");
+
+        const dayOfWeek = document.createElement("select");
+        dayOfWeek.name = "dayOfWeek[]";
+        dayOfWeek.classList.add("dayOfWeek");
+        const days = ["Asign to a day of the week(optional)", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        days.forEach(day => {
+            const option = document.createElement("option");
+            option.textContent = day;
+
+            if (day == "Asign to a day of the week(optional)") {
+                option.value = "0";
+            } else {
+                option.value = day.toLowerCase();
+            }
+            dayOfWeek.appendChild(option);
+            if (day == "Asign to a day of the week(optional)") {
+                option.selected = true;
+            }
+        });
         
         const dayHeader = document.createElement("h3");
         dayHeader.textContent = `Day ${dayCount}`;
+
+
 
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete Day";
@@ -166,7 +187,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         addEventListenerToAddSetButtonMNP (addSetButton, trainingDayDiv);
 
+        
+
+        const spcrDiv = document.createElement("div");
+        spcrDiv.classList.add("spcr");
+
+
+
+
         trainingDaysDiv.appendChild(dayHeader);
+        trainingDaysDiv.appendChild(dayOfWeek);
+        trainingDayDiv.appendChild(spcrDiv);
         trainingDaysDiv.appendChild(addSetButton);
         trainingDaysDiv.appendChild(deleteButton);
     }
@@ -735,8 +766,11 @@ document.addEventListener("DOMContentLoaded", function () {
             var tableData = [];
 
             allTables.forEach((table, index) => {
+                var dayOfTheWeek = table.closest('.trainingDay').querySelector('.dayOfWeek').value;
+                console.log(dayOfTheWeek);
                 var day = {
                     dayNumber: index + 1,
+                    dayOfTheWeek: dayOfTheWeek,
                     sets: []
                 };
                 
@@ -841,7 +875,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log(data);
                 if (data.message) {
                     alert('Plan saved successfully!');
-                    window.location.href = '/myplans';
+                    //window.location.href = '/myplans';
                 } else {
                     alert('Something went wrong!');
                 }

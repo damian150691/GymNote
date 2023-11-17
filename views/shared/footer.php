@@ -30,6 +30,9 @@
             'addtrainingsession' => function($url, $baseUrl) {
                 return $url == 'addtrainingsession' || strpos($baseUrl, 'addtrainingsession') !== false;
             },
+            'trainingsession' => function($url, $baseUrl) {
+                return $url == 'trainingsession' || strpos($baseUrl, 'trainingsession') !== false;
+            },
         
         ];
         
