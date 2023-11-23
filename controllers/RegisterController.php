@@ -81,10 +81,10 @@ class RegisterController {
                 $token = $user['token'];
                 $to = $email;
                 $subject = "GymNote - Verify your email";
-                $message = "Please click on the link below to verify your email address: \n\n http://localhost:8080/verify?token=" . $token;
-                $headers = "From: damian.miela@gmail.com";
+                $message = "Please click on the link below to verify your email address: \n\n http://damian.sadycelmerow.pl/verify?token=" . $token;
 
-                if ($userModel->sendEmail($to, $subject, $message, $headers)) {
+
+                if ($userModel->sendEmail($to, $subject, $message)) {
                     
                     
 
@@ -92,12 +92,14 @@ class RegisterController {
                     header('Location: /login');
                     exit;
                 } else {
-                    return false;
+                    array_push($errors, "Something went wrong with sending email. Please try again.");
+                    return $errors;
                 }
 
                 
             } else {
-                return false;
+                array_push($errors, "Something went wrong. Please try again.");
+                return $errors;
             }
         } else {
             

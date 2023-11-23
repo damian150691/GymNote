@@ -14,8 +14,11 @@
             $previousSessionDayOfTheWeek = date('l', strtotime($previousSessionDate));
             echo "<a href=\"/trainingsession/" . $previousSession['session_id'] . "\"><<<</a>";
         }
+
+        echo $whichNo;
         ?>
-        Training session <span class="small">#<?php echo $sessionId; ?> (<?php echo $trainingSession['session_date'] . " - " . $sessionDayOfTheWeek; ?>)</span>
+
+        training session of Day <?php echo $dayName; ?> from<a href="/plan/<?php echo $plan['plan_id']; ?>"><?php echo $plan['plan_name']; ?></a>
         <?php
         if ($nextSession != NULL) {
             $nextSessionDate = $nextSession['session_date'];
@@ -29,8 +32,6 @@
     
     <div class="session-info ta-left mg40">
         <p><span class="bold">Plan name:</span> <?php echo $trainingSession['plan_name']; ?></p>
-
-
 
         <p><span class="bold">Day:</span> <?php echo $dayName; ?> (<?php echo $dayOfTheWeek; ?>)</p>
 
@@ -145,8 +146,9 @@
                     foreach ($sortedExercises as $exercise) {
                         if ($previousSession != NULL) {
                             foreach ($previousSessionExercises as $previousExercise) {
-                                if ($previousExercise['exercise_id'] == $exercise['exercise_id'] && $previousExercise['lp'] == $exercise['lp']) {
+                                if ($previousExercise['exercise_id'] == $exercise['exercise_id'] && $previousExercise['lp'] == $exercise['lp'] && $previousExercise['sub_id'] == $exercise['sub_id']) {
                                     $exercise['previous_weight'] = $previousExercise['weight'];
+                                    $exercise['previous_reps'] = $previousExercise['reps'];
                                     break;
                                 }
                             }
@@ -155,12 +157,23 @@
                         echo "<tr set_name=\"" . $setName . "\">";
                         echo "<td>" . $exercise['lp'] . "</td>";
                         echo "<td>" . $exercise['name'] . "</td>";
-                        echo "<td>" . $exercise['reps'] . "</td>";
+                        echo "<td>" . $exercise['reps'];
+                        if ($previousSession != NULL) {
+                            if (isset($exercise['previous_reps']) && $exercise['previous_reps'] != 0) {
+                                $repsDifference = $exercise['reps'] - $exercise['previous_reps'];
+                                if ($repsDifference > 0) {
+                                    echo "<span class=\"small green\"> (+" . $repsDifference . ")</span>";
+                                } else if ($repsDifference < 0) {
+                                    echo "<span class=\"small red\"> (" . $repsDifference . ")</span>";
+                                } 
+                            }
+                        }
+                        echo "</td>";
                         
                         
                         echo "<td>" . $exercise['weight'] . "kg";
                         if ($previousSession != NULL) {
-                            if ($exercise['previous_weight'] != 0) {
+                            if (isset($exercise['previous_weight']) && $exercise['previous_weight'] != 0) {
                                 $weightDifference = $exercise['weight'] - $exercise['previous_weight'];
                                 if ($weightDifference > 0) {
                                     echo "<span class=\"small green\"> (+" . $weightDifference . " kg)</span>";
@@ -171,6 +184,7 @@
                                 }
                             }
                         }
+                        echo "</td>";
                         
                         echo "<td>" . $exercise['comments'] . "</td>";
                         echo "</tr>";
@@ -180,6 +194,7 @@
             </tbody>
         </table>
     </div>
+    <div class="spcr"></div>
 
 
 

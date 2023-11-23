@@ -117,12 +117,30 @@ class UserModel {
         }
     }
 
-    public function sendEmail ($to, $subject, $message, $headers) {
-        if (mail($to, $subject, $message, $headers)) {
+    public function sendEmail ($to, $subject, $message) {
+        require_once '../libs/class.phpmailer.php';
+        require_once '../libs/class.smtp.php';
+
+        $mail = new PHPMailer();
+        $mail->From = "no-reply@gymnote.sadycelmerow.pl";
+        $mail->FromName = "GymNote Team";
+        $mail->AddAddress($to);
+        $mail->Host = "smtp.webio.pl";
+        $mail->Mailer = "smtp";
+        $mail->SMTPAuth = true;
+        $mail->Username = "no-reply@gymnote.sadycelmerow.pl";
+        $mail->Password = "zaq1@WSX";
+        $mail->Port = 587;
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+        $mail->WordWrap = 50;
+        $mail->IsHTML(true);
+        if ($mail->Send()) {
             return true;
         } else {
             return false;
         }
+
     }
 
     public function generateToken($tokenLength) {
@@ -550,20 +568,20 @@ class UserModel {
         return $trainingSessions;
     }
 
-    public function getPreviousTrainingSession($db, $sessionId, $userId, $planId) {
-        $sql = "SELECT * FROM training_sessions WHERE session_id < ? AND user_id = ? AND plan_id = ? ORDER BY session_id DESC LIMIT 1";
+    public function getPreviousTrainingSession($db, $sessionId, $userId, $planId, $dayId, $date) {
+        $sql = "SELECT * FROM training_sessions WHERE session_date < ? AND user_id = ? AND plan_id = ? AND day_id = ? ORDER BY session_date DESC LIMIT 1";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param("iii", $sessionId, $userId, $planId);
+        $stmt->bind_param("siii", $date, $userId, $planId, $dayId);
         $stmt->execute();
         $result = $stmt->get_result();
         $previousSession = $result->fetch_assoc();
         return $previousSession;
     }
 
-    public function getNextTrainingSession ($db, $sessionId, $userId, $planId) {
-        $sql = "SELECT * FROM training_sessions WHERE session_id > ? AND user_id = ? AND plan_id = ? ORDER BY session_id ASC LIMIT 1";
+    public function getNextTrainingSession ($db, $sessionId, $userId, $planId, $dayId, $date) {
+        $sql = "SELECT * FROM training_sessions WHERE session_date > ? AND user_id = ? AND plan_id = ? AND day_id = ? ORDER BY session_date ASC LIMIT 1";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param("iii", $sessionId, $userId, $planId);
+        $stmt->bind_param("siii", $date, $userId, $planId, $dayId);
         $stmt->execute();
         $result = $stmt->get_result();
         $nextSession = $result->fetch_assoc();

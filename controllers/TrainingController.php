@@ -38,6 +38,14 @@ class TrainingController {
         return $exercises;
     }
 
+    private function convertNumberToOrdinal($number) {
+        $ends = ['th','st','nd','rd','th','th','th','th','th','th'];
+        if ((($number % 100) >= 11) && (($number % 100) <= 13))
+            return $number. 'th';
+        else
+            return $number. $ends[$number % 10];
+    }
+
     public function handleSaveTrainingSession () {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $json = file_get_contents("php://input");
@@ -173,14 +181,37 @@ class TrainingController {
         $sessionDayOfTheWeek = date('l', strtotime($trainingSession['session_date']));
 
 
-        $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id']);
+        // Initialize the count of previous sessions
+        $previousSessionCount = 0;
+
+        // Use the current session as the starting point
+        $currentSession = $trainingSession;
+
+        // Loop to count the number of previous sessions
+        while (true) {
+            $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $currentSession['plan_id'], $currentSession['day_id'], $currentSession['session_date']);
+            
+            // Check if a previous session exists
+            if ($previousSession != NULL) {
+                // Increment the count and set the current session to the previous one for the next iteration
+                $previousSessionCount++;
+                $currentSession = $previousSession;
+            } else {
+                // Exit the loop if no previous session is found
+                break;
+            }
+        }
+
+        $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
         if ($previousSession != NULL) {
             $previousSessionExercises = $userModel->getExercisesByTrainingSessionId($this->db, $previousSession['session_id']);
         }
 
-        $nextSession = $userModel->getNextTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id']);
-        
-        
+        $nextSession = $userModel->getNextTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
+
+        // Convert the count to a string like "1st", "2nd", "3rd", etc.
+        $whichNo = $this->convertNumberToOrdinal($previousSessionCount + 1);
+
 
         require_once '../views/shared/head.php';
         require_once '../views/user/training_session.php';
@@ -221,6 +252,12 @@ class TrainingController {
         
             // Assign the unique (and already sorted) exercises back to the training session
             $trainingSession['unique_exercises'] = array_values($uniqueExercises);
+
+            $dayName = $userModel->getDayNameByDayId($this->db, $trainingSession['day_id'])['day_name'];
+            $trainingSession['day_name'] = $dayName;
+
+            $dayOfTheWeek = $userModel->getDayOfTheWeekByDayId($this->db, $trainingSession['day_id'])['day_of_the_week'];
+            $trainingSession['day_of_the_week'] = $dayOfTheWeek;
         }
         unset($trainingSession);
 

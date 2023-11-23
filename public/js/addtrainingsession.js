@@ -191,9 +191,18 @@ document.addEventListener("DOMContentLoaded", function () {
         recordCheckbox.checked = !recordCheckbox.checked;
     }
 
-
+    function addEventListenerToSaveButton() {
+        var saveButtons = document.querySelectorAll('.saveTrainingSession');
+        saveButtons.forEach(function(saveButton) {
+            saveButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                saveTrainingSession();
+            });
+        });
+    }
 
     function saveTrainingSession() {
+        
         var notHiddenInputRows = [];
         const inputRows = document.querySelectorAll('.ATSinputRow');
     
@@ -354,6 +363,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 otherDays[i].classList.add('hidden');
             }
         }
+
+        
     }
     
     // Check how many options are in the select element
@@ -367,7 +378,9 @@ document.addEventListener("DOMContentLoaded", function () {
         handleDaySelection();
     
         // Add event listener to handle changes
-        daysSelectElement.addEventListener('change', handleDaySelection);
+        daysSelectElement.addEventListener('change', function() {
+            handleDaySelection();
+        });
     }
     /*--------- End of Redirect to Plan ---------*/
 
@@ -401,12 +414,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*--------- Save Training Session ---------*/
 
-    var saveButton = document.getElementById('saveTrainingSession');
-    saveButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        saveTrainingSession();
-    });
-
+    addEventListenerToSaveButton();
+    
     /*--------- End of Save Training Session ---------*/
 
 

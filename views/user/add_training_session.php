@@ -233,7 +233,7 @@
                 
                 echo "</tbody>";
                 echo "</table>";
-                echo "<button id=\"saveTrainingSession\">Save Training Session</button>";
+                echo "<button class=\"saveTrainingSession\">Save Training Session</button>";
                 echo "</div>";
             }
             echo "</div>";
