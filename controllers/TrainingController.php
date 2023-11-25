@@ -55,19 +55,28 @@ class TrainingController {
                 $userModel = new UserModel($this->db);
                 $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
                 
+
+                $planIdKey = array_keys($data)[0]; // This gets the first key of the array, which should be your plan_id key
+                $planId = str_replace("plan_id: ", "", $planIdKey); // Removing the prefix to get the actual planId
+                $lastInsertedSessionId = 0;
+
+                //convert planId to int
+                $planId = (int)$planId;
+                $userSessionId = $userModel->getPlanByPlanId($this->db, $planId)['created_for'];
+                
                 //get date that is under data->userInputs->date
                 $date = $data['userInputs']['date'];
-                $doesSessionExist = $userModel->checkTrainingSessionByDate($this->db, $user['id'], $date);
+                $doesSessionExist = $userModel->checkTrainingSessionByDate($this->db, $userSessionId, $date);
 
                 if ($doesSessionExist == true) {
-                    $response = $userModel->updateTrainingSession($this->db, $user['id'], $data, $date);
+                    $response = $userModel->updateTrainingSession($this->db, $userSessionId, $data, $date);
                     $response = array(
                         "message" => "Training session updated successfully.",
                         "data" => $data
                     );
 
                 } else {
-                    $response = $userModel->saveTrainingSession($this->db, $user['id'], $data, $date);
+                    $response = $userModel->saveTrainingSession($this->db, $userSessionId, $data, $date);
                     $response = array(
                         "message" => "Training session saved successfully.",
                         "data" => $data

@@ -112,6 +112,47 @@ class MyPlansController {
         exit();
     }
 
+    public function plansForOthers () {
+        $titlePage = 'GymNote - Plans for others';
+        $otherPlansCount = 0;
+        $userModel = new UserModel($this->db);
+        
+
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['message'] = "You need to login first.";
+            header('Location: /login');
+            exit();
+        } 
+        $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
+
+        $otherPlans = $userModel->getPlansForOthers($this->db, $user['id']);
+        $otherPlans = array_reverse($otherPlans);
+        $otherPlansCount = count($otherPlans);
+        
+
+        foreach ($otherPlans as $key => $plan) {
+            $created_for = $userModel->getUserById($this->db, $plan['created_for']);
+
+            if (isset($created_for['first_name'])) {
+                $created_for['username'] = $created_for['first_name'] . " " . $created_for['username'];
+            } else {
+                $created_for['username'] = $created_for['username'];
+            }
+
+            $otherPlans[$key]['created_for'] = $created_for['username'];
+        }
+        
+        //add new key to plans array - created_by
+
+        $myPlans = $userModel->getPlans($this->db, $user['id']);
+        $myPlans = array_reverse($myPlans);
+        $myPlansCount = count($myPlans);
+
+        require_once '../views/shared/head.php';
+        require_once '../views/user/plans_for_others.php';
+        require_once '../views/shared/footer.php';
+    }
+
 
     public function index() {
         $titlePage = 'GymNote - My plans';
@@ -126,6 +167,8 @@ class MyPlansController {
         } 
 
         $plans = $userModel->getPlans($this->db, $_SESSION['user_id']);
+        $plansForOthers = $userModel->getPlansForOthers($this->db, $_SESSION['user_id']);
+        $plansForOthersCount = count($plansForOthers);
         $plans = array_reverse($plans);
         $plansCount = count($plans);
         $user = $userModel->getUserById($this->db, $_SESSION['user_id']);
@@ -160,7 +203,6 @@ class MyPlansController {
 
 
 
-        // Load the login view with any necessary data
         require_once '../views/shared/head.php';
         require_once '../views/user/my_plans.php';
         require_once '../views/shared/footer.php';

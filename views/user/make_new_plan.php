@@ -53,10 +53,10 @@
                         </div>
                     </div>
 
-                    <label for="isActive">Set as active plan:</label>
+                    <label for="isActive" id="isActiveLabel">Set as active plan:</label>
                     <input type="checkbox" name="isActive" id="isActive">
                 </div>
-                
+
             </div>
             
             

@@ -60,7 +60,11 @@
         //make a loop to create tables for each day based on $days array
         foreach ($days as $day) {
             echo "<div class=\"trainingDay\">";
-            echo "<h3>Day " . $day['day_name'] . "</h3>";
+            if ($day["day_of_the_week"] != NULL) {
+                echo "<h3>Day " . $day['day_name'] . " <span class=\"small\">(" . $day['day_of_the_week'] . ")</span></h3>";
+            } else {
+                echo "<h3>Day " . $day['day_name'] . "</h3>";
+            }
             echo "<table id=\"MNP" . $day['day_name'] . "\" class=\"trainingTable stripped\">";
             echo "<tbody>";
             //create thead with exercises names

@@ -892,10 +892,30 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function toggleSetActivePlan() {
+        var isActive = document.getElementById('isActive');
+        var isActiveLabel = document.getElementById('isActiveLabel');
+        var makePlanFor = document.getElementById('makePlanFor');
+    
+        makePlanFor.addEventListener("change", function() {
+            // Get the selected option text
+            var selectedOptionText = makePlanFor.options[makePlanFor.selectedIndex].text;
+    
+            if (selectedOptionText === "Myself") {
+                // Remove the hidden class if the selected option text is "Myself"
+                isActive.classList.remove("hidden");
+                isActiveLabel.classList.remove("hidden");
+            } else {
+                // Add the hidden class if the selected option text is not "Myself"
+                isActive.classList.add("hidden");
+                isActiveLabel.classList.add("hidden");
+            }
+        });
+    }
     
 
     addDayButton ();
     savePlanButton ();
-
+    toggleSetActivePlan ();
   
 });

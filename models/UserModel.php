@@ -737,9 +737,19 @@ class UserModel {
     }
 
     public function getPlans ($db, $id) {
-        $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id FROM mnp_plans WHERE user_id = ?";
+        $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id FROM mnp_plans WHERE created_for = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $plans = $result->fetch_all(MYSQLI_ASSOC);
+        return $plans;
+    }
+
+    public function getPlansForOthers ($db, $id) {
+        $sql = "SELECT plan_id, plan_name, date_created, is_active, user_id, created_for FROM mnp_plans WHERE user_id = ? AND created_for != ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ii", $id, $id);
         $stmt->execute();
         $result = $stmt->get_result();
         $plans = $result->fetch_all(MYSQLI_ASSOC);

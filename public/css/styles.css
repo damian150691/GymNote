@@ -188,7 +188,7 @@ h3 {
 
 a {
   text-decoration: none; /* Remove the default underline */
-  color: #D65A31; /* Link color */
+  color: orange; /* Link color */
   position: relative; /* Required for pseudo-element positioning */
   margin: 0 10px;
 }
@@ -302,7 +302,7 @@ input, select, .custom-file-upload {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .center {
@@ -1014,3 +1014,22 @@ input[type="submit"]:hover {
   margin-bottom: 20px;
 }
 
+.plans-nav-bar {
+  width: 400px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background-color: #eee;
+  position: relative;
+  border-radius: 10px;
+  color: #222831;
+}
+
+.plans-nav-bar a {
+  display: inline-block;
+  margin: 20px;
+  color: #222831;
+}
+
+.plans-nav-bar a:hover {
+  text-decoration: underline;
+}

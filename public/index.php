@@ -43,6 +43,7 @@ $routes = [
     '/admin/edituser/(\d+)' => ['controller' => 'AdminController', 'action' => 'handleEditUser', 'params' => ['db' => $db]],
 
     '/myplans' => ['controller' => 'MyPlansController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/plansforothers' => ['controller' => 'MyPlansController', 'action' => 'plansForOthers', 'params' => ['db' => $db]],
     '/plan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'displayPlan', 'params' => ['db' => $db]],
     '/deleteplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'deletePlan', 'params' => ['db' => $db]],
     '/setactiveplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'handleSetActivePlan', 'params' => ['db' => $db]],

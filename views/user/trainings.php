@@ -6,6 +6,7 @@
     <?php require_once "../views/shared/errors.php";?>
     
     <h2>My training sessions</h2>
+
     <?php
     if ($trainingSessions == NULL) {
         echo "<p>You don't have any training sessions yet.</p>";
@@ -24,19 +25,20 @@
         $groupedPlans[$session['plan_name']][$session['day_name']][] = $session;
     }
 
-    foreach ($groupedPlans as $planName => $sessionsByDay): ?>
-            <div class="dashed-border w90p mgb40">
+    foreach ($groupedPlans as $planName => $sessionsByDay) {
+        ?>
+        <div class="dashed-border w90p mgb40">
             <h3>
                 <?php
-                    echo "<a href=\"/plan/" . $sessionsByDay[$dayName][0]['plan_id'] . "\">";
-                    echo "#" . $sessionsByDay[$dayName][0]['plan_id'] . " ";
-                    echo htmlspecialchars($planName); 
-                    echo "</a>";
+                // Using reset() to get the first element of $sessionsByDay
+                $firstDaySessions = reset($sessionsByDay);
+                echo "<a href=\"/plan/" . $firstDaySessions[0]['plan_id'] . "\">";
+                echo "#" . $firstDaySessions[0]['plan_id'] . " ";
+                echo htmlspecialchars($planName);
+                echo "</a>";
                 ?>
             </h3>
-
             <?php foreach ($sessionsByDay as $dayName => $sessions): ?>
-
                 <h4>Day <?php echo htmlspecialchars($dayName) . " <span class=\"small\">(" . htmlspecialchars($sessions[0]['day_of_the_week']) . ")</span>"; ?></h4>
                 <div class="flex-wrapper flex-left dark-bg ptb5">
                     <div class="flex-item w200"><p class="mg5 bold">No</p></div>
@@ -45,7 +47,7 @@
                 </div>
                 <?php $sessionNumber = count($sessions); ?>
                 <?php foreach ($sessions as $session): ?>
-                    <div class="flex-wrapper flex-left" day_name="<?php echo $session['day_name']; ?> day_id="<?php echo $session['day_id']; ?> session_id="<?php echo $session['session_id']; ?>">
+                    <div class="flex-wrapper flex-left" day_name="<?php echo $session['day_name']; ?>" day_id="<?php echo $session['day_id']; ?>" session_id="<?php echo $session['session_id']; ?>">
                         <div class="flex-item w200">
                             <p class="mg5">#<?php echo $sessionNumber--; ?></p>
                         </div>
@@ -58,6 +60,8 @@
                     </div>
                 <?php endforeach; ?>
             <?php endforeach; ?>
-            </div>
-        <?php endforeach; ?>
+        </div>
+        <?php
+    }
+    ?>
 </div>
