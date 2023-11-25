@@ -88,7 +88,7 @@ class RegisterController {
                     
                     
 
-                    $_SESSION['message'] = "You have been registered successfully. Please check your email to verify your account.";
+                    $_SESSION['message'] = "You have been registered successfully. E-mail with verification link has been sent to your e-mail address (" . $email . "). Please verify your account.";
                     header('Location: /login');
                     exit;
                 } else {
