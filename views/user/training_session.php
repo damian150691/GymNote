@@ -12,20 +12,20 @@
             $previousSessionDate = explode('-', $previousSessionDate);
             $previousSessionDate = $previousSessionDate[2] . "-" . $previousSessionDate[1] . "-" . $previousSessionDate[0];
             $previousSessionDayOfTheWeek = date('l', strtotime($previousSessionDate));
-            echo "<a href=\"/trainingsession/" . $previousSession['session_id'] . "\"><<<</a>";
+            echo "<a href=\"/workout/" . $previousSession['session_id'] . "\"><<<</a>";
         }
 
         echo $whichNo;
         ?>
 
-        training session of Day <?php echo $dayName; ?> from<a href="/plan/<?php echo $plan['plan_id']; ?>"><?php echo $plan['plan_name']; ?></a>
+        workout of Day <?php echo $dayName; ?> from<a href="/plan/<?php echo $plan['plan_id']; ?>"><?php echo $plan['plan_name']; ?></a>
         <?php
         if ($nextSession != NULL) {
             $nextSessionDate = $nextSession['session_date'];
             $nextSessionDate = explode('-', $nextSessionDate);
             $nextSessionDate = $nextSessionDate[2] . "-" . $nextSessionDate[1] . "-" . $nextSessionDate[0];
             $nextSessionDayOfTheWeek = date('l', strtotime($nextSessionDate));
-            echo "<a href=\"/trainingsession/" . $nextSession['session_id'] . "\">>>></a>";
+            echo "<a href=\"/workout/" . $nextSession['session_id'] . "\">>>></a>";
         }
         ?>
     </h2>

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-   console.log("addtrainingsession.js loaded");
+   console.log("addworkout.js loaded");
 
     function redirectToPlan() {
         // Get the previous value from the data attribute
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         this.setAttribute('data-previous', planId);
 
 
-        var newPath = 'addtrainingsession/' + planId;
+        var newPath = 'addworkout/' + planId;
         window.location.pathname = newPath;
     }
 
@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // Send the JSON string to the PHP script
-        fetch('/savetrainingsession', {
+        fetch('/saveworkout', {
             method: 'POST',
             body: jsonData,
             headers: {
@@ -368,20 +368,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     // Check how many options are in the select element
-    var optionsLength = daysSelectElement.options.length;
+    if (daysSelectElement != null) {
+        var optionsLength = daysSelectElement.options.length;
     
-    if (optionsLength == 1) {
-        var trainingDayDiv = document.querySelector('.ATStrainingDay');
-        trainingDayDiv.classList.remove('hidden');
-    } else {
-        // Call the function on page load to handle the initially selected day
-        handleDaySelection();
-    
-        // Add event listener to handle changes
-        daysSelectElement.addEventListener('change', function() {
+        if (optionsLength == 1) {
+            var trainingDayDiv = document.querySelector('.ATStrainingDay');
+            trainingDayDiv.classList.remove('hidden');
+        } else {
+            // Call the function on page load to handle the initially selected day
             handleDaySelection();
-        });
+        
+            // Add event listener to handle changes
+            daysSelectElement.addEventListener('change', function() {
+                handleDaySelection();
+            });
+        }
     }
+    
     /*--------- End of Redirect to Plan ---------*/
 
     

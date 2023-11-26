@@ -5,12 +5,14 @@
 <div id="content">
     <?php require_once "../views/shared/errors.php";?>
     
-    <h2>My training sessions</h2>
+    <h2>My workouts</h2>
+
+    <a href="/addworkout"><button class="centerbtn">Add workout</button></a>
 
     <?php
     if ($trainingSessions == NULL) {
-        echo "<p>You don't have any training sessions yet.</p>";
-        echo "<button><a href=\"/myplans\">Add training session to a plan</a></button>";
+        echo "<p>You don't have any workouts yet.</p>";
+        echo "<button><a href=\"/myplans\">Add workout to a plan</a></button>";
         exit();
     } 
 
@@ -52,10 +54,15 @@
                             <p class="mg5">#<?php echo $sessionNumber--; ?></p>
                         </div>
                         <div class="flex-item w200">
-                            <p class="mg5"><?php echo $session['session_date']; ?></p>
+                            <p class="mg5">
+                                <?php 
+                                echo $session['session_date']; 
+                                echo ' <span class="small">(' . date('l', strtotime($session['session_date'])) . ')</span>';
+                                ?>
+                            </p>
                         </div>
                         <div class="flex-item w200">
-                            <a href="/trainingsession/<?php echo $session['session_id']; ?>"><button>View</button></a>
+                            <a href="/workout/<?php echo $session['session_id']; ?>" class="mg5 d-i">View</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

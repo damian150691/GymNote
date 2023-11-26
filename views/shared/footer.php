@@ -27,11 +27,14 @@
             'exercises' => function($url) {
                 return $url == 'exercises';
             },
-            'addtrainingsession' => function($url, $baseUrl) {
-                return $url == 'addtrainingsession' || strpos($baseUrl, 'addtrainingsession') !== false;
+            'addworkout' => function($url, $baseUrl) {
+                return $url == 'addworkout' || strpos($baseUrl, 'addworkout') !== false;
             },
-            'trainingsession' => function($url, $baseUrl) {
-                return $url == 'trainingsession' || strpos($baseUrl, 'trainingsession') !== false;
+            'workout' => function($url, $baseUrl) {
+                return $url == 'workout' || strpos($baseUrl, 'workout') !== false;
+            },
+            'myplans' => function($url) {
+                return $url == 'myplans' || $url == 'plansforothers';
             },
         
         ];

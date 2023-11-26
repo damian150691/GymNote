@@ -53,7 +53,7 @@
                         echo "<td>" . $activePlan['plan_name'] . "</td>";
                         echo "<td>" . $activePlan['date_created'] . "</td>";
                         echo "<td>" . $activePlan['created_by'] . "</td>";
-                        echo "<td><a href='/plan/" . $activePlan['plan_id'] . "'>View</a><a href='/deleteplan/" . $activePlan['plan_id'] . "'>Delete</a><a href='/addtrainingsession/" . $activePlan['plan_id'] . "'>Add training session</a></td>";
+                        echo "<td><a href='/plan/" . $activePlan['plan_id'] . "'>View</a><a href='/deleteplan/" . $activePlan['plan_id'] . "'>Delete</a><a href='/addworkout/" . $activePlan['plan_id'] . "'>Add workout</a></td>";
                         echo "</tr>";
                     }
                     ?>

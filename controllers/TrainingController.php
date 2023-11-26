@@ -124,6 +124,8 @@ class TrainingController {
 
         $plans = $userModel->getPlans($this->db, $userId);
 
+        $activePlan = $userModel->getActivePlan($this->db, $userId);
+
         if ($defaultPlan != null) {
             $chosenPlan = $defaultPlan;
             $days = $userModel->getDaysByPlanId($this->db, $chosenPlan['plan_id']);
@@ -139,8 +141,64 @@ class TrainingController {
                     $exercises[$s['set_id']] = $userModel->getExercisesBySetId($this->db, $s['set_id']);
                 }
             }
-           
+
+            $trainingSessions = $userModel->getTrainingSessionsByUserId($this->db, $userId);
+            // Sort the array by session_date
+            usort($trainingSessions, function($a, $b) {
+                return strtotime($a['session_date']) - strtotime($b['session_date']);
+            });
+            $latestSession = end($trainingSessions);
+
+            
+
+
+            //loop to get all reps by exercise id
+            $daysCount = count($days);
+            // Map day names to numeric values, using lowercase for consistency
+            $dayMap = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
+            // Getting the current day of the week as a number (1 for Monday, 7 for Sunday)
+            $currentDayOfWeek = date('N');
+            // Default selected day
+            $selectedDayId = null;
+            $closestDifference = PHP_INT_MAX;
+
+            // Initialize today's date
+            $todayDate = new DateTime(); // Today's date
+
+            // Parse the latest session date
+            $latestSessionDate = new DateTime($latestSession['session_date']);
+            $latestSessionDayOfWeek = $latestSessionDate->format('N');
+
+            // Calculate the difference in days between today and the last session date
+            $interval = $todayDate->diff($latestSessionDate);
+            $daysSinceLastSession = $interval->days;
+
+            foreach ($days as $day) {
+                $dayOfWeek = isset($dayMap[strtolower($day['day_of_the_week'])]) ? $dayMap[strtolower($day['day_of_the_week'])] : null;
+
+                if ($dayOfWeek) {
+                    // If the last session was more than 7 days ago, ignore it
+                    if ($daysSinceLastSession <= 7) {
+                        // Check if the latest session day has passed in the current week
+                        if ($todayDate > $latestSessionDate && $latestSessionDayOfWeek == $dayOfWeek) {
+                            continue; // Skip this day as it has already been completed in the current week
+                        }
+                    }
+
+                    // Calculate forward and backward differences as before
+                    $forwardDifference = ($dayOfWeek >= $currentDayOfWeek) ? ($dayOfWeek - $currentDayOfWeek) : ($dayOfWeek + 7 - $currentDayOfWeek);
+                    $backwardDifference = ($currentDayOfWeek > $dayOfWeek) ? ($currentDayOfWeek - $dayOfWeek) : ($currentDayOfWeek + 7 - $dayOfWeek);
+                    $difference = min($forwardDifference, $backwardDifference);
+
+                    if ($difference < $closestDifference) {
+                        $closestDifference = $difference;
+                        $selectedDayId = $day['day_id'];
+                    }
+                }
+            }
         }
+
+        
 
         require_once '../views/shared/head.php';
         require_once '../views/user/add_training_session.php';
@@ -163,7 +221,7 @@ class TrainingController {
         $sessionId = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_NUMBER_INT);
         $sessionId = preg_replace("/[^0-9]/", "", $sessionId);
 
-        $titlePage = 'GymNote - Training session #'.$sessionId.'';
+        $titlePage = 'GymNote - Workout #'.$sessionId.'';
 
         $userModel = new UserModel($this->db);
 
@@ -198,7 +256,7 @@ class TrainingController {
 
         // Loop to count the number of previous sessions
         while (true) {
-            $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $currentSession['plan_id'], $currentSession['day_id'], $currentSession['session_date']);
+            $previousSession = $userModel->getPreviousTrainingSession($this->db, $userId, $currentSession['plan_id'], $currentSession['day_id'], $currentSession['session_date']);
             
             // Check if a previous session exists
             if ($previousSession != NULL) {
@@ -211,12 +269,12 @@ class TrainingController {
             }
         }
 
-        $previousSession = $userModel->getPreviousTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
+        $previousSession = $userModel->getPreviousTrainingSession($this->db, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
         if ($previousSession != NULL) {
             $previousSessionExercises = $userModel->getExercisesByTrainingSessionId($this->db, $previousSession['session_id']);
         }
 
-        $nextSession = $userModel->getNextTrainingSession($this->db, $sessionId, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
+        $nextSession = $userModel->getNextTrainingSession($this->db, $userId, $trainingSession['plan_id'], $trainingSession['day_id'], $trainingSession['session_date']);
 
         // Convert the count to a string like "1st", "2nd", "3rd", etc.
         $whichNo = $this->convertNumberToOrdinal($previousSessionCount + 1);
@@ -229,7 +287,7 @@ class TrainingController {
 
 
     public function index() {
-        $titlePage = 'GymNote - Add training session';
+        $titlePage = 'GymNote - Add workout';
 
         $errors = array();
         $userId = $_SESSION['user_id'];

@@ -21,6 +21,7 @@ $route = str_replace($base_url, '', $request_uri);
 // Define routes and their corresponding controllers and actions
 $routes = [
     '/' => ['controller' => 'HomeController', 'action' => 'index'],
+    '' => ['controller' => 'HomeController', 'action' => 'index'],
 
     '/login' => ['controller' => 'LoginController', 'action' => 'index', 'params' => ['db' => $db]],
     '/logout' => ['controller' => 'LoginController', 'action' => 'handleLogout'],
@@ -48,10 +49,11 @@ $routes = [
     '/deleteplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'deletePlan', 'params' => ['db' => $db]],
     '/setactiveplan/(\d+)' => ['controller' => 'MyPlansController', 'action' => 'handleSetActivePlan', 'params' => ['db' => $db]],
 
-    '/trainings' => ['controller' => 'TrainingController', 'action' => 'index', 'params' => ['db' => $db]],
-    '/addtrainingsession/(\d+)' => ['controller' => 'TrainingController', 'action' => 'handleAddTrainingSession', 'params' => ['db' => $db]],
-    '/savetrainingsession' => ['controller' => 'TrainingController', 'action' => 'handleSaveTrainingSession', 'params' => ['db' => $db]],
-    '/trainingsession/(\d+)' => ['controller' => 'TrainingController', 'action' => 'displayTrainingSession', 'params' => ['db' => $db]],
+    '/workouts' => ['controller' => 'TrainingController', 'action' => 'index', 'params' => ['db' => $db]],
+    '/addworkout/(\d+)' => ['controller' => 'TrainingController', 'action' => 'handleAddTrainingSession', 'params' => ['db' => $db]],
+    '/addworkout' => ['controller' => 'TrainingController', 'action' => 'handleAddTrainingSession', 'params' => ['db' => $db]],
+    '/saveworkout' => ['controller' => 'TrainingController', 'action' => 'handleSaveTrainingSession', 'params' => ['db' => $db]],
+    '/workout/(\d+)' => ['controller' => 'TrainingController', 'action' => 'displayTrainingSession', 'params' => ['db' => $db]],
 
     '/makenewplan' => ['controller' => 'MakeNewPlanController', 'action' => 'index', 'params' => ['db' => $db]],
     '/saveplan' => ['controller' => 'MakeNewPlanController', 'action' => 'handleSavePlan', 'params' => ['db' => $db]],

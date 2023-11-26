@@ -20,7 +20,8 @@ body {
 	text-align: center;
   display: block;
 	padding-top: 1px;
-  background-image: url('../img/background-barbell.png'); /* Replace with your image path */
+  padding-bottom: 20px;
+  background-image: url('../img/background-barbell.png'); 
   background-repeat: no-repeat;
   background-position: calc(0% + 50px) calc(100% - 50px);
   background-size: 200px auto;
@@ -352,6 +353,14 @@ input, select, .custom-file-upload {
 
 .w200 {
   width: 200px;
+}
+
+.d-b {
+  display: block;
+}
+
+.d-i {
+  display: inline-block;
 }
 
 .dashed-border {
@@ -888,6 +897,10 @@ input[type="submit"]:hover {
 
 .user-row-element {
   margin: 0 10px;              
+}
+
+.user-row-element button {
+  margin: 10px 0;              
 }
 
 .friendRequestAvatar {
